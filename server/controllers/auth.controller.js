@@ -53,6 +53,12 @@ exports.verifyEmail = async (req, res, next) => {
     if(user.activationToken == req.params.token) {
       user.isActive = true;
       await user.save();
+      const wallet = await user.createWallet();
+      wallet.amount = 100000;
+      await wallet.save();
+      const coupon = await user.createCoupon();
+      coupon.code = 'WELCOME' + user.username.toUpperCase();
+      await code.save();
       return res.status(200).json(responseObj(true, 'Email Verified'));
     }
     return res.status(400).json(responseObj(false, 'Invalid Token'));
