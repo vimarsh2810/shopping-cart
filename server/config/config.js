@@ -8,6 +8,12 @@ module.exports = {
     password: process.env.DB_PW,
     dialect: process.env.DIALECT,
     app_port: process.env.APP_PORT,
-    jwt_secret: process.env.JWT_SECRET
+    jwt_secret: process.env.JWT_SECRET,
+    salt_value: process.env.SALT_VALUE,
+    roles: {
+      SuperAdmin: 1,
+      SubAdmin: 2,
+      User: 3
+    }
   }
 };

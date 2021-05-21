@@ -16,10 +16,7 @@ const User = sequelize.define('user', {
     username: {
       type: Sequelize.STRING(20),
       allowNull: false,
-      unique: true,
-      validate: {
-        is: ["^[a-z][a-z0-9]{4,20}", "i"]
-      }
+      unique: true
     },
     email: {
       type: Sequelize.STRING(50),

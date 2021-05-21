@@ -1,9 +1,12 @@
 const bcrypt = require('bcryptjs');
+require('dotenv').config();
 
 const { createToken } = require('../helpers/createToken.js');
 const { deliverMail } = require('../helpers/nodeMailer.js');
 const { responseObj } = require('../helpers/responseObj.js');
 const { User } = require('../models/user.js');
+
+const tokenExpirationTime = 60*60;
 
 exports.signup = async (req, res, next) => {
   try {
@@ -19,29 +22,18 @@ exports.signup = async (req, res, next) => {
 
     const cart = await user.createCart();
     const wishList = await user.createWishList();
-    res.redirect(`/auth/sendVerificationMail/${user.id}`);
-    
-    // return res.status(200).json(responseObj(true, `Registration Successful, userId: ${user.id}`));
-  } catch (error) {
-    return res.status(500).json(responseObj(false, error.message));
-  }
-};
-
-exports.sendVerificationMail = async (req, res, next) => {
-  try {
-    const user = await User.findByPk(req.params.id);
     
     const link = req.protocol + '://' + req.get('host') + '/auth/verifyEmail' + '/' + user.id + '/' + user.activationToken;
     const mailOptions = {
-      from: 'darshsharma2810@gmail.com',
+      from: process.env.MAIL_ID,
       to: user.email,
       subject: 'Email Verification',
       text: `Click the link to verify your email: ${link}`
     };
     deliverMail(mailOptions);
-    res.redirect('/auth/login');
+    
+    return res.status(200).json(responseObj(true, `Registration Successful, check your email for verification`));
   } catch (error) {
-    console.log(error)
     return res.status(500).json(responseObj(false, error.message));
   }
 };
@@ -49,19 +41,18 @@ exports.sendVerificationMail = async (req, res, next) => {
 exports.verifyEmail = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.params.userId);
-    console.log(user)
-    if(user.activationToken == req.params.token) {
-      user.isActive = true;
-      await user.save();
-      const wallet = await user.createWallet();
-      wallet.amount = 100000;
-      await wallet.save();
-      const coupon = await user.createCoupon();
-      coupon.code = 'WELCOME' + user.username.toUpperCase();
-      await code.save();
-      return res.status(200).json(responseObj(true, 'Email Verified'));
+    if(user.activationToken !== req.params.token) {
+      return res.status(400).json(responseObj(false, 'Invalid Token'));
     }
-    return res.status(400).json(responseObj(false, 'Invalid Token'));
+    user.isActive = true;
+    await user.save();
+    const wallet = await user.createWallet();
+    wallet.amount = 100000;
+    await wallet.save();
+    const coupon = await user.createCoupon({
+      code: 'WELCOME' + user.username.toUpperCase()
+    });
+    return res.status(200).json(responseObj(true, 'Email Verified'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
@@ -69,7 +60,7 @@ exports.verifyEmail = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   try {
-    console.log(req.originalUrl)
+    
     const user = await User.findOne({ where: { email: req.body.email } });
     if(!user) {
       return res.status(404).json(responseObj(false, 'Email is not registered!'));
@@ -84,14 +75,15 @@ exports.login = async (req, res, next) => {
       userId: user.id,
       userName: user.username,
       userRole: user.userRoleId
-    }, 60*60);
+    }, tokenExpirationTime);
 
     return res.status(200).json(responseObj(true, 'Login Successful!', {
       id: user.id,
       name: user.name,
       username: user.username,
       email: user.email,
-      isActive: user.isActive
+      isActive: user.isActive,
+      tokenExpirationTime: tokenExpirationTime
     }, token));
     
   } catch (error) {

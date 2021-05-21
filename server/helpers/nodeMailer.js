@@ -12,7 +12,6 @@ const transporter = nodeMailer.createTransport({
 const deliverMail = (options) => {
   transporter.sendMail(options, (error, info) => {
     if(error) {
-      // return res.status(500).json(responseObj(500, false, 'Error', error.message));
       console.log(error.message);
     } else {
       console.log(info.response);

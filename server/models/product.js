@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 
 const sequelize = require('../config/db.js');
+const { Category } = require('./category.js');
 const { User } = require('./user.js');
 
 const Product = sequelize.define('product', {
@@ -28,5 +29,8 @@ const Product = sequelize.define('product', {
 
 Product.belongsTo(User);
 User.hasMany(Product);
+
+Product.belongsTo(Category);
+Category.hasMany(Product);
 
 module.exports = { Product };

@@ -11,6 +11,8 @@ const { Order } = require('./order.js');
 const { OrderItem } = require('./orderItem.js');
 const { WishList } = require('./wishList.js');
 const { WishListItem } = require('./wishListItem.js');
+const { Wallet } = require('./wallet.js');
+const { Coupon } = require('./coupon.js');
 
 const db = {}
 
@@ -24,6 +26,8 @@ db.order = Order;
 db.orderItem = OrderItem;
 db.wishList = WishList;
 db.wishListItem = WishListItem;
+db.wallet = Wallet;
+db.coupon = Coupon;
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
