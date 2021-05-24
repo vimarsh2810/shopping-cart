@@ -36,7 +36,9 @@ exports.addProduct = async (req, res, next) => {
       title: req.body.title,
       price: req.body.price,
       description: req.body.description,
-      categoryId: req.body.categoryId
+      categoryId: req.body.categoryId,
+      userId: req.body.userId,
+      imagePath: `./public/img/products/${req.fileName}`
     });
     return res.status(200).json(responseObj(true, 'Product created.', product));
   } catch (error) {

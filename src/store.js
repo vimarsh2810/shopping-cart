@@ -50,7 +50,11 @@ export default new Vuex.Store({
         user: authData.payload
       });
       dispatch('setLogoutTimer', authData.payload.tokenExpirationTime);
-      router.push('/dashboard')
+      if(authData.payload.roleId === 3) {
+        router.push('/user/dashboard');
+      } else {
+        router.push('/admin/add-product');
+      }
     },
     logout({commit}) {
       commit('clearAuthData');

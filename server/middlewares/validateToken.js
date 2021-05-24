@@ -7,7 +7,6 @@ const validateToken = (req, res, next) => {
     if(!req.headers.authorization) {
       return res.status(401).json(responseObj(false, 'User not logged in.'));
     }
-    console.log(req.headers);
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, development.jwt_secret);
     req.userData = decoded;

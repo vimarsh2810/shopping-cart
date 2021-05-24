@@ -30,6 +30,7 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "nodemon": "^2.0.7",
+    "vue-cli-plugin-vuetify": "~2.4.0",
     "vue-template-compiler": "^2.6.11"
   }
 }
