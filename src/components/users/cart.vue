@@ -7,19 +7,19 @@
           <table class="table">
             <thead>
               <tr>
-                <th class="text-center">Action</th>
                 <th class="text-center">Product Image</th>
                 <th class="text-center">Product Name</th>
                 <th class="text-center">Price</th>
                 <th class="text-center">Quantity</th>
                 <th class="text-center">Total</th>
+                <th class="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="product in cartProducts" :key="product.id">
-                <td class="text-center">
-                  <button @click.prevent="deleteCartItem(product.id)">DELETE</button>
-                </td>
+              <tr v-if="cartProducts.length <= 0">
+                <td colspan="6" class="text-center no-products-tr">No Products in your cart</td>
+              </tr>
+              <tr v-else v-for="product in cartProducts" :key="product.id">
                 <td>
                   <div class="cart-img text-center">
                     <img :src="product.imagePath" alt="">
@@ -29,12 +29,16 @@
                 <td class="vertical-center text-center">{{ product.price }}</td>
                 <td class="vertical-center text-center">
                   <div class="quantity">
-                    <button class="btn">+</button>
-                    <input type="text" class="form-control" v-model="ddd">
-                    <button class="btn">+</button>
+                    <button class="btn btn-success" @click="product.cartItem.quantity--">&#8722;</button>
+                    <span>{{ product.cartItem.quantity }}</span>
+                    <button class="btn btn-success" @click="product.cartItem.quantity++">&#43;</button><br>
+                    <button class="btn btn-sm btn-primary update-qty-btn" @click="updateQuantity(product.id, product.cartItem.quantity)">Update Quantity</button>
                   </div>
                 </td>
                 <td class="vertical-center text-center">{{ product.total }}</td>
+                <td class="vertical-center text-center">
+                  <button class="btn btn-warning" style="color: #fff" @click="deleteCartItem(product.id)">DELETE</button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -80,7 +84,6 @@ export default {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
         });
-        console.log(response.data);
         this.cartProducts = response.data.payload.products;
       } catch (error) {
         console.log(error.response);
@@ -94,10 +97,23 @@ export default {
           }
         });
         console.log(response.data);
+        location.reload();
       } catch (error) {
         console.log(error.response);
       }
     },
+    async updateQuantity(productId, quantity) {
+      try {
+        const response = await axios.put(`http://localhost:3000/cart/updateQuantity/${productId}`, { quantity }, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.token}`
+          }
+        });
+        location.reload();
+      } catch (error) {
+        console.log(error.response);
+      }
+    }
   },
   created() {
     this.getCart();
@@ -120,12 +136,14 @@ export default {
     min-width: 100% !important;
   }
   .cart-img {
-    max-width: 200px;
-    max-height: 140px;
-    object-fit: cover;
+    width: 200px;
+    height: 140px;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
 
   .cart-img img {
@@ -141,4 +159,23 @@ export default {
     width: 100%;
     padding: 20px;
   }
+
+  .quantity span {
+    margin-left: 10px; 
+    margin-right: 10px
+  }
+
+  td button:focus {
+    box-shadow:none !important;
+  }
+
+  .no-products-tr {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  .update-qty-btn {
+    margin-top: 10px;
+  }
+
 </style>

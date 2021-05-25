@@ -11,4 +11,6 @@ router.get('/getCart', validateToken, cartController.getCart);
 
 router.delete('/deleteCartItem/:productId', validateToken, cartController.deleteCartItem);
 
+router.put('/updateQuantity/:productId', validateToken, cartController.updateQuantity);
+
 module.exports = router;
