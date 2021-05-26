@@ -4,7 +4,7 @@
     <div class="wrapper" style="margin-top: 100px">
       <div class="container">
         <h3 class="mbpx-30px">{{ categoryTitle }}</h3>
-        <div class="row">
+        <div class="row" v-if="products.length > 0">
 
           <div class="col-lg-3 col-md-4 col-sm-6 col-12 mbpx-30px" v-for="product in products" :key="product.id">
             <div class="card">
@@ -22,6 +22,12 @@
             </div>
           </div>
           
+        </div>
+        <div class="no-product-found" v-else>
+          <div class="no-product-found-inner">
+            <img src="/img/products/no-products-found.png" alt="">
+            <h5>Sorry, No products found for this category!</h5>
+          </div>
         </div>
       </div>
     </div>
@@ -43,7 +49,7 @@ export default {
   methods: {
     async getProductsByCategory() {
       try {
-        const response = await axios.get(`http://localhost:3000/shop/getProductsByCategory/${this.$route.params.id}`, {
+        const response = await axios.get(`http://localhost:3000/shop/productsByCategory/${this.$route.params.id}`, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
@@ -61,7 +67,7 @@ export default {
           productId: productId,
           quantity: 1
         };
-        const response = await axios.post('http://localhost:3000/cart/addToCart', data, {
+        const response = await axios.post(`${this.$store.getters.base_url}/cart/addToCart`, data, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
@@ -161,5 +167,16 @@ export default {
   .form-control:focus,
   .btn:focus {
     box-shadow:none !important;
+  }
+
+  .no-product-found {
+    margin-top: 60px;
+  }
+
+  .no-product-found-inner {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
   }
 </style>

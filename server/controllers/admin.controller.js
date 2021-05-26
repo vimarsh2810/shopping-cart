@@ -5,10 +5,6 @@ const { responseObj } = require('../helpers/responseObj.js');
 const { development } = require('../config/config.js');
 const { Category } = require('../models/category.js');
 
-/* =============================================
-                    Sub Admins
-============================================= */
-
 // @desc Create a SubAdmin
 // @route POST /admin/subAdmin/add 
 
@@ -29,15 +25,18 @@ exports.addSubAdmin = async (req, res, next) => {
   }
 };
 
-/* =============================================
-                    Products
-============================================= */
-
 // @desc Create a Product
 // @route POST /admin/product/add 
 
 exports.addProduct = async (req, res, next) => {
   try {
+
+    const { title, price, description, categoryId, userId } = req.body;
+    
+    if(!title || !price || !description || !categoryId || !userId || !req.fileName) {
+      return res.status(400).json(responseObj(false, 'All details should be filled'));
+    }
+
     const user = await User.findByPk(req.userData.userId);
     const product = await user.createProduct({
       title: req.body.title,
@@ -47,15 +46,12 @@ exports.addProduct = async (req, res, next) => {
       userId: req.body.userId,
       imagePath: `/img/products/${req.fileName}`
     });
+
     return res.status(200).json(responseObj(true, 'Product created.', product));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
-
-/* =============================================
-                    Category
-============================================= */
 
 // @desc Create a SubAdmin
 // @route POST /admin/category/add 

@@ -7,11 +7,11 @@ const router = express.Router();
 
 router.post('/addToCart', validateToken, cartController.addToCart);
 
-router.get('/getCart', validateToken, cartController.getCart);
+router.get('/cartProducts', validateToken, cartController.getCart);
 
-router.delete('/deleteCartItem/:productId', validateToken, cartController.deleteCartItem);
+router.delete('/cartProduct/:productId', validateToken, cartController.deleteCartItem);
 
-router.put('/updateQuantity/:productId', validateToken, cartController.updateQuantity);
+router.put('/quantity/:productId', validateToken, cartController.updateQuantity);
 
 router.post('/verifyCoupon', validateToken, cartController.verifyCoupon);
 

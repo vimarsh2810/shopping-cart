@@ -30,7 +30,7 @@
 import axios from 'axios';
   import Navbar from '../shared/navbar.vue';
   export default {
-    name: 'Dashboard',
+    name: 'UserHome',
     components: {
       Navbar
     },
@@ -47,7 +47,7 @@ import axios from 'axios';
       },
       async getAllProducts() {
         try {
-          const response = await axios.get('http://localhost:3000/shop/getAllProducts', {
+          const response = await axios.get(`${this.$store.getters.base_url}/shop/products`, {
             headers: {
               'Authorization': `Bearer ${this.$store.getters.token}`
             }

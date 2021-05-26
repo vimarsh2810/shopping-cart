@@ -37,7 +37,7 @@ export default {
       };
       try {
         const response = await axios.post(
-          "http://localhost:3000/auth/login",
+          `${this.$store.getters.base_url}/auth/login`,
           formData
         );
         console.log(response.data.payload);

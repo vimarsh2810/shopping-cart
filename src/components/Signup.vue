@@ -50,7 +50,7 @@ export default {
         password: this.password
       };
       try {
-        const response = await axios.post('http://localhost:3000/auth/signup', formData);
+        const response = await axios.post(`${this.$store.getters.base_url}/auth/signup`, formData);
         if(response.data.success) {
           this.$router.push('/login');
         }

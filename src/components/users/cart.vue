@@ -118,7 +118,7 @@ export default {
   methods: {
     async getCart() {
       try {
-        const response = await axios.get('http://localhost:3000/cart/getCart', {
+        const response = await axios.get(`${this.$store.getters.base_url}/cart/cartProducts`, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
@@ -151,7 +151,7 @@ export default {
 
     async deleteCartItem(productId) {
       try {
-        const response = await axios.delete(`http://localhost:3000/cart/deleteCartItem/${productId}`, {
+        const response = await axios.delete(`${this.$store.getters.base_url}/cart/cartProduct/${productId}`, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
@@ -165,7 +165,7 @@ export default {
 
     async updateQuantity(productId, quantity) {
       try {
-        const response = await axios.put(`http://localhost:3000/cart/updateQuantity/${productId}`, { quantity }, {
+        const response = await axios.put(`${this.$store.getters.base_url}/cart/quantity/${productId}`, { quantity }, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
@@ -178,7 +178,7 @@ export default {
 
     async verifyCoupon() {
       try {
-        const response = await axios.post('http://localhost:3000/cart/verifyCoupon', { couponCode: this.couponCode }, {
+        const response = await axios.post(`${this.$store.getters.base_url}/cart/verifyCoupon`, { couponCode: this.couponCode }, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }

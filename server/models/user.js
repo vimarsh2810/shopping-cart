@@ -41,9 +41,16 @@ const User = sequelize.define('user', {
   {
     hooks: {
       beforeCreate: async function(user, options) {
-        const userExist = await User.findOne({ where: { email: user.email } });
+        const userExist = await User.findOne({ 
+          where: { 
+            [Sequelize.Op.or]: {
+              email: user.email, 
+              username: user.username
+            }
+          } 
+        });
         if(userExist) {
-          throw new Sequelize.ValidationError("Email is already registered");
+          throw new Sequelize.ValidationError("Email or Username is already registered");
         }
       }
     }

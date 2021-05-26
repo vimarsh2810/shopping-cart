@@ -29,7 +29,7 @@
             </select>
           </div>
 
-          <div class="form-group" v-if="isParentSelected">
+          <div class="form-group">
             <label for="childCategory">Child Category</label>
             <select name="childCategory" class="form-control" id="childCategory">
               <option value="" selected hidden>Select Child Category</option>
@@ -42,7 +42,7 @@
             <input type="file" class="form-control" name="image" id="image" ref="file" @change="onFileChange" >
           </div>
 
-          <button class="btn btn-primary material-button" @click.prevent="addProduct">Add Product</button>
+          <button class="btn btn-primary material-button" type="button" @click.prevent="addProduct">Add Product</button>
         </form>
         <!-- Form ends -->
       </div>
@@ -68,7 +68,6 @@ export default {
       userId: this.$store.getters.userData.id,
       parentCategories: this.$store.getters.categories,
       childCategories: null,
-      isParentSelected: false,
       categoryId: null
     };
   },
@@ -79,7 +78,6 @@ export default {
 
     onSelectParent() {
       let selectedParent = undefined;
-      this.isParentSelected = true;
       for(let category of this.parentCategories) {
         if(category.id == document.querySelector('#parentCategory').value) {
           selectedParent = category;
@@ -100,7 +98,7 @@ export default {
       formData.append('userId', this.userId);
       formData.append('categoryId', this.categoryId);
       try {  
-        const response = await axios.post('http://localhost:3000/admin/product/add', formData, {
+        const response = await axios.post(`${this.$store.getters.base_url}/admin/product`, formData, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }

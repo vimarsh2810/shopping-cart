@@ -43,9 +43,9 @@ exports.signup = async (req, res, next) => {
 
 exports.verifyEmail = async (req, res, next) => {
   try {
-    const user = await User.findByPk(req.params.userId);
-    if(user.activationToken !== req.params.token) {
-      return res.status(400).json(responseObj(false, 'Invalid Token'));
+    const user = await User.findByPk(req.userData.userId);
+    if(user.verificationOtp !== req.body.otp) {
+      return res.status(400).json(responseObj(false, 'Incorrect Otp'));
     }
     user.isActive = true;
     await user.save();

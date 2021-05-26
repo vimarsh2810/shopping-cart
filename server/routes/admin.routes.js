@@ -7,11 +7,11 @@ const { upload } = require('../middlewares/uploadImage.js');
 
 const router = express.Router();
 
-router.post('/category/add', [validateToken, checkAdmin], adminController.addCategory);
+router.post('/category', [validateToken, checkAdmin], adminController.addCategory);
 
-router.post('/product/add', [validateToken, checkAdmin, upload.single("file")], adminController.addProduct);
+router.post('/product', [validateToken, checkAdmin, upload.single("file")], adminController.addProduct);
 
-router.post('/subAdmin/add', [validateToken, checkSuperAdmin], adminController.addSubAdmin);
+router.post('/subAdmin', [validateToken, checkSuperAdmin], adminController.addSubAdmin);
 
 router.get('/categories', [validateToken, checkSuperAdmin], adminController.getAllCategories);
 

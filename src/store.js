@@ -3,7 +3,6 @@ import Vuex from 'vuex';
 import axios from 'axios';
 import router from './router';
 import createPersistedState from 'vuex-persistedstate';
-import { development } from '../server/config/config.js';
 
 Vue.use(Vuex);
 
@@ -13,6 +12,7 @@ export default new Vuex.Store({
     token: null,
     user: null,
     isLoggedIn: false,
+    base_url: 'http://localhost:3000',
     categories: null
   },
   mutations: {
@@ -39,22 +39,9 @@ export default new Vuex.Store({
       }, expirationTime*1000);
     },
 
-    signup({commit}, authData) {
-      console.log(authData)
-      axios.post(`${development.base_url}/auth/signup`, authData)
-        .then(res => {
-          if(res.data.success) {
-            router.push('/login');
-          }
-        })
-        .catch(err => {
-          console.log(err.response);
-        })
-    },
-
     async getCategories(context) {
       try {
-        const response = await axios.get('http://localhost:3000/admin/categories', {
+        const response = await axios.get(`${context.getters.base_url}/admin/categories`, {
           headers: {
             'Authorization': `Bearer ${context.getters.token}`
           }
@@ -71,10 +58,11 @@ export default new Vuex.Store({
         user: authData.payload
       });
       dispatch('setLogoutTimer', authData.payload.tokenExpirationTime);
-      dispatch('getCategories');
+      
       if(authData.payload.roleId === 3) {
-        router.push('/user/dashboard');
+        router.push('/user/home');
       } else {
+        dispatch('getCategories');
         router.push('/admin/add-product');
       }
     },
@@ -89,6 +77,7 @@ export default new Vuex.Store({
     token: (state) => state.token,
     userData: (state) => state.user,
     isLoggedIn: (state) => state.isLoggedIn,
-    categories: (state) => state.categories
+    categories: (state) => state.categories,
+    base_url: (state) => state.base_url
   }
 });

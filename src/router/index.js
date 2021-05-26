@@ -2,11 +2,13 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Signup from '../components/Signup.vue';
 import Login from '../components/Login.vue';
-import Dashboard from '../components/users/dashboard.vue';
+import UserHome from '../components/users/user-home.vue';
 import AddProduct from '../components/admin/add-product.vue';
 import Cart from '../components/users/cart.vue';
 import Categories from '../components/users/categories.vue';
 import ShopByCategory from '../components/users/shop-by-category.vue';
+import AddCategory from '../components/admin/add-category.vue';
+import VerifyEmail from '../components/verify-email.vue';
 
 Vue.use(VueRouter)
 
@@ -22,9 +24,9 @@ const routes = [
     component: Login
   },
   {
-    path: '/user/dashboard',
-    name: 'Dashboard',
-    component: Dashboard
+    path: '/user/home',
+    name: 'UserHome',
+    component: UserHome
   },,
   {
     path: '/admin/add-product',
@@ -45,6 +47,16 @@ const routes = [
     path: '/user/category/:id',
     name: 'ShopByCategory',
     component: ShopByCategory
+  },
+  {
+    path: '/admin/add-category',
+    name: 'AddCategory',
+    component: AddCategory
+  },
+  {
+    path: '/user/verify-email',
+    name: 'VerifyEmail',
+    component: VerifyEmail
   }
 ]
 

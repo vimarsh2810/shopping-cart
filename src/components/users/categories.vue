@@ -34,7 +34,7 @@ export default {
   methods: {
     async getCategories() {
       try {
-        const response = await axios.get('http://localhost:3000/shop/categories', {
+        const response = await axios.get(`${this.$store.getters.base_url}/shop/categories`, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
@@ -82,14 +82,14 @@ export default {
     align-items:center;
     text-align: center;
     justify-content:center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.24);
+    transition: all 0.2s ease-in-out;
   }
 
   .category-circle:hover {
     cursor: pointer;
     background-color: #ffffff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.24);
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.36);
     transform: translateY(-3px);
   }
 
