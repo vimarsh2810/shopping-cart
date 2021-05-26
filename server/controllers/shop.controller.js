@@ -3,6 +3,9 @@ const { Category } = require('../models/category.js');
 const { Product } = require('../models/product.js');
 const Op = require('sequelize').Op;
 
+// @desc Get all products
+// @route GET /shop/getAllProducts
+
 exports.getAllProducts = async (req, res, next) => {
   try {
     console.log('shop')
@@ -13,6 +16,9 @@ exports.getAllProducts = async (req, res, next) => {
   }
 };
 
+// @desc Get product by id
+// @route GET /shop/product/:id
+
 exports.getProductById = async (req, res, next) => {
   try {
     const products = await Product.findByPk(req.params.id);
@@ -21,6 +27,9 @@ exports.getProductById = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+// @desc Get all categories
+// @route GET /shop/categories
 
 exports.getCategories = async (req, res, next) => {
   try {
@@ -34,6 +43,9 @@ exports.getCategories = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+// @desc Get products by categoryId
+// @route GET /shop/getProductsByCategory/:categoryId
 
 exports.getProductsByCategory = async (req, res, next) => {
   try {

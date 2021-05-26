@@ -13,4 +13,6 @@ router.delete('/deleteCartItem/:productId', validateToken, cartController.delete
 
 router.put('/updateQuantity/:productId', validateToken, cartController.updateQuantity);
 
+router.post('/verifyCoupon', validateToken, cartController.verifyCoupon);
+
 module.exports = router;

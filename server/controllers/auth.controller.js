@@ -5,38 +5,41 @@ const { createToken } = require('../helpers/createToken.js');
 const { deliverMail } = require('../helpers/nodeMailer.js');
 const { responseObj } = require('../helpers/responseObj.js');
 const { User } = require('../models/user.js');
+const { generateOtp } = require('../helpers/generateOtp.js');
+const { development } = require('../config/config.js');
 
 const tokenExpirationTime = 60*60;
 
+// @desc User Signup
+// @route POST /auth/signup 
+
 exports.signup = async (req, res, next) => {
   try {
-    const token = createToken({ email: req.body.email }, 10*60);
+    const otp = generateOtp();
+
     const user = await User.create({
       name: req.body.name,
       username: req.body.username,
       email: req.body.email,
-      password: bcrypt.hashSync(req.body.password, 12),
-      activationToken: token,
-      userRoleId: 3
+      password: bcrypt.hashSync(req.body.password, parseInt(development.salt_value)),
+      verificationOtp: otp,
+      userRoleId: development.roles.User
     });
 
-    const cart = await user.createCart();
-    const wishList = await user.createWishList();
+    await user.createCart();
+    await user.createWishList();
+    const wallet = await user.createWallet();
     
-    const link = req.protocol + '://' + req.get('host') + '/auth/verifyEmail' + '/' + user.id + '/' + user.activationToken;
-    const mailOptions = {
-      from: process.env.MAIL_ID,
-      to: user.email,
-      subject: 'Email Verification',
-      text: `Click the link to verify your email: ${link}`
-    };
-    deliverMail(mailOptions);
+    deliverMail({ email: user.email, verificationOtp: user.verificationOtp });
     
     return res.status(200).json(responseObj(true, `Registration Successful, check your email for verification`));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+// @desc Verify user emailId
+// @route GET /verifyEmail/:userId/:token
 
 exports.verifyEmail = async (req, res, next) => {
   try {
@@ -46,7 +49,7 @@ exports.verifyEmail = async (req, res, next) => {
     }
     user.isActive = true;
     await user.save();
-    const wallet = await user.createWallet();
+    const wallet = await user.getWallet();
     wallet.amount = 100000;
     await wallet.save();
     const coupon = await user.createCoupon({
@@ -57,6 +60,9 @@ exports.verifyEmail = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+// @desc Login
+// @route POST /auth/login
 
 exports.login = async (req, res, next) => {
   try {
@@ -76,7 +82,7 @@ exports.login = async (req, res, next) => {
       userName: user.username,
       userRole: user.userRoleId
     }, tokenExpirationTime);
-
+    
     return res.status(200).json(responseObj(true, 'Login Successful!', {
       id: user.id,
       name: user.name,

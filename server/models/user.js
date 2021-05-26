@@ -27,7 +27,7 @@ const User = sequelize.define('user', {
       type: Sequelize.STRING,
       allowNull: false
     },
-    activationToken: {
+    verificationOtp: {
       type: Sequelize.STRING
     },
     isActive: {
@@ -41,9 +41,9 @@ const User = sequelize.define('user', {
   {
     hooks: {
       beforeCreate: async function(user, options) {
-        const reqUser = await User.findOne({ where: { email: user.email } });
-        if(reqUser) {
-          throw new Error('Email already exists!');
+        const userExist = await User.findOne({ where: { email: user.email } });
+        if(userExist) {
+          throw new Sequelize.ValidationError("Email is already registered");
         }
       }
     }

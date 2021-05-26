@@ -4,30 +4,54 @@
     <div class="container">
       <div class="card card-1">
         <h5 class="card-title">Add Product</h5>
-        <form @submit.prevent="addProduct" method="POST" enctype="multipart/form-data">
+        <!-- Form starts -->
+        <form method="POST">
           <div class="form-group">
             <label for="title">Product Title</label>
-            <input type="text" name="title" id="title" class="form-control" v-model="title" />
+            <input type="text" name="title" id="title" class="form-control" v-model="title" >
           </div>
+
           <div class="form-group">
             <label for="description">Description</label>
-            <textarea id="description" class="form-control" name="description" v-model="description"></textarea>
+            <textarea id="description" class="form-control" name="description" v-model="description" ></textarea>
           </div>
+
           <div class="form-group">
             <label for="price">Price</label>
-            <input type="number" class="form-control" name="price" id="price" v-model="price">
+            <input type="number" class="form-control" name="price" id="price" v-model="price" >
           </div>
+
+          <div class="form-group">
+            <label for="parentCategory">Parent Category</label>
+            <select name="parentCategory" class="form-control" id="parentCategory" required @change="onSelectParent">
+              <option value="" selected hidden>Select Parent Category</option>
+              <option :value="category.id" v-for="category in parentCategories" :key="category.id">{{ category.title }}</option>
+            </select>
+          </div>
+
+          <div class="form-group" v-if="isParentSelected">
+            <label for="childCategory">Child Category</label>
+            <select name="childCategory" class="form-control" id="childCategory">
+              <option value="" selected hidden>Select Child Category</option>
+              <option :value="category.id" v-for="category in childCategories" :key="category.id">{{ category.title }}</option>
+            </select>
+          </div>
+
           <div class="form-group">
             <label for="image">Image</label>
-            <input type="file" class="form-control" name="image" id="image" ref="file" @change="onFileChange">
+            <input type="file" class="form-control" name="image" id="image" ref="file" @change="onFileChange" >
           </div>
-          <button class="btn btn-primary material-button" type="submit">Add Product</button>
+
+          <button class="btn btn-primary material-button" @click.prevent="addProduct">Add Product</button>
         </form>
+        <!-- Form ends -->
       </div>
     </div>   
   </div>
 </template>
+
 <script>
+
 import AdminNavbar from '../shared/admin-navbar.vue';
 import axios from 'axios';
 export default {
@@ -42,6 +66,9 @@ export default {
       price: null,
       image: null,
       userId: this.$store.getters.userData.id,
+      parentCategories: this.$store.getters.categories,
+      childCategories: null,
+      isParentSelected: false,
       categoryId: null
     };
   },
@@ -49,16 +76,30 @@ export default {
     onFileChange(event) {
       this.image = this.$refs.file.files[0];
     },
+
+    onSelectParent() {
+      let selectedParent = undefined;
+      this.isParentSelected = true;
+      for(let category of this.parentCategories) {
+        if(category.id == document.querySelector('#parentCategory').value) {
+          selectedParent = category;
+          break;
+        }
+      }
+      this.childCategories = selectedParent.children;
+    },
+    
     async addProduct() {
-      try {
-        console.log('hello')
-        const formData = new FormData();
-        formData.append('file', this.image);
-        formData.append('description', this.description);
-        formData.append('title', this.title);
-        formData.append('price', this.price);
-        formData.append('userId', this.userId);
-        formData.append('categoryId', 6);
+      
+      const formData = new FormData();
+      this.categoryId = document.querySelector('#childCategory').value;
+      formData.append('file', this.image);
+      formData.append('description', this.description);
+      formData.append('title', this.title);
+      formData.append('price', this.price);
+      formData.append('userId', this.userId);
+      formData.append('categoryId', this.categoryId);
+      try {  
         const response = await axios.post('http://localhost:3000/admin/product/add', formData, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
@@ -66,9 +107,11 @@ export default {
         });
         console.log(response.data);
       } catch (error) {
-        console.log(error.response)
+        console.log(error.response);
+        alert(error.response.data.message)
       }
     }
+
   }
 }
 </script>
@@ -78,7 +121,7 @@ export default {
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 200px;
+  margin-top: 100px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }

@@ -10,6 +10,9 @@ module.exports = {
     app_port: process.env.APP_PORT,
     jwt_secret: process.env.JWT_SECRET,
     salt_value: process.env.SALT_VALUE,
+    mail_id: process.env.MAIL_ID,
+    mail_pw: process.env.MAIL_PW,
+    mail_service: process.env.MAIL_SERVICE,
     roles: {
       SuperAdmin: 1,
       SubAdmin: 2,

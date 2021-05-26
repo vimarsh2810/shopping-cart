@@ -42,7 +42,7 @@ const routes = [
     component: Categories
   },
   {
-    path: '/user/shop-by-category/:id',
+    path: '/user/category/:id',
     name: 'ShopByCategory',
     component: ShopByCategory
   }

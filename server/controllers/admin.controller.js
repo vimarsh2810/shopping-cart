@@ -3,10 +3,14 @@ const bcrypt = require('bcryptjs');
 const { User } = require('../models/user.js');
 const { responseObj } = require('../helpers/responseObj.js');
 const { development } = require('../config/config.js');
+const { Category } = require('../models/category.js');
 
 /* =============================================
                     Sub Admins
 ============================================= */
+
+// @desc Create a SubAdmin
+// @route POST /admin/subAdmin/add 
 
 exports.addSubAdmin = async (req, res, next) => {
   try {
@@ -29,6 +33,9 @@ exports.addSubAdmin = async (req, res, next) => {
                     Products
 ============================================= */
 
+// @desc Create a Product
+// @route POST /admin/product/add 
+
 exports.addProduct = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.userData.userId);
@@ -38,7 +45,7 @@ exports.addProduct = async (req, res, next) => {
       description: req.body.description,
       categoryId: req.body.categoryId,
       userId: req.body.userId,
-      imagePath: `./public/img/products/${req.fileName}`
+      imagePath: `/img/products/${req.fileName}`
     });
     return res.status(200).json(responseObj(true, 'Product created.', product));
   } catch (error) {
@@ -50,6 +57,9 @@ exports.addProduct = async (req, res, next) => {
                     Category
 ============================================= */
 
+// @desc Create a SubAdmin
+// @route POST /admin/category/add 
+
 exports.addCategory = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.userData.userId);
@@ -58,6 +68,21 @@ exports.addCategory = async (req, res, next) => {
       parentId: req.body.parentId || null
     });
     return res.status(200).json(responseObj(true, 'Category created.', category));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+// @desc Get all categories
+// @route GET /admin/categories
+
+exports.getAllCategories = async (req, res, next) => {
+  try {
+    const categories = await Category.findAll({ where: { parentId: null } });
+    for(let category of categories) {
+      category.dataValues.children = await category.getChildren();
+    }
+    return res.status(200).json(responseObj(true, 'Categories', categories));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
