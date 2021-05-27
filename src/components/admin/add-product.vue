@@ -6,6 +6,12 @@
         <h5 class="card-title">Add Product</h5>
         <!-- Form starts -->
         <form method="POST">
+          <div class="alert alert-danger" role="alert" v-if="errors">
+            {{ errors }}
+          </div>
+          <div class="alert alert-danger" role="alert" v-if="successMsg">
+            {{ successMsg }}
+          </div>
           <div class="form-group">
             <label for="title">Product Title</label>
             <input type="text" name="title" id="title" class="form-control" v-model="title" >
@@ -68,7 +74,9 @@ export default {
       userId: this.$store.getters.userData.id,
       parentCategories: this.$store.getters.categories,
       childCategories: null,
-      categoryId: null
+      categoryId: null,
+      errors: null,
+      successMsg: null
     };
   },
   methods: {
@@ -88,7 +96,6 @@ export default {
     },
     
     async addProduct() {
-      
       const formData = new FormData();
       this.categoryId = document.querySelector('#childCategory').value;
       formData.append('file', this.image);
@@ -104,9 +111,13 @@ export default {
           }
         });
         console.log(response.data);
+        if(response.data.success) {
+          this.errors = null;
+          this.successMsgs = response.data.message;
+        }
       } catch (error) {
-        console.log(error.response);
-        alert(error.response.data.message)
+        this.successMsg = null;
+        this.errors = error.response.data.message
       }
     }
 
@@ -122,6 +133,12 @@ export default {
   margin-top: 100px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.alert {
+  font-size: 14px !important;
+  padding: 6px 10px !important;
+  margin-bottom: 10px !important;
 }
 
 form {

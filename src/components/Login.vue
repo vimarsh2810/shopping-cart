@@ -49,13 +49,12 @@ export default {
           `${this.$store.getters.base_url}/auth/login`,
           formData
         );
-        console.log(response.data.payload);
         this.$store.dispatch("login", response.data);
       } catch (error) {
-        console.log(error.response);
+        this.error = error.response.data.message;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -84,6 +83,12 @@ form {
   background-color: #007bff;
   border-top-left-radius: .25rem;
   border-top-right-radius: .25rem;
+}
+
+.alert {
+  font-size: 14px !important;
+  padding: 6px 10px !important;
+  margin-bottom: 10px !important;
 }
 
 .material-button {

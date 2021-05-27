@@ -178,6 +178,13 @@ export default {
 </script>
 
 <style scoped>
+
+  .alert {
+    font-size: 14px !important;
+    padding: 6px 10px !important;
+    margin-bottom: 10px !important;
+  }
+
   #payment-info-card {
     width: 50%;
     padding: 20px;

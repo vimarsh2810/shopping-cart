@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const { validationResult } = require('express-validator');
 require('dotenv').config();
 
 const { createToken } = require('../helpers/createToken.js');
@@ -34,7 +35,7 @@ exports.signup = async (req, res, next) => {
     
     return res.status(200).json(responseObj(true, `Registration Successful, check your email for verification`));
   } catch (error) {
-    return res.status(500).json(responseObj(false, error.message));
+    return res.status(500).json(responseObj(false, error.message, [error.message]));
   }
 };
 

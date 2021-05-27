@@ -11,7 +11,7 @@ const Category = sequelize.define('category', {
     autoIncrement: true
   },
   title: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING(40),
     unique: true
   }
 });

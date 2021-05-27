@@ -6,6 +6,14 @@
         <h5 class="card-title">Add Category</h5>
         <!-- Form starts -->
         <form method="POST">
+          <div class="error-msgs" v-if="errors">
+            <div class="alert alert-danger" role="alert" v-for="(error, index) in errors" :key="index">
+              {{ error }}
+            </div>
+          </div>
+          <div class="alert alert-success" role="alert" v-if="successMsg">
+            {{ successMsg }}
+          </div>
           <div class="form-group">
             <label for="title">Category Title</label>
             <input type="text" name="title" id="title" class="form-control" v-model="title" >
@@ -37,7 +45,9 @@ export default {
     return {
       title: null,
       parentCategories: this.$store.getters.categories,
-      parentId: null
+      parentId: null,
+      errors: null,
+      successMsg: null
     };
   },
 
@@ -57,11 +67,15 @@ export default {
         });
         console.log(response.data);
         if(response.data.success) {
+          this.errors = null;
+          this.successMsg = response.data.message;
+        }
+        if(response.data.success) {
           this.$store.dispatch('getCategories');
         }
       } catch (error) {
-        alert(error.response.data);
-        console.log(error.response);
+        this.successMsg = null;
+        this.errors = error.response.data.payload;
       }
     }
 
@@ -78,6 +92,12 @@ export default {
     margin-top: 100px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .alert {
+    font-size: 14px !important;
+    padding: 6px 10px !important;
+    margin-bottom: 10px !important;
   }
 
   form {

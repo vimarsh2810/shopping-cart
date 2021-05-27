@@ -43,7 +43,6 @@ exports.addProduct = async (req, res, next) => {
       price: req.body.price,
       description: req.body.description,
       categoryId: req.body.categoryId,
-      userId: req.body.userId,
       imagePath: `/img/products/${req.fileName}`
     });
 

@@ -3,8 +3,13 @@
     <div class="card card-1">
       <h5 class="card-title">Signup</h5>
       <form method="POST">
-        <div class="alert alert-danger" role="alert" v-if="error">
-          {{ error }}
+        <div class="error-msgs" v-if="errors">
+          <div class="alert alert-danger" role="alert" v-for="(error, index) in errors" :key="index">
+            {{ error }}
+          </div>
+        </div>
+        <div class="alert alert-success" role="alert" v-if="successMsg">
+          {{ successMsg }}
         </div>
         <div class="form-group">
           <label for="name">Name</label>
@@ -44,33 +49,37 @@ export default {
       username: null,
       password: null,
       confirmPassword: null,
-      error: null
+      errors: null,
+      successMsg: null
     };
   },
   methods: {
 
     async signup() {
       if(!this.name || !this.email || !this.username || !this.password || !this.confirmPassword) {
-        this.error = 'Please fill up all details';
+        this.errors = ['Please fill up all details'];
         return;
       }
       if(this.password !== this.confirmPassword) {
-        this.error = 'Passwords do not match';
+        this.errors = ['Passwords do not match'];
         return;
       }
       const formData = {
         name: this.name,
         email: this.email,
         username: this.username,
-        password: this.password
+        password: this.password,
+        confirmPassword: this.confirmPassword
       };
       try {
         const response = await axios.post(`${this.$store.getters.base_url}/auth/signup`, formData);
         if(response.data.success) {
-          this.$router.push('/login');
+          this.errors = null;
+          this.successMsg = response.data.message;
         }
       } catch (error) {
-        console.log(error.response);
+        this.successMsg = null;
+        this.errors = error.response.data.payload;
       }
     }
   }
@@ -78,6 +87,13 @@ export default {
 </script>
 
 <style scoped>
+
+.alert {
+  font-size: 14px !important;
+  padding: 6px 10px !important;
+  margin-bottom: 10px !important;
+}
+
 .card-1 {
   max-width: 500px;
   margin-left: auto;
