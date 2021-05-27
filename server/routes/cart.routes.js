@@ -15,4 +15,8 @@ router.put('/quantity/:productId', validateToken, cartController.updateQuantity)
 
 router.post('/verifyCoupon', validateToken, cartController.verifyCoupon);
 
+router.post('/paymentAmount', validateToken, cartController.getPaymentAmount);
+
+router.post('/payment', validateToken, cartController.payment);
+
 module.exports = router;

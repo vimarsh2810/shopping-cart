@@ -3,28 +3,32 @@
     <div class="card card-1">
       <h5 class="card-title">Signup</h5>
       <form method="POST">
+        <div class="alert alert-danger" role="alert" v-if="error">
+          {{ error }}
+        </div>
         <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" name="name" id="name" class="form-control" v-model="name" />
-          <small class="form-text text-muted"></small>
+          <input type="text" name="name" id="name" class="form-control" v-model="name" placeholder="Enter your Name">
         </div>
         <div class="form-group">
           <label for="username">Username</label>
-          <input type="text" name="username" id="username" class="form-control" v-model="username" />
-          <small class="form-text text-muted"></small>
+          <input type="text" name="username" id="username" class="form-control" v-model="username" placeholder="Enter your Username">
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="text" name="email" id="email" class="form-control" v-model="email" />
-          <small class="form-text text-muted"></small>
+          <input type="text" name="email" id="email" class="form-control" v-model="email" placeholder="Enter your Email Id">
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" name="password" id="password" class="form-control" v-model="password" />
-          <small class="form-text text-muted"></small>
+          <input type="password" name="password" id="password" class="form-control" v-model="password" placeholder="Enter your Password">
+        </div>
+        <div class="form-group">
+          <label for="password">Confirm Password</label>
+          <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" v-model="confirmPassword" placeholder="Confirm Password">
         </div>
         <button class="btn btn-primary material-button" @click.prevent="signup">Signup</button>
       </form>
+      <p class="text-center">Already have an account? <span class="login-link"><router-link to="/login">Login.</router-link></span></p>
     </div>
   </div>
 </template>
@@ -35,14 +39,25 @@ export default {
   name: 'Signup',
   data() {
     return {
-      name: '',
-      email: '',
-      username: '',
-      password: ''
+      name: null,
+      email: null,
+      username: null,
+      password: null,
+      confirmPassword: null,
+      error: null
     };
   },
   methods: {
+
     async signup() {
+      if(!this.name || !this.email || !this.username || !this.password || !this.confirmPassword) {
+        this.error = 'Please fill up all details';
+        return;
+      }
+      if(this.password !== this.confirmPassword) {
+        this.error = 'Passwords do not match';
+        return;
+      }
       const formData = {
         name: this.name,
         email: this.email,
@@ -96,5 +111,10 @@ form {
 .form-control:focus,
 .btn:focus {
   box-shadow:none !important;
+}
+
+.login-link {
+  color: #007bff;
+  cursor: pointer;
 }
 </style>

@@ -4,6 +4,8 @@ const sequelize = require('../config/db.js');
 const { Cart } = require("../models/cart");
 const { Product } = require("../models/product");
 const { Coupon } = require("../models/coupon");
+const { verifyCouponCode } = require("../helpers/verifyCouponCode");
+const { development } = require('../config/config.js');
 
 // @desc Add product to user cart
 // @route POST /cart/addToCart
@@ -75,8 +77,10 @@ exports.updateQuantity = async (req, res, next) => {
 
 exports.verifyCoupon = async (req, res, next) => {
   try {
-    const coupon = await Coupon.findOne({ where: { userId: req.userData.userId } });
-    if(coupon.code !== req.body.couponCode) {
+    const { couponCode } = req.body;
+    const couponVerified = await verifyCouponCode(couponCode, req.userData.userId);
+    console.log(couponVerified)
+    if(!couponVerified) {
       return res.status(400).json(responseObj(false, 'Invalid Coupon Code'));
     }
     return res.status(200).json(responseObj(true, 'Valid Coupon Code'));
@@ -85,13 +89,81 @@ exports.verifyCoupon = async (req, res, next) => {
   }
 };
 
+exports.getPaymentAmount = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userData.userId, {
+      include: [{ model: Cart}]
+    });
+    const { isCouponApplied } = req.body;
+    const products = await user.cart.getProducts();
+    let amount = 0
+    if(products.length > 0) {
+      products.forEach((product) => {
+        amount += product.cartItem.quantity * product.price;
+      });
+      if(isCouponApplied) {
+        return res.status(200).json(responseObj(true, 'Amount', {
+          totalAmount: amount,
+          finalAmount: amount / 2,
+          discount: 50
+        }));
+      }
+      return res.status(200).json(responseObj(true, 'Amount', {
+        totalAmount: amount,
+        finalAmount: amount,
+        discount: 0
+      }));
+    }
+    
+    return res.status(400).json(responseObj(false, 'No products in cart'));
+  } catch (error) {
+    return res.status(500).json(responseObj(500, false, error.message));
+  }
+}
+
 // @desc Checkout
 // @route POST /cart/checkout
 
-exports.checkout = async (req, res, next) => {
+exports.payment = async (req, res, next) => {
   try {
-    const cart = await Cart.findOne({ where: { userId: parseInt(req.userData.userId) } });
+
+    const { paymentSuccess, couponCode, isCouponApplied } = req.body;
+    if(!paymentSuccess) {
+      return res.status(400).json(responseObj(false, 'Payment Failed'));
+    }
+    let couponVerified = false;
+    if(isCouponApplied) {
+      couponVerified = await verifyCouponCode(couponCode, req.userData.userId);
+    }
+    const user = await User.findByPk(req.userData.userId, {
+      include: [{ model: Cart}, { model: Coupon}]
+    });
+    const products = await user.cart.getProducts();
+    if(products.length > 0) {
+      const order = await user.createOrder();
+      let amount = 0;
+      products.forEach((product) => {
+        amount += product.price * product.cartItem.quantity;
+      });
+      const result = await order.addProducts(products.map(product => {
+        product.orderItem = { quantity: product.cartItem.quantity };
+        return product;
+      }));
+      if(couponVerified) {
+        order.amount = amount / 2;
+      } else {
+        order.amount = amount;
+      }
+      
+      order.status = development.orderStatus.InProcess;
+      await order.save();
+      user.coupon.isUsed = true;
+      await user.coupon.save();
+      await user.cart.setProducts(null);
+      return res.status(200).json(responseObj(true, 'Order Created', order));
+    }
+    return res.status(404).json(responseObj(false, 'No products in cart'));
   } catch (error) {
-    
+    return res.status(500).json(responseObj(false, error.message));
   }
 };

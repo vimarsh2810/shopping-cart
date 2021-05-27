@@ -17,6 +17,10 @@ const Product = sequelize.define('product',
       unique: true,
       allowNull: false
     },
+    brandName: {
+      type: Sequelize.STRING(40),
+      allowNull: false
+    },
     description: {
       type: Sequelize.STRING
     },

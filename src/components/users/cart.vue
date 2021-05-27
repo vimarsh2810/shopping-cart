@@ -5,7 +5,7 @@
       <div class="container">
 
         <div class="row">
-          <div class="col-md-9 col-12">
+          <div class="col-12">
             <!-- Table responsive div starts -->
             <div class="table-responsive">
               <table class="table">
@@ -39,7 +39,7 @@
                         <button class="btn btn-sm btn-primary update-qty-btn" @click="updateQuantity(product.id, product.cartItem.quantity)">Update Quantity</button>
                       </div>
                     </td>
-                    <td class="vertical-center text-center">{{ product.total }}</td>
+                    <td class="vertical-center text-center">{{ product.cartItem.quantity * product.price }}</td>
                     <td class="vertical-center text-center">
                       <button class="btn btn-warning" style="color: #fff" @click="deleteCartItem(product.id)">DELETE</button>
                     </td>
@@ -48,71 +48,48 @@
               </table>
             </div>
             <!-- Table responsive div ends -->
-
-          </div>
-          <div class="col-md-3 col-12">
-            <!-- Checkout & Coupon starts -->
-
-            <div class="card ml-auto mr-auto">
-              <div class="coupon-form">
-                <form method="POST">
-                  <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Enter Coupon Code" name="couponCode" v-model="couponCode">
-                  </div>
-                  <div class="form-group">
-                    <button class="btn btn-primary" type="submit" @click.prevent="verifyCoupon">Apply Coupon</button>
-                  </div>
-                </form>
-              </div>
-              <div class="update-cart-div">
-                <div class="checkout-section">
-                  <div class="checkout-div">
-                    <p style="text-align: right;">
-                      <span style="float: left;">
-                        Total Amount
-                      </span>
-                      {{ totalAmount }}
-                    </p>
-                    <p style="text-align: right;">
-                      <span style="float: left;">
-                        Discount
-                      </span>
-                      <span v-if="isCouponApplied">50%</span>
-                      <span v-else>0%</span>
-                    </p>
-                    <p style="text-align: right;">
-                      <span style="float: left;">
-                        Final Amount
-                      </span>
-                      {{ finalAmount }}
-                    </p>
-                    <button class="btn btn-primary" type="submit">Checkout</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Checkout & Coupon ends -->
+            <button class="btn btn-primary" type="button" id="btn-checkout" data-toggle="modal" data-target="#exampleModal">Checkout</button>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Modal confirm -->
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Confirm Checkout</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to checkout? 
+          </div>
+          <div class="modal-footer d-flex justify-content-center align-content-center">
+            <button type="button" class="btn btn-success" data-dismiss="modal" style="margin-right: 10px" @click.prevent="checkout">Yes</button>
+            <button type="button" class="btn btn-danger">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert" role="alert" id="result"></div>
   </div>
 </template>
 <script>
+
 import axios from 'axios';
 import Navbar from "../shared/navbar.vue";
+
 export default {
   name: "Cart",
   components: { Navbar },
   data() {
     return {
-      ddd: '',
-      cartProducts: [],
-      couponCode: '',
-      isCouponApplied: false,
-      totalAmount: 0,
-      finalAmount: 0
+      cartProducts: []
     };
   },
   methods: {
@@ -125,28 +102,9 @@ export default {
         });
         
         this.cartProducts = response.data.payload.products;
-        this.calculateAmount();
       } catch (error) {
-        console.log(error.response);
+        console.log(error);
       }
-    },
-
-    calculateAmount() {
-      let totalDummyAmount = 0;
-      let finalDummyAmount = 0;
-      let cartProductsDummy = this.cartProducts;
-
-      for(let product of cartProductsDummy) {
-        totalDummyAmount += product.cartItem.quantity * product.price;
-        if(this.isCouponApplied) {
-          finalDummyAmount = totalDummyAmount / 2;
-        } else {
-          finalDummyAmount = totalDummyAmount;
-        }
-      }
-
-      this.totalAmount = totalDummyAmount;
-      this.finalAmount = finalDummyAmount;
     },
 
     async deleteCartItem(productId) {
@@ -176,21 +134,8 @@ export default {
       }
     },
 
-    async verifyCoupon() {
-      try {
-        const response = await axios.post(`${this.$store.getters.base_url}/cart/verifyCoupon`, { couponCode: this.couponCode }, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
-          }
-        });
-        console.log(response.data);
-        if(response.data.success) {
-          this.isCouponApplied = true;
-          this.calculateAmount();
-        }
-      } catch (error) {
-        
-      }
+    checkout() {
+      this.$router.push('/user/cart/payment')
     }
   },
 
@@ -261,12 +206,11 @@ export default {
     margin-top: 10px;
   }
 
-  ::placeholder {
-    font-size: 10px;
-  }
-
-  .coupon-form input[type=text] {
-    font-size: 10px;
+  #btn-checkout {
+    display: block;
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   @media (max-width: 992px) {

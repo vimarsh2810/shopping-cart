@@ -13,6 +13,11 @@ module.exports = {
     mail_id: process.env.MAIL_ID,
     mail_pw: process.env.MAIL_PW,
     mail_service: process.env.MAIL_SERVICE,
+    orderStatus: {
+      Delivered: 'delivered',
+      InProcess: 'In Process',
+      Cancelled: 'cancelled'
+    },
     roles: {
       SuperAdmin: 1,
       SubAdmin: 2,

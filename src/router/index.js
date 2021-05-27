@@ -9,10 +9,16 @@ import Categories from '../components/users/categories.vue';
 import ShopByCategory from '../components/users/shop-by-category.vue';
 import AddCategory from '../components/admin/add-category.vue';
 import VerifyEmail from '../components/verify-email.vue';
+import Payment from '../components/users/payment.vue';
 
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/',
+    name: 'Login',
+    component: Login
+  },
   {
     path: '/signup',
     name: 'Signup',
@@ -39,7 +45,7 @@ const routes = [
     component: Cart
   },
   {
-    path: '/user/categories',
+    path: '/user/category',
     name: 'Categories',
     component: Categories
   },
@@ -57,6 +63,11 @@ const routes = [
     path: '/user/verify-email',
     name: 'VerifyEmail',
     component: VerifyEmail
+  },
+  {
+    path: '/user/cart/payment',
+    name: 'Payment',
+    component: Payment
   }
 ]
 
