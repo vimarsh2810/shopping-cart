@@ -97,7 +97,6 @@ export default {
   },
   methods: {
     async makePayment(isSuccess) {
-      console.log(isSuccess)
       try {
         const response = await axios.post(
           `${this.$store.getters.base_url}/cart/payment`, 
@@ -111,10 +110,13 @@ export default {
               'Authorization': `Bearer ${this.$store.getters.token}`
           }
         });
-        console.log(response.data);
+        if(response.data.success) {
+          this.error = null;
+          this.successMsg = response.data.message;
+        }
       } catch (error) {
-        console.log(error.response.data);
-        alert(error.response.data.message);
+        this.successMsg = null;
+        this.error = error.response.data.message;
       }
     },
 
@@ -153,20 +155,6 @@ export default {
         this.getPaymentAmount();
         this.successMsg = null;
         this.error = error.response.data.message;
-      }
-    },
-
-    async checkout() {
-      try {
-        const response = await axios.get(`${this.$store.getters.base_url}/cart/checkout`, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
-          }
-        });
-        console.log(response.data);
-      } catch (error) {
-        console.log(error.response.data);
-        alert(error.response.data.message);
       }
     }
   },

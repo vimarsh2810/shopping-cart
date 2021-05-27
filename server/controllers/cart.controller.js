@@ -6,6 +6,7 @@ const { Product } = require("../models/product");
 const { Coupon } = require("../models/coupon");
 const { verifyCouponCode } = require("../helpers/verifyCouponCode");
 const { development } = require('../config/config.js');
+const { Wallet } = require("../models/wallet");
 
 // @desc Add product to user cart
 // @route POST /cart/addToCart
@@ -131,34 +132,49 @@ exports.payment = async (req, res, next) => {
     if(!paymentSuccess) {
       return res.status(400).json(responseObj(false, 'Payment Failed'));
     }
+
     let couponVerified = false;
     if(isCouponApplied) {
       couponVerified = await verifyCouponCode(couponCode, req.userData.userId);
     }
+
     const user = await User.findByPk(req.userData.userId, {
-      include: [{ model: Cart}, { model: Coupon}]
+      include: [{ model: Cart }, { model: Coupon }, { model: Wallet }]
     });
+
     const products = await user.cart.getProducts();
+
     if(products.length > 0) {
       const order = await user.createOrder();
       let amount = 0;
+
       products.forEach((product) => {
         amount += product.price * product.cartItem.quantity;
       });
-      const result = await order.addProducts(products.map(product => {
-        product.orderItem = { quantity: product.cartItem.quantity };
-        return product;
-      }));
+
       if(couponVerified) {
         order.amount = amount / 2;
       } else {
         order.amount = amount;
       }
-      
+
+      const result = await order.addProducts(products.map(product => {
+        product.orderItem = { quantity: product.cartItem.quantity };
+        return product;
+      }));
+
+      if(user.wallet.balance < order.amount) {
+        order.status = development.orderStatus.Failed;
+        await order.save();
+        return res.status(400).json(responseObj(false, 'Balance Insufficient'))
+      }
+
       order.status = development.orderStatus.InProcess;
       await order.save();
       user.coupon.isUsed = true;
+      user.wallet.balance -= order.amount;
       await user.coupon.save();
+      await user.wallet.save();
       await user.cart.setProducts(null);
       return res.status(200).json(responseObj(true, 'Order Created', order));
     }

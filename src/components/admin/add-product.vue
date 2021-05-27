@@ -9,22 +9,27 @@
           <div class="alert alert-danger" role="alert" v-if="errors">
             {{ errors }}
           </div>
-          <div class="alert alert-danger" role="alert" v-if="successMsg">
+          <div class="alert alert-success" role="alert" v-if="successMsg">
             {{ successMsg }}
           </div>
           <div class="form-group">
             <label for="title">Product Title</label>
-            <input type="text" name="title" id="title" class="form-control" v-model="title" >
+            <input type="text" name="title" id="title" class="form-control" v-model="title" placeholder="Enter product title">
           </div>
 
           <div class="form-group">
             <label for="description">Description</label>
-            <textarea id="description" class="form-control" name="description" v-model="description" ></textarea>
+            <textarea id="description" class="form-control" name="description" v-model="description" placeholder="Enter product description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="title">Brand Name</label>
+            <input type="text" name="brandName" id="brandName" class="form-control" v-model="brandName" placeholder="Enter brand name">
           </div>
 
           <div class="form-group">
             <label for="price">Price</label>
-            <input type="number" class="form-control" name="price" id="price" v-model="price" >
+            <input type="number" class="form-control" name="price" id="price" v-model="price" placeholder="Enter brand price">
           </div>
 
           <div class="form-group">
@@ -70,6 +75,7 @@ export default {
       title: '',
       description: '',
       price: null,
+      brandName: '',
       image: null,
       userId: this.$store.getters.userData.id,
       parentCategories: this.$store.getters.categories,
@@ -101,6 +107,7 @@ export default {
       formData.append('file', this.image);
       formData.append('description', this.description);
       formData.append('title', this.title);
+      formData.append('brandName', this.brandName);
       formData.append('price', this.price);
       formData.append('userId', this.userId);
       formData.append('categoryId', this.categoryId);
@@ -110,10 +117,9 @@ export default {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
         });
-        console.log(response.data);
         if(response.data.success) {
           this.errors = null;
-          this.successMsgs = response.data.message;
+          this.successMsg = response.data.message;
         }
       } catch (error) {
         this.successMsg = null;

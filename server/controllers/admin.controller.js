@@ -41,6 +41,7 @@ exports.addProduct = async (req, res, next) => {
     const product = await user.createProduct({
       title: req.body.title,
       price: req.body.price,
+      brandName: req.body.brandName,
       description: req.body.description,
       categoryId: req.body.categoryId,
       imagePath: `/img/products/${req.fileName}`
@@ -64,7 +65,8 @@ exports.addCategory = async (req, res, next) => {
     });
     return res.status(200).json(responseObj(true, 'Category created.', category));
   } catch (error) {
-    return res.status(500).json(responseObj(false, error.message));
+    console.log(error)
+    return res.status(500).json(responseObj(false, error.message, [error.message]));
   }
 };
 

@@ -10,7 +10,7 @@ const Wallet = sequelize.define('wallet', {
     allowNull: false,
     autoIncrement: true
   },
-  amount: {
+  balance: {
     type: Sequelize.DECIMAL
   }
 });

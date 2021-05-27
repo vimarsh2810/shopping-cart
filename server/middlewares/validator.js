@@ -4,7 +4,8 @@ const { responseObj } = require('../helpers/responseObj');
 const signupValidator = () => {
   return [
     body('name')
-      .isAlpha().withMessage('Name must only contain alphabets'),
+      .matches(/^[a-zA-Z][a-z\s]+$/i)
+      .withMessage('Name must only contain alphabets & spaces.'),
     
     body('username')
       .isAlphanumeric().withMessage('Username must only contain alphanumeric characters')

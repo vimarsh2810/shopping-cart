@@ -13,10 +13,12 @@ module.exports = {
     mail_id: process.env.MAIL_ID,
     mail_pw: process.env.MAIL_PW,
     mail_service: process.env.MAIL_SERVICE,
+    initial_balance: 100000,
     orderStatus: {
       Delivered: 'delivered',
-      InProcess: 'In Process',
-      Cancelled: 'cancelled'
+      InProcess: 'in Process',
+      Cancelled: 'cancelled',
+      Failed: 'failed'
     },
     roles: {
       SuperAdmin: 1,

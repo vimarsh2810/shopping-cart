@@ -51,7 +51,7 @@ exports.verifyEmail = async (req, res, next) => {
     user.isActive = true;
     await user.save();
     const wallet = await user.getWallet();
-    wallet.amount = 100000;
+    wallet.balance = development.initial_balance;
     await wallet.save();
     const coupon = await user.createCoupon({
       code: 'WELCOME' + user.username.toUpperCase()
