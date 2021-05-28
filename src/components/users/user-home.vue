@@ -24,6 +24,19 @@
           </div>
           
         </div>
+
+        <div v-if="totalPages > 0" class="pagination-wrapper d-flex justify-content-center">
+          <div class="pagination-arrow" @click="getProducts(currentPage - 1)" v-if="showPrevious()">
+            <img src="/img/left-arrow.png" alt="">
+          </div>
+          <div class="pagination-page-no" v-for="i in totalPages" :key="i">
+            <span class="pagination-btn" v-bind:class="{ active: i == currentPage }" @click="getProducts(i)">{{i}}</span>
+          </div>
+          <div class="pagination-arrow" @click="getProducts(currentPage + 1)" v-if="showNext()">
+            <img src="/img/right-arrow.png" alt="">
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -41,21 +54,40 @@ import axios from 'axios';
         user: {},
         isLoggedIn: false,
         products: [],
-        error: null
+        error: null,
+        totalPages: null,
+        totalProductsCount: null,
+        currentPage: null,
+        limit: 4
       }
     },
     methods: {
       logout() {
         this.$store.dispatch('logout');
       },
-      async getAllProducts() {
+
+      showPrevious() {
+        return this.currentPage == 1 ? false : true;
+      },
+
+      showNext() {
+        return this.currentPage == this.totalPages ? false : true;
+      },
+
+      async getProducts(requestedPage) {
         try {
-          const response = await axios.get(`${this.$store.getters.base_url}/shop/products`, {
+          const response = await axios.get(`${this.$store.getters.base_url}/shop/limitedProducts?page=${requestedPage}&limit=${this.limit}`, {
             headers: {
               'Authorization': `Bearer ${this.$store.getters.token}`
             }
           });
-          this.products = response.data.payload;
+          if(response.data.success) {
+            // console.log(response.data.payload)
+            this.products = response.data.payload.products;
+            this.totalPages = response.data.payload.totalPages;
+            this.totalProductsCount = response.data.payload.productCount;
+            this.currentPage = response.data.payload.currentPage;
+          }
         } catch (error) {
           
         }
@@ -73,9 +105,10 @@ import axios from 'axios';
       }
     }, 
     created() {
+      
       this.user = this.$store.getters.userData;
       this.isLoggedIn = this.$store.getters.isLoggedIn;
-      this.getAllProducts();
+      this.getProducts(1);
     }
   }
 </script>
@@ -86,6 +119,44 @@ import axios from 'axios';
     height: 100%;
     margin-left: auto;
     margin-right: auto;
+  }
+
+  .pagination-arrow {
+    height: 35px;
+    width: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .pagination-page-no {
+    margin: 0 10px;
+    
+  }
+
+  span.active {
+    background-color: #007bff;
+    color: #ffffff;
+    overflow: hidden;
+  }
+
+  span.pagination-btn {
+    display: inline-flex;
+    border: 1px solid none;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+    line-height: 18px;
+  }
+
+  .pagination-page-no span.pagination-btn:hover {
+    cursor: pointer;
+    background-color: #007bff;
+    color: #ffffff;
   }
 
   .mbpx-30px {

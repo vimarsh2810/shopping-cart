@@ -11,7 +11,7 @@ const pagination = (page, limit) => {
 const paginationMetaData = (items, page, size) => {
   const { count, rows } = items;
   const totalNoOfPages = Math.ceil(count / size);
-  const currentPage = page ? page : 1;
+  const currentPage = parseInt(page ? page : 1);
   return {
     count,
     rows,
