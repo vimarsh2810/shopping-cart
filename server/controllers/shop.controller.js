@@ -1,6 +1,7 @@
 const { responseObj } = require('../helpers/responseObj.js');
 const { Category } = require('../models/category.js');
 const { Product } = require('../models/product.js');
+const { pagination, paginationMetaData } = require('../helpers/pagination.js');
 const Op = require('sequelize').Op;
 
 // @desc Get all products
@@ -11,6 +12,28 @@ exports.getAllProducts = async (req, res, next) => {
     console.log('shop')
     const products = await Product.findAll();
     return res.status(200).json(responseObj(false, 'All products', products));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+// @desc Get all products
+// @route GET /shop/getAllProducts
+
+exports.getProducts = async (req, res, next) => {
+  try {
+
+    let { page, limit } = req.query;
+    const { offset, size } = pagination(page, limit); 
+
+    const items = await Product.findAndCountAll({ limit: size, offset: offset });
+    const result = paginationMetaData(items, page, size);
+    return res.status(200).json(responseObj(true, 'Paginated Products', {
+      productCount: result.count,
+      products: result.rows,
+      totalPages: result.totalNoOfPages,
+      currentPage: result.currentPage
+    }));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

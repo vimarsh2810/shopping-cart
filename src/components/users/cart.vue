@@ -6,6 +6,9 @@
 
         <div class="row">
           <div class="col-12">
+            <div class="alert alert-danger" role="alert" v-if="!isUserActive">
+              Verify Email Id to add products in cart
+            </div>
             <!-- Table responsive div starts -->
             <div class="table-responsive">
               <table class="table">
@@ -48,7 +51,7 @@
               </table>
             </div>
             <!-- Table responsive div ends -->
-            <button class="btn btn-primary" type="button" id="btn-checkout" data-toggle="modal" data-target="#exampleModal">Checkout</button>
+            <button class="btn btn-primary" type="button" id="btn-checkout" data-toggle="modal" data-target="#checkoutModal">Checkout</button>
           </div>
         </div>
       </div>
@@ -56,11 +59,11 @@
 
     <!-- Modal confirm -->
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Confirm Checkout</h5>
+            <h5 class="modal-title" id="checkoutModalLabel">Confirm Checkout</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -89,7 +92,8 @@ export default {
   components: { Navbar },
   data() {
     return {
-      cartProducts: []
+      cartProducts: [],
+      isUserActive: this.$store.getters.userData.isActive
     };
   },
   methods: {
@@ -122,6 +126,10 @@ export default {
     },
 
     async updateQuantity(productId, quantity) {
+      if(quantity == 0) {
+        await this.deleteCartItem(productId);
+        return;
+      }
       try {
         const response = await axios.put(`${this.$store.getters.base_url}/cart/quantity/${productId}`, { quantity }, {
           headers: {
@@ -135,6 +143,9 @@ export default {
     },
 
     checkout() {
+      if(!this.isUserActive) {
+        return;
+      }
       this.$router.push('/user/cart/payment')
     }
   },

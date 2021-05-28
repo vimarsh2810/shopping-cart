@@ -16,6 +16,9 @@ exports.addToCart = async (req, res, next) => {
     const user = await User.findByPk(req.userData.userId, {
       include: [{ model: Cart}]
     });
+    if(!user.isActive) {
+      return res.status(403).json(responseObj(false, 'Verify Email Id to add products in cart'));
+    }
     const result = await sequelize.query('CALL add_to_cart(:cartId, :productId, :quantity)', {
       replacements: { cartId: user.cart.id, productId: parseInt(req.body.productId), quantity: parseInt(req.body.quantity) }
     });
@@ -97,7 +100,8 @@ exports.getPaymentAmount = async (req, res, next) => {
     });
     const { isCouponApplied } = req.body;
     const products = await user.cart.getProducts();
-    let amount = 0
+    let amount = 0;
+    
     if(products.length > 0) {
       products.forEach((product) => {
         amount += product.cartItem.quantity * product.price;

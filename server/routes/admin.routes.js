@@ -14,6 +14,6 @@ router.post('/product', [validateToken, checkAdmin, upload.single("file")], admi
 
 router.post('/subAdmin', [validateToken, checkSuperAdmin], adminController.addSubAdmin);
 
-router.get('/categories', [validateToken, checkSuperAdmin], adminController.getAllCategories);
+router.get('/categories', [validateToken, checkAdmin], adminController.getAllCategories);
 
 module.exports = router;

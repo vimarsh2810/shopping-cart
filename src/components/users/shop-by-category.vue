@@ -4,6 +4,9 @@
     <div class="wrapper" style="margin-top: 100px">
       <div class="container">
         <h3 class="mbpx-30px">{{ categoryTitle }}</h3>
+        <div class="alert alert-danger" role="alert" v-if="!isUserActive">
+          Verify Email Id to add products in cart
+        </div>
         <div class="row" v-if="products.length > 0">
 
           <div class="col-lg-3 col-md-4 col-sm-6 col-12 mbpx-30px" v-for="product in products" :key="product.id">
@@ -13,7 +16,6 @@
               </div>
               <div class="card-product-details">
                 <h4>{{ product.title }}</h4>
-                <!-- <p style="text-align: right;"><span class=" d-inline-flex align-items-center badge badge-success" style="float: left;">4.5&nbsp;&#11088;</span>&#8377;{{ product.price }}</p> -->
                 <p><span class=" d-inline-flex align-items-center badge badge-success">4.5&nbsp;&#11088;</span>&nbsp;&nbsp;&nbsp;&#8377;{{ product.price }}</p>
               </div>
               <div class="card-product-btn">
@@ -25,7 +27,7 @@
         </div>
         <div class="no-product-found" v-else>
           <div class="no-product-found-inner">
-            <img src="/img/products/no-products-found.png" alt="">
+            <img src="/img/products/no-products-found-2021-05-26.jpg" alt="">
             <h5>Sorry, No products found for this category!</h5>
           </div>
         </div>
@@ -33,9 +35,11 @@
     </div>
   </div>
 </template>
+
 <script>
 import axios from 'axios';
 import Navbar from '../shared/navbar.vue';
+
 export default {
   name: 'ShopByCategory',
   components: { Navbar },
@@ -43,9 +47,12 @@ export default {
   data() {
     return {
       categoryTitle: '',
-      products: []
+      products: [],
+      error: null,
+      isUserActive: this.$store.getters.userData.isActive
     };
   },
+
   methods: {
     async getProductsByCategory() {
       try {
@@ -63,20 +70,12 @@ export default {
 
     async addToCart(productId) {
       try {
-        const data = {
-          productId: productId,
-          quantity: 1
-        };
-        const response = await axios.post(`${this.$store.getters.base_url}/cart/addToCart`, data, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
-          }
-        });
+        const response = await this.$store.dispatch('addToCart', productId);
         if(response.data.success) {
           this.$router.push('/user/cart');
         }
       } catch (error) {
-        console.log(error.response);
+        this.error = error.response.data.message;
       }
     }
   },

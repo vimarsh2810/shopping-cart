@@ -39,7 +39,6 @@ export default {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
         });
-        console.log(response.data);
         this.parentCategories = response.data.payload;
       } catch (error) {
         console.log(error.response);
@@ -76,7 +75,8 @@ export default {
   .category-circle {
     width: 180px;
     height: 180px;
-    background-color: #f1f1f1;
+    color: #ffffff;
+    background-color: #8abbee;
     border-radius: 50%;
     display:flex;
     align-items:center;
@@ -87,10 +87,11 @@ export default {
   }
 
   .category-circle:hover {
+    color: #000000;
     cursor: pointer;
     background-color: #ffffff;
     box-shadow: 0 3px 9px rgba(0, 0, 0, 0.36);
-    transform: translateY(-3px);
+    transform: translateY(-2px);
   }
 
   @media (max-width: 650px) {

@@ -133,7 +133,8 @@ export default {
           this.discount = response.data.payload.discount
         }
       } catch (error) {
-        console.log(error.response);
+        this.successMsg = null;
+        this.error = error.response.data.message;
       }
     },
 

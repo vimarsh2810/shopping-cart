@@ -6,7 +6,7 @@ const { development } = require('../config/config.js');
 const { Category } = require('../models/category.js');
 
 // @desc Create a SubAdmin
-// @route POST /admin/subAdmin/add 
+// @route POST /admin/subAdmin
 
 exports.addSubAdmin = async (req, res, next) => {
   try {
@@ -26,7 +26,7 @@ exports.addSubAdmin = async (req, res, next) => {
 };
 
 // @desc Create a Product
-// @route POST /admin/product/add 
+// @route POST /admin/product
 
 exports.addProduct = async (req, res, next) => {
   try {
@@ -54,7 +54,7 @@ exports.addProduct = async (req, res, next) => {
 };
 
 // @desc Create a SubAdmin
-// @route POST /admin/category/add 
+// @route POST /admin/category 
 
 exports.addCategory = async (req, res, next) => {
   try {
@@ -65,7 +65,6 @@ exports.addCategory = async (req, res, next) => {
     });
     return res.status(200).json(responseObj(true, 'Category created.', category));
   } catch (error) {
-    console.log(error)
     return res.status(500).json(responseObj(false, error.message, [error.message]));
   }
 };

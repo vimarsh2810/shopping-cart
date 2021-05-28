@@ -3,6 +3,9 @@
     <Navbar />
     <div class="wrapper" style="margin-top: 100px">
       <div class="container">
+        <div class="alert alert-danger" role="alert" v-if="!user.isActive">
+          Verify Email Id to add products in cart
+        </div>
         <div class="row">
 
           <div class="col-lg-3 col-md-4 col-sm-6 col-12 mbpx-30px" v-for="product in products" :key="product.id">
@@ -12,11 +15,10 @@
               </div>
               <div class="card-product-details">
                 <h4>{{ product.title }}</h4>
-                <!-- <p style="text-align: right;"><span class=" d-inline-flex align-items-center badge badge-success" style="float: left;">4.5&nbsp;&#11088;</span>&#8377;{{ product.price }}</p> -->
                 <p><span class=" d-inline-flex align-items-center badge badge-success">4.5&nbsp;&#11088;</span>&nbsp;&nbsp;&nbsp;&#8377;{{ product.price }}</p>
               </div>
               <div class="card-product-btn">
-                <button class="btn btn-primary material-button">ADD TO CART</button>
+                <button class="btn btn-primary material-button" type="button" @click.prevent="addToCart(product.id)">ADD TO CART</button>
               </div>
             </div>
           </div>
@@ -38,7 +40,8 @@ import axios from 'axios';
       return {
         user: {},
         isLoggedIn: false,
-        products: []
+        products: [],
+        error: null
       }
     },
     methods: {
@@ -55,6 +58,17 @@ import axios from 'axios';
           this.products = response.data.payload;
         } catch (error) {
           
+        }
+      },
+
+      async addToCart(productId) {
+        try {
+          const response = await this.$store.dispatch('addToCart', productId);
+          if(response.data.success) {
+            this.$router.push('/user/cart');
+          }
+        } catch (error) {
+          alert(error.response.data.message);
         }
       }
     }, 

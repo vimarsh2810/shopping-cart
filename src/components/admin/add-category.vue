@@ -68,8 +68,6 @@ export default {
         if(response.data.success) {
           this.errors = null;
           this.successMsg = response.data.message;
-        }
-        if(response.data.success) {
           this.$store.dispatch('getCategories');
         }
       } catch (error) {

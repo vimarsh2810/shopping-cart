@@ -33,11 +33,6 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    setLogoutTimer({commit}, expirationTime) {
-      setTimeout(() => {
-        commit('clearAuthData');
-      }, expirationTime*1000);
-    },
 
     async getCategories(context) {
       try {
@@ -70,7 +65,21 @@ export default new Vuex.Store({
     logout({commit}) {
       commit('clearAuthData');
       router.push('/login');
+    },
+
+    async addToCart(context, productId) {
+      const data = {
+        productId: productId,
+        quantity: 1
+      };
+
+      return await axios.post(`${context.getters.base_url}/cart/addToCart`, data, {
+        headers: {
+            'Authorization': `Bearer ${context.getters.token}`
+        }
+      });
     }
+
   },
 
   getters: {
