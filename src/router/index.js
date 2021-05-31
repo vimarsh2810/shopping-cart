@@ -11,6 +11,7 @@ import AddCategory from '../components/admin/add-category.vue';
 import VerifyEmail from '../components/verify-email.vue';
 import Payment from '../components/users/payment.vue';
 import Orders from '../components/users/orders.vue';
+import OrderDetails from '../components/users/order-details.vue'
 import PageNotFound from '../components/page-not-found.vue';
 import store from '../store';
 import { development } from '../../server/config/config';
@@ -100,6 +101,14 @@ const routes = [
     path: '/user/orders',
     name: 'Orders',
     component: Orders,
+    meta: {
+      requiresAuth: true, adminAuth: false, userAuth: true
+    }
+  },
+  {
+    path: '/user/orders/:id',
+    name: 'OrderDetails',
+    component: OrderDetails,
     meta: {
       requiresAuth: true, adminAuth: false, userAuth: true
     }

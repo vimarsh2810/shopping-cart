@@ -42,18 +42,16 @@
                     <td class="text-center">{{ order.status }}</td>
                     <td class="text-center">
                       <button 
-                        class="btn btn-primary" 
-                        style="color: #fff" 
+                        class="btn btn-primary"
+                        @click="redirectToOrderDetails(order.id)"
                       >Details</button>
                       <button 
                         v-if="order.status === 'in Process'"
-                        class="btn btn-primary ml-2" 
-                        style="color: #fff" 
+                        class="btn btn-primary ml-2"
                       >Cancel</button>
                       <button 
                         v-else-if="order.status === 'failed'"
-                        class="btn btn-primary ml-2" 
-                        style="color: #fff"
+                        class="btn btn-primary ml-2"
                       >Retry</button>
                     </td>
                   </tr>
@@ -145,6 +143,10 @@ export default {
 
     showNext() {
       return this.currentPage == this.totalPages ? false : true;
+    },
+
+    redirectToOrderDetails(orderId) {
+      this.$router.push({ name: 'OrderDetails', params: { id: orderId }});
     }
   },
 
