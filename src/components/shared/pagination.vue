@@ -18,11 +18,6 @@
 export default {
   name: 'Pagination',
   props: ['currentPage', 'totalPages', 'showPrevious', 'showNext'],
-  data() {
-    return {
-
-    }
-  },
 
   methods: {
     getProducts(requiredPage) {
@@ -70,7 +65,5 @@ export default {
 
   .pagination-page-no span.pagination-btn:hover {
     cursor: pointer;
-    background-color: #007bff;
-    color: #ffffff;
   }
 </style>

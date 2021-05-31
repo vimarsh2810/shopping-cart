@@ -2,7 +2,8 @@
   <div class="main-div">
     <Navbar />
     <div class="wrapper" style="margin-top: 100px">
-      <div class="container">
+      <!-- Container starts -->
+      <div class="container" v-if="!isLoading">
 
         <div class="row">
           <div class="col-12">
@@ -26,7 +27,7 @@
                   <tr v-if="cartProducts.length <= 0">
                     <td colspan="6" class="text-center no-products-tr">No Products in your cart</td>
                   </tr>
-                  <tr v-else v-for="product in cartProducts" :key="product.id">
+                  <tr v-else v-for="product in visibleCartProducts" :key="product.id">
                     <td>
                       <div class="cart-img text-center">
                         <img :src="product.imagePath" alt="">
@@ -36,28 +37,61 @@
                     <td class="vertical-center text-center">{{ product.price }}</td>
                     <td class="vertical-center text-center" style="width: 200px">
                       <div class="quantity">
-                        <button class="btn btn-success btn-qty" @click="product.cartItem.quantity--" style="display: inline-block">&#8722;</button>
+                        <button 
+                          class="btn btn-success btn-qty" 
+                          @click="product.cartItem.quantity--" 
+                          style="display: inline-block"
+                        >&#8722;</button>
                         <span style="display: inline-block">{{ product.cartItem.quantity }}</span>
-                        <button class="btn btn-success btn-qty" @click="product.cartItem.quantity++" style="display: inline-block">&#43;</button><br>
-                        <button class="btn btn-sm btn-primary update-qty-btn" @click="updateQuantity(product.id, product.cartItem.quantity)">Update Quantity</button>
+
+                        <button 
+                          class="btn btn-success btn-qty" 
+                          @click="product.cartItem.quantity++" 
+                          style="display: inline-block"
+                        >&#43;</button><br>
+
+                        <button 
+                          class="btn btn-sm btn-primary update-qty-btn" 
+                          @click="updateQuantity(product.id, product.cartItem.quantity)"
+                        >Update Quantity</button>
                       </div>
                     </td>
                     <td class="vertical-center text-center">{{ product.cartItem.quantity * product.price }}</td>
                     <td class="vertical-center text-center">
-                      <button class="btn btn-warning" style="color: #fff" @click="deleteCartItem(product.id)">DELETE</button>
+                      <button 
+                        class="btn btn-warning" 
+                        style="color: #fff" 
+                        @click="deleteCartItem(product.id)"
+                      >DELETE</button>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
+            <div class="col-12">
+              <Pagination 
+                :currentPage="currentPage" 
+                :totalPages="totalPages" 
+                :showPrevious="showPrevious()" 
+                :showNext="showNext()"
+                @pageClicked="filterItems($event)"
+              ></Pagination>
+            </div>
             <!-- Table responsive div ends -->
-            <button class="btn btn-primary" type="button" id="btn-checkout" data-toggle="modal" data-target="#checkoutModal">Checkout</button>
+            <button 
+              class="btn btn-primary" 
+              type="button" 
+              id="btn-checkout" 
+              data-toggle="modal" 
+              data-target="#checkoutModal"
+            >Checkout</button>
           </div>
         </div>
       </div>
+      <!-- Container ends -->
     </div>
 
-    <!-- Modal confirm -->
+    <!-- Checkout Modal starts -->
 
     <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
@@ -72,27 +106,40 @@
             Are you sure you want to checkout? 
           </div>
           <div class="modal-footer d-flex justify-content-center align-content-center">
-            <button type="button" class="btn btn-success" data-dismiss="modal" style="margin-right: 10px" @click.prevent="checkout">Yes</button>
+            <button
+              type="button" 
+              class="btn btn-success"
+              data-dismiss="modal" 
+              style="margin-right: 10px" 
+              @click.prevent="checkout"
+            >Yes</button>
             <button type="button" class="btn btn-danger">No</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="alert" role="alert" id="result"></div>
+    <!-- Checkout Modal ends -->
+
   </div>
 </template>
 <script>
 
 import axios from 'axios';
 import Navbar from "../shared/navbar.vue";
+import Pagination from '../shared/pagination';
 
 export default {
   name: "Cart",
-  components: { Navbar },
+  components: { Navbar, Pagination },
   data() {
     return {
       cartProducts: [],
+      visibleCartProducts: [],
+      isLoading: true,
+      currentPage: null,
+      totalPages: null,
+      limit: 5,
       isUserActive: this.$store.getters.userData.isActive
     };
   },
@@ -105,7 +152,12 @@ export default {
           }
         });
         
-        this.cartProducts = response.data.payload.products;
+        if(response.data.success) {
+          this.cartProducts = response.data.payload.products;
+          this.totalPages = Math.ceil(this.cartProducts.length / this.limit);
+          this.isLoading = false;
+          this.filterItems(1);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -140,6 +192,21 @@ export default {
       } catch (error) {
         console.log(error.response);
       }
+    },
+
+    filterItems(requiredPage) {
+      const startIndex = (parseInt(requiredPage) - 1) * this.limit;
+      const endIndex = startIndex + this.limit - 1;
+      this.visibleCartProducts = this.cartProducts.filter((product, index) => index >= startIndex && index <= endIndex);
+      this.currentPage = requiredPage;
+    },
+
+    showPrevious() {
+      return this.currentPage == 1 ? false : true;
+    },
+
+    showNext() {
+      return this.currentPage == this.totalPages ? false : true;
     },
 
     checkout() {
@@ -222,6 +289,7 @@ export default {
     width: 200px;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 30px;
   }
 
   @media (max-width: 992px) {
