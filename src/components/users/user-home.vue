@@ -2,11 +2,11 @@
   <div class="main-div">
     <Navbar />
     <div class="wrapper" style="margin-top: 100px">
-      <div class="container">
+      <div class="container" v-if="!isLoading">
         <div class="alert alert-danger" role="alert" v-if="!user.isActive">
           Verify Email Id to add products in cart
         </div>
-        <div class="row">
+        <div class="row" v-if="products.length > 0">
 
           <div class="col-lg-3 col-md-4 col-sm-6 col-12 mbpx-30px" v-for="product in products" :key="product.id">
             <div class="card">
@@ -22,28 +22,25 @@
               </div>
             </div>
           </div>
+
+          <div class="col-12">
+            <Pagination 
+              :currentPage="currentPage" 
+              :totalPages="totalPages" 
+              :showPrevious="showPrevious()" 
+              :showNext="showNext()"
+              @pageClicked="getProducts($event)"
+            ></Pagination>
+          </div>
           
         </div>
 
-        <!-- <div v-if="totalPages > 0" class="pagination-wrapper d-flex justify-content-center">
-          <div class="pagination-arrow" @click="getProducts(currentPage - 1)" v-if="showPrevious()">
-            <img src="/img/left-arrow.png" alt="">
+        <div class="no-products-found" v-else>
+          <div class="no-product-found-inner">
+            <img src="/img/products/no-products-found-2021-05-26.jpg" alt="">
+            <h5>Sorry, No products found for this category!</h5>
           </div>
-          <div class="pagination-page-no" v-for="i in totalPages" :key="i">
-            <span class="pagination-btn" v-bind:class="{ active: i == currentPage }" @click="getProducts(i)">{{i}}</span>
-          </div>
-          <div class="pagination-arrow" @click="getProducts(currentPage + 1)" v-if="showNext()">
-            <img src="/img/right-arrow.png" alt="">
-          </div>
-        </div> -->
-
-        <Pagination 
-          :currentPage="currentPage" 
-          :totalPages="totalPages" 
-          :showPrevious="showPrevious()" 
-          :showNext="showNext()"
-          @pageClicked="getProducts($event)"
-        ></Pagination>
+        </div>
 
       </div>
     </div>
@@ -61,6 +58,7 @@ import axios from 'axios';
     },
     data() {
       return {
+        isLoading: true,
         user: {},
         products: [],
         error: null,
@@ -96,6 +94,7 @@ import axios from 'axios';
             this.totalPages = response.data.payload.totalPages;
             this.totalProductsCount = response.data.payload.productCount;
             this.currentPage = response.data.payload.currentPage;
+            this.isLoading = false;
           }
         } catch (error) {
           console.log(error.response.data.message)
@@ -243,6 +242,17 @@ import axios from 'axios';
   .form-control:focus,
   .btn:focus {
     box-shadow:none !important;
+  }
+
+  .no-product-found {
+    margin-top: 60px;
+  }
+
+  .no-product-found-inner {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
   }
 
 </style>

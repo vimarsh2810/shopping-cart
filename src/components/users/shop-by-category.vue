@@ -1,7 +1,7 @@
 <template>
   <div class="main-div">
     <Navbar />
-    <div class="wrapper" style="margin-top: 100px">
+    <div class="wrapper" style="margin-top: 100px" v-if="!isLoading">
       <div class="container">
         <h3 class="mbpx-30px">{{ categoryTitle }}</h3>
         <div class="alert alert-danger" role="alert" v-if="!isUserActive">
@@ -46,6 +46,7 @@ export default {
   props: ['id'],
   data() {
     return {
+      isLoading: true,
       categoryTitle: '',
       products: [],
       error: null,
@@ -63,6 +64,7 @@ export default {
         });
         this.products = response.data.payload.products;
         this.categoryTitle = response.data.payload.title;
+        this.isLoading = false;
       } catch (error) {
         console.log(error.response);
       }
