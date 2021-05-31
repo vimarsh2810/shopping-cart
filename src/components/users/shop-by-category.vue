@@ -53,7 +53,7 @@
 <script>
 import axios from 'axios';
 import Navbar from '../shared/navbar.vue';
-import Pagination from '../shared/pagination.vue';
+import Pagination from '../shared/pagination';
 
 export default {
   name: 'ShopByCategory',
