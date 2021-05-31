@@ -3,6 +3,7 @@
     <Navbar />
     <div class="wrapper" style="margin-top: 100px">
       <div class="container" v-if="!isLoading">
+        <h3 class="mbpx-30px">Products</h3>
         <div class="alert alert-danger" role="alert" v-if="!user.isActive">
           Verify Email Id to add products in cart
         </div>
@@ -65,7 +66,7 @@ import axios from 'axios';
         totalPages: null,
         totalProductsCount: null,
         currentPage: null,
-        limit: 3
+        limit: 4
       }
     },
     methods: {

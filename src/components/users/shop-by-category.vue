@@ -2,11 +2,13 @@
   <div class="main-div">
     <Navbar />
     <div class="wrapper" style="margin-top: 100px" v-if="!isLoading">
+      <!-- Container starts -->
       <div class="container">
-        <h3 class="mbpx-30px">{{ categoryTitle }}</h3>
+        <h4 class="mbpx-30px">{{ categoryTitle }}</h4>
         <div class="alert alert-danger" role="alert" v-if="!isUserActive">
           Verify Email Id to add products in cart
         </div>
+        <!-- Row starts -->
         <div class="row" v-if="products.length > 0">
 
           <div class="col-lg-3 col-md-4 col-sm-6 col-12 mbpx-30px" v-for="product in products" :key="product.id">
@@ -23,8 +25,19 @@
               </div>
             </div>
           </div>
+
+          <div class="col-12">
+            <Pagination 
+              :currentPage="currentPage" 
+              :totalPages="totalPages" 
+              :showPrevious="showPrevious()" 
+              :showNext="showNext()"
+              @pageClicked="getProductsByCategory($event)"
+            ></Pagination>
+          </div>
           
         </div>
+        <!-- Row ends -->
         <div class="no-product-found" v-else>
           <div class="no-product-found-inner">
             <img src="/img/products/no-products-found-2021-05-26.jpg" alt="">
@@ -32,6 +45,7 @@
           </div>
         </div>
       </div>
+      <!-- Container ends -->
     </div>
   </div>
 </template>
@@ -39,31 +53,50 @@
 <script>
 import axios from 'axios';
 import Navbar from '../shared/navbar.vue';
+import Pagination from '../shared/pagination.vue';
 
 export default {
   name: 'ShopByCategory',
-  components: { Navbar },
-  props: ['id'],
+  components: { Navbar, Pagination },
+  props: ['title'],
   data() {
     return {
       isLoading: true,
-      categoryTitle: '',
       products: [],
+      categoryTitle: null,
       error: null,
-      isUserActive: this.$store.getters.userData.isActive
+      isUserActive: this.$store.getters.userData.isActive,
+      currentPage: null,
+      totalPages: null,
+      limit: 4
     };
   },
 
   methods: {
-    async getProductsByCategory() {
+
+    showPrevious() {
+      return this.currentPage == 1 ? false : true;
+    },
+
+    showNext() {
+      return this.currentPage == this.totalPages ? false : true;
+    },
+
+    async getProductsByCategory(requestedPage) {
       try {
         const response = await axios.get(`http://localhost:3000/shop/productsByCategory/${this.$route.params.id}`, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
+          }, params: {
+            page: requestedPage,
+            limit: this.limit
           }
         });
+        
         this.products = response.data.payload.products;
-        this.categoryTitle = response.data.payload.title;
+        this.currentPage = response.data.payload.currentPage;
+        this.totalPages = response.data.payload.totalPages
+        this.categoryTitle = response.data.payload.categoryTitle;
         this.isLoading = false;
       } catch (error) {
         console.log(error.response);
@@ -81,8 +114,9 @@ export default {
       }
     }
   },
+
   created() {
-    this.getProductsByCategory();
+    this.getProductsByCategory(1);
   }
 }
 </script>

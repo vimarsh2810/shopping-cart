@@ -2,11 +2,13 @@
   <div class="main-div">
     <Navbar />
     <div class="wrapper" style="margin-top: 100px">
+      <!-- Container starts -->
       <div class="container">
         <div class="row" v-for="parentCategory in parentCategories" :key="parentCategory.id">
           <div class="col-12" style="margin-bottom: 30px" v-if="parentCategory.children.length > 0">
             <h4>{{ parentCategory.title }}</h4>
           </div>
+          
           <div class="col-md-3 col-sm-4 col-6" v-for="childCategory in parentCategory.children" :key="childCategory.id">
             <div class="category-circle" @click="redirectToCategoryPage(childCategory.id, childCategory.title)">
               {{ childCategory.title }}
@@ -14,6 +16,7 @@
           </div>
         </div>
       </div>
+      <!-- Container ends -->
     </div>
   </div>
 </template>
@@ -45,8 +48,8 @@ export default {
       }
     },
     
-    redirectToCategoryPage(categoryId) {
-      this.$router.push({name: 'ShopByCategory', params: { id: categoryId }});
+    redirectToCategoryPage(categoryId, categoryTitle) {
+      this.$router.push({name: 'ShopByCategory', params: { id: categoryId } });
     }
   },
   created() {

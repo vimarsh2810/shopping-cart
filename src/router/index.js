@@ -66,6 +66,7 @@ const routes = [
     path: '/user/category/:id',
     name: 'ShopByCategory',
     component: ShopByCategory,
+    props: true,
     meta: {
       requiresAuth: true, adminAuth: false, userAuth: true
     }
