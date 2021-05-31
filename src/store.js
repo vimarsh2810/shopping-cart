@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import axios from 'axios';
 import router from './router';
 import createPersistedState from 'vuex-persistedstate';
+import { development } from '../server/config/config.js';
 
 Vue.use(Vuex);
 
@@ -11,14 +12,14 @@ export default new Vuex.Store({
   state: {
     token: null,
     user: null,
-    isLoggedIn: false,
+    isAuthenticated: false,
     base_url: 'http://localhost:3000',
     categories: null
   },
   mutations: {
     setAuthData(state, loginData) {
       state.token = loginData.token;
-      state.isLoggedIn = !!(loginData.token);
+      state.isAuthenticated = !!(loginData.token);
       state.user = loginData.user;
     },
 
@@ -52,9 +53,8 @@ export default new Vuex.Store({
         token: authData.accessToken,
         user: authData.payload
       });
-      dispatch('setLogoutTimer', authData.payload.tokenExpirationTime);
       
-      if(authData.payload.roleId === 3) {
+      if(authData.payload.roleId === development.roles.User) {
         router.push('/user/home');
       } else {
         dispatch('getCategories');
@@ -87,6 +87,7 @@ export default new Vuex.Store({
     userData: (state) => state.user,
     isLoggedIn: (state) => state.isLoggedIn,
     categories: (state) => state.categories,
-    base_url: (state) => state.base_url
+    base_url: (state) => state.base_url,
+    authStatus: (state) => state.isAuthenticated
   }
 });

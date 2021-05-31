@@ -25,7 +25,7 @@
           
         </div>
 
-        <div v-if="totalPages > 0" class="pagination-wrapper d-flex justify-content-center">
+        <!-- <div v-if="totalPages > 0" class="pagination-wrapper d-flex justify-content-center">
           <div class="pagination-arrow" @click="getProducts(currentPage - 1)" v-if="showPrevious()">
             <img src="/img/left-arrow.png" alt="">
           </div>
@@ -35,7 +35,15 @@
           <div class="pagination-arrow" @click="getProducts(currentPage + 1)" v-if="showNext()">
             <img src="/img/right-arrow.png" alt="">
           </div>
-        </div>
+        </div> -->
+
+        <Pagination 
+          :currentPage="currentPage" 
+          :totalPages="totalPages" 
+          :showPrevious="showPrevious()" 
+          :showNext="showNext()"
+          @pageClicked="getProducts($event)"
+        ></Pagination>
 
       </div>
     </div>
@@ -44,21 +52,22 @@
 <script>
 import axios from 'axios';
   import Navbar from '../shared/navbar.vue';
+  import Pagination from '../shared/pagination.vue';
   export default {
     name: 'UserHome',
     components: {
-      Navbar
+      Navbar,
+      Pagination
     },
     data() {
       return {
         user: {},
-        isLoggedIn: false,
         products: [],
         error: null,
         totalPages: null,
         totalProductsCount: null,
         currentPage: null,
-        limit: 4
+        limit: 3
       }
     },
     methods: {
@@ -81,15 +90,15 @@ import axios from 'axios';
               'Authorization': `Bearer ${this.$store.getters.token}`
             }
           });
+
           if(response.data.success) {
-            // console.log(response.data.payload)
             this.products = response.data.payload.products;
             this.totalPages = response.data.payload.totalPages;
             this.totalProductsCount = response.data.payload.productCount;
             this.currentPage = response.data.payload.currentPage;
           }
         } catch (error) {
-          
+          console.log(error.response.data.message)
         }
       },
 
@@ -105,7 +114,6 @@ import axios from 'axios';
       }
     }, 
     created() {
-      
       this.user = this.$store.getters.userData;
       this.isLoggedIn = this.$store.getters.isLoggedIn;
       this.getProducts(1);
@@ -121,6 +129,10 @@ import axios from 'axios';
     margin-right: auto;
   }
 
+  .pagination-wrapper {
+    margin-bottom: 30px;
+  }
+
   .pagination-arrow {
     height: 35px;
     width: 35px;
@@ -132,7 +144,6 @@ import axios from 'axios';
 
   .pagination-page-no {
     margin: 0 10px;
-    
   }
 
   span.active {

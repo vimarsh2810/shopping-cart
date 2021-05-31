@@ -10,14 +10,18 @@ import ShopByCategory from '../components/users/shop-by-category.vue';
 import AddCategory from '../components/admin/add-category.vue';
 import VerifyEmail from '../components/verify-email.vue';
 import Payment from '../components/users/payment.vue';
+import PageNotFound from '../components/page-not-found.vue';
+import store from '../store';
+import { development } from '../../server/config/config';
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Login',
-    component: Login
+    redirect: {
+      name: 'Login'
+    }
   },
   {
     path: '/signup',
@@ -33,48 +37,97 @@ const routes = [
     path: '/user/home',
     name: 'UserHome',
     component: UserHome
-  },,
+  },
   {
     path: '/admin/add-product',
     name: 'AddProduct',
-    component: AddProduct
+    component: AddProduct,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
   },
   {
     path: '/user/cart',
     name: 'Cart',
-    component: Cart
+    component: Cart,
+    meta: {
+      requiresAuth: true, adminAuth: false, userAuth: true
+    }
   },
   {
     path: '/user/category',
     name: 'Categories',
-    component: Categories
+    component: Categories,
+    meta: {
+      requiresAuth: true, adminAuth: false, userAuth: true
+    }
   },
   {
     path: '/user/category/:id',
     name: 'ShopByCategory',
-    component: ShopByCategory
+    component: ShopByCategory,
+    meta: {
+      requiresAuth: true, adminAuth: false, userAuth: true
+    }
   },
   {
     path: '/admin/add-category',
     name: 'AddCategory',
-    component: AddCategory
+    component: AddCategory,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
   },
   {
     path: '/user/verify-email',
     name: 'VerifyEmail',
-    component: VerifyEmail
+    component: VerifyEmail,
+    meta: {
+      requiresAuth: true, adminAuth: false, userAuth: true
+    }
   },
   {
     path: '/user/cart/payment',
     name: 'Payment',
-    component: Payment
+    component: Payment,
+    meta: {
+      requiresAuth: true, adminAuth: false, userAuth: true
+    }
+  },
+  {
+    path: '/page-not-found',
+    name: 'PageNotFound',
+    component: PageNotFound
   }
 ]
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  if(to.meta.requiresAuth) {
+    if(!store.getters.authStatus) {
+      next('/login');
+    } else {
+      if(to.meta.adminAuth) {
+        if(store.getters.userData.roleId === development.roles.SuperAdmin || store.getters.userData.roleId === development.roles.SubAdmin) {
+          next();
+        } else {
+          next('/page-not-found');
+        }
+      } else if(to.meta.userAuth) {
+        if(store.getters.userData.roleId === development.roles.User) {
+          next();
+        } else {
+          next('/page-not-found');
+        }
+      }
+    }
+  } else {
+    next();
+  }
+});
 
 export default router
