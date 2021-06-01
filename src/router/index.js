@@ -11,7 +11,8 @@ import AddCategory from '../components/admin/add-category.vue';
 import VerifyEmail from '../components/verify-email.vue';
 import Payment from '../components/users/payment.vue';
 import Orders from '../components/users/orders.vue';
-import OrderDetails from '../components/users/order-details.vue'
+import OrderDetails from '../components/users/order-details.vue';
+import AdminEditProfile from '../components/admin/edit-profile.vue';
 import PageNotFound from '../components/page-not-found.vue';
 import store from '../store';
 import { development } from '../../server/config/config';
@@ -77,6 +78,14 @@ const routes = [
     path: '/admin/add-category',
     name: 'AddCategory',
     component: AddCategory,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/edit-profile',
+    name: 'AdminEditProfile',
+    component: AdminEditProfile,
     meta: {
       requiresAuth: true, adminAuth: true, userAuth: false
     }
