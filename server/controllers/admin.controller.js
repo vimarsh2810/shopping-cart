@@ -1,12 +1,13 @@
 const bcrypt = require('bcryptjs');
 
 const { User } = require('../models/user.js');
+const { Product } = require('../models/product.js');
 const { responseObj } = require('../helpers/responseObj.js');
 const { development } = require('../config/config.js');
 const { Category } = require('../models/category.js');
 
-// @desc Create a SubAdmin
-// @route POST /admin/subAdmin
+/* @desc Create a SubAdmin */
+/* @route POST /admin/subAdmin */
 
 exports.addSubAdmin = async (req, res, next) => {
   try {
@@ -25,15 +26,15 @@ exports.addSubAdmin = async (req, res, next) => {
   }
 };
 
-// @desc Create a Product
-// @route POST /admin/product
+/* @desc Create a Product */
+/* @route POST /admin/product */
 
 exports.addProduct = async (req, res, next) => {
   try {
 
-    const { title, price, description, categoryId, userId } = req.body;
+    const { title, brandName, price, description, categoryId } = req.body;
     
-    if(!title || !price || !description || !categoryId || !userId || !req.fileName) {
+    if(!title || !brandName || !price || !description || !categoryId || !req.fileName ) {
       return res.status(400).json(responseObj(false, 'All details should be filled'));
     }
 
@@ -53,8 +54,57 @@ exports.addProduct = async (req, res, next) => {
   }
 };
 
-// @desc Create a SubAdmin
-// @route POST /admin/category 
+/* @desc Edit a Product */
+/* @route PUT /admin/product/:id */
+
+exports.editProduct = async (req, res, next) => {
+  try {
+    const { title, brandName, price, description, categoryId } = req.body;
+
+    if(!title || !brandName || !price || !description || !categoryId) {
+      return res.status(400).json(responseObj(false, 'All details should be filled'));
+    }
+
+    const product = await Product.findByPk(req.params.id);
+    product.title = title;
+    product.brandName = brandName;
+    product.description = description;
+    product.price = price;
+    product.categoryId = categoryId;
+    await product.save();
+    return res.status(200).json(responseObj(true, 'Product Updated'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Delete a Product */
+/* @route DELETE /admin/product/:id */
+
+exports.deleteProduct = async (req, res, next) => {
+  try {
+    const product = await Product.findByPk(req.params.id);
+    await product.destroy();
+    return res.status(200).json(responseObj(true, 'Product Deleted'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Get a Product by ID */
+/* @route GET /admin/product/:id */
+
+exports.getProductById = async (req, res, next) => {
+  try {
+    const product = await Product.findByPk(req.params.id);
+    return res.status(200).json(responseObj(true, `Product having ID = ${req.params.id}`, product));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Create a category */
+/* @route POST /admin/category */
 
 exports.addCategory = async (req, res, next) => {
   try {
@@ -69,8 +119,52 @@ exports.addCategory = async (req, res, next) => {
   }
 };
 
-// @desc Get all categories
-// @route GET /admin/categories
+/* @desc Edit a category */
+/* @route PUT /admin/category/:id */
+
+exports.editCategory = async (req, res, next) => {
+  try {
+    const { title, parentId } = req.body;
+    if(!title) {
+      return res.status(400).json(responseObj(false, 'All details required'));
+    }
+    const category = await Category.findByPk(req.params.id);
+    category.title = title;
+    category.parentId = parentId || null;
+    await category.save();
+    return res.status(200).json(responseObj(true, 'Category updated'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Delete a category */
+/* @route DELETE /admin/category/:id */
+
+exports.deleteCategory = async (req, res, next) => {
+  try {
+    const category = await Category.findByPk(req.params.id);
+    await category.destroy();
+    return res.status(200).json(responseObj(true, 'Category deleted'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Get category by ID */
+/* @router GET /admin/category/:id */
+
+exports.getCategoryById = async (req, res, next) => {
+  try {
+    const category = await Category.findByPk(req.params.id);
+    return res.status(200).json(responseObj(true, 'Category with ID = ${req.params.id}', category));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Get all categories */
+/* @route GET /admin/categories */
 
 exports.getAllCategories = async (req, res, next) => {
   try {
@@ -79,6 +173,23 @@ exports.getAllCategories = async (req, res, next) => {
       category.dataValues.children = await category.getChildren();
     }
     return res.status(200).json(responseObj(true, 'Categories', categories));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Edit Admin Profile */
+/* @route PUT /admin/profile */
+
+exports.editProfile = async (req, res, next) => {
+  try {
+    const { name, username, email } = req.body;
+    const user = await User.findByPk(req.userData.userId);
+    user.name = name;
+    user.username = username;
+    user.email = email;
+    await user.save();
+    return res.status(200).json(responseObj(true, 'Profile Updated'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
