@@ -131,11 +131,17 @@ exports.retryOrder = async (req, res, next) => {
   }
 };
 
+/* @desc Get Notifications */
+/* @route GET /user/notifications */
+
 exports.getNotifications = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.userData.userId);
-    if(!user.isActive) {
-      return res.status(400).json(responseObj(false, 'Email is already verified'));
+    if(user.isActive) {
+      const notifications = [
+        'No Notifications'
+      ];
+      return res.status(200).json(responseObj(false, 'Email is already verified', notifications));
     }
 
     const notifications = [
@@ -144,8 +150,8 @@ exports.getNotifications = async (req, res, next) => {
       'Verify Email to purchase products',
     ];
 
-    return res.status(200).json(responseObj(true, notifications));
+    return res.status(200).json(responseObj(true, 'Notifications', notifications));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
-}
+};

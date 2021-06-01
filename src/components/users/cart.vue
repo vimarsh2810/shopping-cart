@@ -145,6 +145,10 @@ export default {
   },
   methods: {
     async getCart() {
+      if(!this.isUserActive) {
+        this.isLoading = false;
+        return;
+      }
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/cart/cartProducts`, {
           headers: {

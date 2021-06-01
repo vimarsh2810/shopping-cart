@@ -18,7 +18,7 @@
           </div>
           <div class="col-12">
             <div class="alert alert-danger" role="alert" v-if="!isUserActive">
-              Verify Email Id to add products in cart
+              Verify Email Id to access this functionality
             </div>
             <div class="table-responsive">
               <table class="table">
@@ -103,6 +103,9 @@ export default {
 
   methods: {
     async getOrders() {
+      if(!this.isUserActive) {
+        return;
+      }
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/user/orders`, {
           headers: {
@@ -116,7 +119,7 @@ export default {
           this.filterOrders(1);
         }
       } catch (error) {
-        console.log(error.response.data);
+        console.log(error);
       }
     },
 

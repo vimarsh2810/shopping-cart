@@ -3,6 +3,9 @@
     <Navbar />
     <div class="wrapper" style="margin-top: 100px">
       <div class="container" v-if="!isLoading">
+        <div class="alert alert-danger" role="alert" v-if="!isUserActive">
+          Verify Email Id to access this functionality
+        </div>
         <div class="row">
           <div class="col-12">
             <div class="table-responsive">
@@ -81,6 +84,10 @@ export default {
 
   methods: {
     async getOrderProducts() {
+      if(!this.isUserActive) {
+        this.isLoading = false;
+        return;
+      }
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/user/order/${this.$route.params.id}`, {
           headers: {

@@ -2,8 +2,10 @@
   <div class="main-div">
     <Navbar/>
     <div class="wrapper" style="margin-top: 100px">
-      <div class="container">
-        
+      <div class="alert alert-danger ml-5 mr-5" role="alert" v-if="!isUserActive">
+        Verify Email Id to access this functionality
+      </div>
+      <div class="container" v-else>
         <!-- Checkout & Coupon starts -->
         <h4 class="text-center" style="margin-bottom: 30px">Make Payment</h4>
         <div class="card ml-auto mr-auto" id="payment-info-card">
@@ -91,6 +93,7 @@ export default {
       discount: 0,
       couponCode: null,
       isCouponApplied: false,
+      isUserActive: this.$store.getters.userData.isActive,
       error: null,
       successMsg: null
     };
