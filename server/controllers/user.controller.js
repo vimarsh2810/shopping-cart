@@ -8,6 +8,9 @@ const { Coupon } = require('../models/coupon.js');
 const { Wallet } = require('../models/wallet.js');
 const { development } = require('../config/config.js');
 
+/* @desc Get data of logged in user */
+/* @route GET /user/getUserData */
+
 exports.getUserData = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.userData.userId);
@@ -17,6 +20,9 @@ exports.getUserData = async (req, res, next) => {
   }
 };
 
+/* @desc Get all orders of logged in user */
+/* @route GET /user/orders */
+
 exports.getOrders = async (req, res, next) => {
   try {
     const orders = await Order.findAll({ where: { userId: req.userData.userId }});
@@ -25,6 +31,9 @@ exports.getOrders = async (req, res, next) => {
     return res.status(500).json(responseObj(500, false, error.message));
   }
 };
+
+/* @desc Get order details and products by orderid */
+/* @route GET /user/order/:id */
 
 exports.getOrderProducts = async (req, res, next) => {
   try {
@@ -36,6 +45,9 @@ exports.getOrderProducts = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+/* @desc Get order amount by orderid */
+/* @route GET /user/orderAmount/:id */
 
 exports.getOrderAmount = async (req, res, next) => {
   try {
@@ -59,6 +71,9 @@ exports.getOrderAmount = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+/* @desc Retry a failed order */
+/* @route POST /user/retryOrder/:id */
 
 exports.retryOrder = async (req, res, next) => {
   try {
@@ -115,3 +130,22 @@ exports.retryOrder = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+exports.getNotifications = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userData.userId);
+    if(!user.isActive) {
+      return res.status(400).json(responseObj(false, 'Email is already verified'));
+    }
+
+    const notifications = [
+      'Verify Email to get personalized Coupon',
+      'Verify Email to get bonus amount',
+      'Verify Email to purchase products',
+    ];
+
+    return res.status(200).json(responseObj(true, notifications));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+}

@@ -15,4 +15,6 @@ router.post('/orderAmount/:id', validateToken, userController.getOrderAmount);
 
 router.post('/retryOrder/:id', validateToken, userController.retryOrder);
 
+router.get('/notification', validateToken, userController.getNotifications);
+
 module.exports = router;

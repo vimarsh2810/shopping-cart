@@ -9,8 +9,8 @@ const { development } = require('../config/config.js');
 const { Wallet } = require("../models/wallet");
 const { Order } = require("../models/order");
 
-// @desc Add product to user cart
-// @route POST /cart/addToCart
+/* @desc Add product to user cart */
+/* @route POST /cart/addToCart */
 
 exports.addToCart = async (req, res, next) => {
   try {
@@ -29,8 +29,8 @@ exports.addToCart = async (req, res, next) => {
   }
 };
 
-// @desc Get all cart products
-// @route GET /cart/getCart
+/* @desc Get all cart products */
+/* @route GET /cart/cartProducts */
 
 exports.getCart = async (req, res, next) => {
   try {
@@ -44,8 +44,8 @@ exports.getCart = async (req, res, next) => {
   }
 };
 
-// @desc Delete a product from user cart
-// @route DELETE /cart/deleteCartItem/:productId
+/* @desc Delete a product from user cart */
+/* @route DELETE /cart/deleteCartItem/:productId */
 
 exports.deleteCartItem = async (req, res, next) => {
   try {
@@ -57,8 +57,8 @@ exports.deleteCartItem = async (req, res, next) => {
   }
 };
 
-// @desc Update product quantity in cart
-// @route PUT /cart/updateQuantity/:productId
+/* @desc Update product quantity in cart */
+/* @route PUT /cart/updateQuantity/:productId */
 
 exports.updateQuantity = async (req, res, next) => {
   try {
@@ -77,8 +77,8 @@ exports.updateQuantity = async (req, res, next) => {
   }
 };
 
-// @desc Verify coupon applied is correct or not
-// @route POST /cart/verifyCoupon
+/* @desc Verify coupon applied is correct or not */
+/* @route POST /cart/verifyCoupon */
 
 exports.verifyCoupon = async (req, res, next) => {
   try {
@@ -93,6 +93,9 @@ exports.verifyCoupon = async (req, res, next) => {
     return res.status(500).json(responseObj(500, false, error.message));
   }
 };
+
+/* @desc Get payment amount fot order */
+/* GET /cart/paymentAmount */
 
 exports.getPaymentAmount = async (req, res, next) => {
   try {
@@ -127,8 +130,8 @@ exports.getPaymentAmount = async (req, res, next) => {
   }
 }
 
-// @desc Checkout
-// @route POST /cart/checkout
+/* @desc Payment */
+/* @route POST /cart/payment */
 
 exports.payment = async (req, res, next) => {
   try {
