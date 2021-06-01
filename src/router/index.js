@@ -10,6 +10,7 @@ import ShopByCategory from '../components/users/shop-by-category.vue';
 import AddCategory from '../components/admin/add-category.vue';
 import VerifyEmail from '../components/verify-email.vue';
 import Payment from '../components/users/payment.vue';
+import RetryPayment from '../components/users/retry-payment.vue';
 import Orders from '../components/users/orders.vue';
 import OrderDetails from '../components/users/order-details.vue';
 import AdminEditProfile from '../components/admin/edit-profile.vue';
@@ -120,6 +121,14 @@ const routes = [
     path: '/user/cart/payment',
     name: 'Payment',
     component: Payment,
+    meta: {
+      requiresAuth: true, adminAuth: false, userAuth: true
+    }
+  },
+  {
+    path: '/user/orders/retry-payment/:id',
+    name: 'RetryPayment',
+    component: RetryPayment,
     meta: {
       requiresAuth: true, adminAuth: false, userAuth: true
     }

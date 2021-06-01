@@ -45,13 +45,16 @@
                         class="btn btn-primary"
                         @click="redirectToOrderDetails(order.id)"
                       >Details</button>
+
                       <button 
                         v-if="order.status === 'in Process'"
                         class="btn btn-primary ml-2"
                       >Cancel</button>
+
                       <button 
                         v-else-if="order.status === 'failed'"
                         class="btn btn-primary ml-2"
+                        @click="retryOrder(order.id)"
                       >Retry</button>
                     </td>
                   </tr>
@@ -147,6 +150,10 @@ export default {
 
     redirectToOrderDetails(orderId) {
       this.$router.push({ name: 'OrderDetails', params: { id: orderId }});
+    },
+
+    retryOrder(orderId) {
+      this.$router.push({ name: 'RetryPayment', params: { id: orderId } });
     }
   },
 

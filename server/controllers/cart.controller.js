@@ -7,6 +7,7 @@ const { Coupon } = require("../models/coupon");
 const { verifyCouponCode } = require("../helpers/verifyCouponCode");
 const { development } = require('../config/config.js');
 const { Wallet } = require("../models/wallet");
+const { Order } = require("../models/order");
 
 // @desc Add product to user cart
 // @route POST /cart/addToCart
