@@ -208,4 +208,18 @@ exports.getAllOrders = async (req, res, next) => {
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
-}
+};
+
+/* @desc Get orders by Id and its products */
+/* @route GET /admin/orders/:id */
+
+exports.getOrderById = async (req, res, next) => {
+  try {
+    const order = await Order.findByPk(req.params.id, {
+      include: [{ model: Product, include: [{ model: Category, attributes: ['title'] }] }]
+    });
+    return res.status(200).json(responseObj(true, `Order having ID = ${req.params.id}`, order));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};

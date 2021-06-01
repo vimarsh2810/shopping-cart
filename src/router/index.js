@@ -14,6 +14,7 @@ import Orders from '../components/users/orders.vue';
 import OrderDetails from '../components/users/order-details.vue';
 import AdminEditProfile from '../components/admin/edit-profile.vue';
 import AllOrders from '../components/admin/all-orders.vue';
+import AdminOrderDetails from '../components/admin/order-details.vue';
 import PageNotFound from '../components/page-not-found.vue';
 import store from '../store';
 import { development } from '../../server/config/config';
@@ -95,6 +96,14 @@ const routes = [
     path: '/admin/orders',
     name: 'AllOrders',
     component: AllOrders,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/orders/:id',
+    name: 'AdminOrderDetails',
+    component: AdminOrderDetails  ,
     meta: {
       requiresAuth: true, adminAuth: true, userAuth: false
     }

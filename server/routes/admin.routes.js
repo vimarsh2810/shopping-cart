@@ -32,4 +32,6 @@ router.put('/profile', [validateToken, checkAdmin], adminController.editProfile)
 
 router.get('/orders', [validateToken, checkAdmin], adminController.getAllOrders);
 
+router.get('/order/:id', [validateToken, checkAdmin], adminController.getOrderById);
+
 module.exports = router;

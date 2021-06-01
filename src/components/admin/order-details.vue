@@ -1,6 +1,6 @@
 <template>
   <div class="main-div">
-    <Navbar />
+    <AdminNavbar />
     <div class="wrapper" style="margin-top: 100px">
       <div class="container" v-if="!isLoading">
         <div class="row">
@@ -26,11 +26,6 @@
                     <td class="text-center">{{ product.price }}</td>
                     <td class="text-center">{{ product.orderItem.quantity }}</td>
                     <td class="text-center">
-                      <button
-                        v-if="orderStatus === 'in Process'"
-                        class="btn btn-primary mr-2"
-                        @click="removeProduct(product.id)"
-                      >Remove</button>
                       <button
                         class="btn btn-primary"
                         @click="redirectToProductDetails(product.id)"
@@ -60,12 +55,12 @@
 
 <script>
 import axios from 'axios';
-import Navbar from '../shared/navbar.vue';
+import AdminNavbar from '../shared/admin-navbar.vue';
 import Pagination from '../shared/pagination.vue';
 
 export default {
-  name: 'OrderDetails',
-  components: { Navbar, Pagination },
+  name: 'AdminOrderDetails',
+  components: { AdminNavbar, Pagination },
   data() {
     return {
       orderStatus: null,
@@ -82,7 +77,7 @@ export default {
   methods: {
     async getOrderProducts() {
       try {
-        const response = await axios.get(`${this.$store.getters.base_url}/user/order/${this.$route.params.id}`, {
+        const response = await axios.get(`${this.$store.getters.base_url}/admin/order/${this.$route.params.id}`, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }

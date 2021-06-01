@@ -1,6 +1,6 @@
 <template>
   <div class="main-div">
-    <Navbar />
+    <AdminNavbar />
     <div class="wrapper" style="margin-top: 100px">
       <div class="container">
         <div class="row">
@@ -72,13 +72,13 @@
 
 <script>
 import axios from 'axios';
-import Navbar from '../shared/navbar.vue';
+import AdminNavbar from '../shared/admin-navbar.vue';
 import Pagination from '../shared/pagination.vue';
 import { development } from '../../../server/config/config.js';
 
 export default {
   name: 'AllOrders',
-  components: { Navbar, Pagination},
+  components: { AdminNavbar, Pagination},
   data() {
     return {
       allOrders: [],
@@ -139,7 +139,7 @@ export default {
     },
 
     redirectToOrderDetails(orderId) {
-      this.$router.push({ name: 'OrderDetails', params: { id: orderId }});
+      this.$router.push({ name: 'AdminOrderDetails', params: { id: orderId } });
     }
   },
 

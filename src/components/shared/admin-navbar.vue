@@ -67,7 +67,7 @@ export default {
   color: #ffffff !important;
 }
 
-.router-link-exact-active {
+.router-link-active {
   text-decoration: underline;
   text-decoration-thickness: 3px;
   text-underline-offset: 8px;
