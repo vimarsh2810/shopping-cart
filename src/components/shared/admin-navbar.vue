@@ -22,24 +22,16 @@
           </div>
         </li>
 
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="orderDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-user-circle mr-1"></i>Orders
-          </a>
-
-          <div class="dropdown-menu" aria-labelledby="orderDropdown">
-            <router-link to="/admin/completed-orders" class="dropdown-item">Add SubAdmin</router-link>
-            <router-link to="/admin/pending-orders" class="dropdown-item">Add SubAdmin</router-link>
-            <router-link to="/admin/cancelled-orders" class="dropdown-item">Add SubAdmin</router-link>
-          </div>
+        <li class="nav-item">
+          <router-link to="/admin/orders" class="nav-link">Orders</router-link>
         </li>
 
         <li class="nav-item dropdown ml-auto">
-          <a class="nav-link dropdown-toggle" href="#" id="orderDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-user-circle mr-1"></i>Username
+          <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-user-circle mr-1"></i>{{ $store.getters.userData.username }}
           </a>
 
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="orderDropdown">
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
             <router-link to="/admin/edit-profile" class="dropdown-item">Edit Profile</router-link>
             <a class="dropdown-item" @click.prevent="logout"><i class="fas fa-power-off"></i>&nbsp;&nbsp;Logout</a>
           </div>

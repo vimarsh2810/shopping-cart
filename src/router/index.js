@@ -13,6 +13,7 @@ import Payment from '../components/users/payment.vue';
 import Orders from '../components/users/orders.vue';
 import OrderDetails from '../components/users/order-details.vue';
 import AdminEditProfile from '../components/admin/edit-profile.vue';
+import AllOrders from '../components/admin/all-orders.vue';
 import PageNotFound from '../components/page-not-found.vue';
 import store from '../store';
 import { development } from '../../server/config/config';
@@ -86,6 +87,14 @@ const routes = [
     path: '/admin/edit-profile',
     name: 'AdminEditProfile',
     component: AdminEditProfile,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/orders',
+    name: 'AllOrders',
+    component: AllOrders,
     meta: {
       requiresAuth: true, adminAuth: true, userAuth: false
     }

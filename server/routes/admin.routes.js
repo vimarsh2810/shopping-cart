@@ -30,4 +30,6 @@ router.get('/categories', [validateToken, checkAdmin], adminController.getAllCat
 
 router.put('/profile', [validateToken, checkAdmin], adminController.editProfile);
 
+router.get('/orders', [validateToken, checkAdmin], adminController.getAllOrders);
+
 module.exports = router;

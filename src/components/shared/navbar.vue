@@ -74,7 +74,7 @@ export default {
   display: block;
 }
 
-/* makes sub-menu S open on hover */
+/* makes sub-menu open on hover */
 .submenu-item:hover > .dropdown-menu {
   display: block;
 }

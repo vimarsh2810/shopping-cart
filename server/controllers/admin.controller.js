@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 
 const { User } = require('../models/user.js');
 const { Product } = require('../models/product.js');
+const { Order } = require('../models/order.js');
 const { responseObj } = require('../helpers/responseObj.js');
 const { development } = require('../config/config.js');
 const { Category } = require('../models/category.js');
@@ -194,3 +195,17 @@ exports.editProfile = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+/* @desc Get all orders of all users */
+/* @route GET /admin/orders */
+
+exports.getAllOrders = async (req, res, next) => {
+  try {
+    const orders = await Order.findAll({
+      include: [{ model: User }]
+    });
+    return res.status(200).json(responseObj(true, "All Orders", orders));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+}
