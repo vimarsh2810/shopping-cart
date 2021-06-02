@@ -25,7 +25,7 @@
                   <tr v-else v-for="category in categories" :key="category.id">
                     <td class="text-center vertical-center">{{ category.title }}</td>
                     <td class="text-center vertical-center" v-if="category.parent">{{ category.parent.title }}</td>
-                    <td class="text-center vertical-center" v-else>Null</td>
+                    <td class="text-center vertical-center" v-else>None</td>
                     <td class="text-center vertical-center">{{ category.user.name }}</td>
                     <td class="text-center vertical-center">
                       <button 
@@ -110,7 +110,7 @@ export default {
           });
 
           if(response.data.success) {
-            this.getProducts(this.currentPage);
+            this.categories.length == 1 ? this.getCategories(this.currentPage - 1) : this.getCategories(this.currentPage);
           }
         } catch (error) {
           console.log(error.response.data.message);

@@ -91,7 +91,7 @@ export default {
           }, params: {
             page: requestedPage,
             limit: this.limit,
-            includeCategory: true
+            includeCategory: Boolean(true)
           }
         });
 

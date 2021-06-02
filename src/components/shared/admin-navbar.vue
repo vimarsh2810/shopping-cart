@@ -17,7 +17,7 @@
 
           <div class="dropdown-menu" aria-labelledby="settingDropdown">
             <router-link to="/admin/manage-products" class="dropdown-item">Manage Products</router-link>
-            <router-link to="/admin/add-category" class="dropdown-item">Add Category</router-link>
+            <router-link to="/admin/manage-categories" class="dropdown-item">Manage Categories</router-link>
             <router-link to="/admin/add-subadmin" class="dropdown-item" v-if="userRole == allRoles.SuperAdmin">Add SubAdmin</router-link>
           </div>
         </li>

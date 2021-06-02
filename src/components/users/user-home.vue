@@ -90,7 +90,7 @@ import axios from 'axios';
             }, params: {
               page: requestedPage,
               limit: this.limit,
-              includeCategory: false
+              includeCategory: Boolean(false)
             }
           });
 

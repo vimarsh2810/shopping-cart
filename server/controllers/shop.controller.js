@@ -25,7 +25,7 @@ exports.getProducts = async (req, res, next) => {
     let { page, limit, includeCategory } = req.query;
     const { offset, size } = pagination(page, limit);
     let items;
-    if(includeCategory === true) {
+    if(includeCategory) {
       items = await Product.findAndCountAll({
         include: [{ model: Category, attributes: ['title'] }],
         limit: size,
