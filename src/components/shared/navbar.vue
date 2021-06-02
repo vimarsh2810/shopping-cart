@@ -45,7 +45,7 @@
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="orderDropdown">
                 <router-link to="/user/edit-profile" class="dropdown-item"><i class="fas fa-user-edit"></i>&nbsp;&nbsp;Edit Profile</router-link>
                 <router-link to="/user/wishlist" class="dropdown-item"><i class="fas fa-heart"></i>&nbsp;&nbsp;My WishList</router-link>
-                <router-link to="/user/verify-email" class="dropdown-item"><i class="fas fa-envelope"></i>&nbsp;&nbsp;Verify Email</router-link>
+                <router-link to="/user/verify-email" class="dropdown-item" v-if="!isUserActive"><i class="fas fa-envelope"></i>&nbsp;&nbsp;Verify Email</router-link>
                 <a class="dropdown-item" @click.prevent="logout"><i class="fas fa-power-off"></i>&nbsp;&nbsp;Logout</a>
               </div>
             </li>
@@ -64,7 +64,8 @@ export default {
   data() {
     return {
       notifications: [],
-      isLoading: true
+      isLoading: true,
+      isUserActive: this.$store.getters.userData.isActive
     };
   },
   methods: {

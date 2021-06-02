@@ -4,6 +4,7 @@ import Signup from '../components/Signup.vue';
 import Login from '../components/Login.vue';
 import UserHome from '../components/users/user-home.vue';
 import AddProduct from '../components/admin/add-product.vue';
+import AddSubAdmin from '../components/admin/add-subadmin.vue';
 import Cart from '../components/users/cart.vue';
 import Categories from '../components/users/categories.vue';
 import ShopByCategory from '../components/users/shop-by-category.vue';
@@ -50,6 +51,14 @@ const routes = [
     component: AddProduct,
     meta: {
       requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/add-subadmin',
+    name: 'AddSubAdmin',
+    component: AddSubAdmin,
+    meta: {
+      requiresAuth: true, adminAuth: false, superAdminAuth: true, userAuth: false
     }
   },
   {
@@ -114,7 +123,7 @@ const routes = [
     name: 'VerifyEmail',
     component: VerifyEmail,
     meta: {
-      requiresAuth: true, adminAuth: false, userAuth: true
+      requiresAuth: true, adminAuth: false, userAuth: true, userNotActive: true
     }
   },
   {
@@ -172,8 +181,21 @@ router.beforeEach((to, from, next) => {
         } else {
           next('/page-not-found');
         }
+      } else if(to.meta.superAdminAuth) {
+        if(store.getters.userData.roleId === development.roles.SuperAdmin) {
+          next();
+        } else {
+          next('/page-not-found');
+        }
       } else if(to.meta.userAuth) {
         if(store.getters.userData.roleId === development.roles.User) {
+          if(to.meta.userNotActive) {
+            if(!store.getters.userData.isActive) {
+              next();
+            } else {
+              next('/page-not-found');
+            }
+          }
           next();
         } else {
           next('/page-not-found');

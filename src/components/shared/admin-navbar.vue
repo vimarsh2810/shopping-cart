@@ -18,7 +18,7 @@
           <div class="dropdown-menu" aria-labelledby="settingDropdown">
             <router-link to="/admin/add-product" class="dropdown-item">Add Product</router-link>
             <router-link to="/admin/add-category" class="dropdown-item">Add Category</router-link>
-            <router-link to="/admin/add-subadmin" class="dropdown-item">Add SubAdmin</router-link>
+            <router-link to="/admin/add-subadmin" class="dropdown-item" v-if="userRole == allRoles.SuperAdmin">Add SubAdmin</router-link>
           </div>
         </li>
 
@@ -28,7 +28,7 @@
 
         <li class="nav-item dropdown ml-auto">
           <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-user-circle mr-1"></i>{{ $store.getters.userData.username }}
+            <i class="fas fa-user-circle mr-1"></i>{{ username }}
           </a>
 
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
@@ -43,8 +43,16 @@
 </template>
 
 <script>
+import { development } from '../../../server/config/config.js';
 export default {
   name: "AdminNavbar",
+  data() {
+    return {
+      username: this.$store.getters.userData.username,
+      allRoles: development.roles,
+      userRole: this.$store.getters.userData.roleId
+    };
+  },
   methods: {
     logout(event) {
       this.$store.dispatch("logout");

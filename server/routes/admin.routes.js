@@ -4,7 +4,7 @@ const adminController = require('../controllers/admin.controller.js');
 const { checkAdmin, checkSuperAdmin } = require('../middlewares/checkRole.js');
 const { validateToken } = require('../middlewares/validateToken.js');
 const { upload } = require('../middlewares/uploadImage.js');
-const { categoryValidator, validate } = require('../middlewares/validator.js');
+const { categoryValidator, signupValidator, validate } = require('../middlewares/validator.js');
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ router.delete('/product/:id', [validateToken, checkAdmin], adminController.delet
 
 router.get('/product/:id', [validateToken, checkAdmin], adminController.getProductById);
 
-router.post('/subAdmin', [validateToken, checkSuperAdmin], adminController.addSubAdmin);
+router.post('/subAdmin', [validateToken, checkSuperAdmin, signupValidator(), validate], adminController.addSubAdmin);
 
 router.get('/categories', [validateToken, checkAdmin], adminController.getAllCategories);
 
