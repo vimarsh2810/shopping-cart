@@ -4,8 +4,15 @@
     <div class="wrapper" style="margin-top: 100px">
       <div class="container" v-if="!isLoading">
         <div class="row">
-          <div class="col-12">
-            <h4 class="mb-4">Products</h4>
+          <div class="col-sm-6 col-12">
+            <h4 class="mb-2 mt-2">Products</h4>
+          </div>
+          <div class="col-sm-6 col-12">
+            <button 
+              class="btn btn-primary d-block mb-2 mt-2"
+              id="add-product-link"
+              @click="$router.push({ name: 'AddProduct' })"
+            >Add New Product</button>
           </div>
           <div class="col-12">
             <div class="table-responsive">
@@ -184,6 +191,17 @@ export default {
     .product-img {
       width: 150px;
       height: 100px;
+    }
+  }
+
+  #add-product-link {
+    margin-left: auto;
+  }
+
+  @media (max-width: 576px) {
+    #add-product-link {
+      margin-left: 0;
+      margin-right: auto;
     }
   }
 
