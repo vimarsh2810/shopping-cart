@@ -61,6 +61,7 @@ exports.addProduct = async (req, res, next) => {
 exports.editProduct = async (req, res, next) => {
   try {
     const { title, brandName, price, description, categoryId } = req.body;
+    console.log(req.body);
 
     if(!title || !brandName || !price || !description || !categoryId) {
       return res.status(400).json(responseObj(false, 'All details should be filled'));
@@ -97,7 +98,9 @@ exports.deleteProduct = async (req, res, next) => {
 
 exports.getProductById = async (req, res, next) => {
   try {
-    const product = await Product.findByPk(req.params.id);
+    const product = await Product.findByPk(req.params.id, {
+      include: [{ model: Category, attributes: ['id', 'title'] }]
+    });
     return res.status(200).json(responseObj(true, `Product having ID = ${req.params.id}`, product));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));

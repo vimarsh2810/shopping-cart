@@ -98,7 +98,7 @@ import axios from 'axios';
             this.isLoading = false;
           }
         } catch (error) {
-          console.log(error.response.data.message)
+          console.log(error.response.data.message);
         }
       },
 

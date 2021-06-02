@@ -9,7 +9,6 @@ const Op = require('sequelize').Op;
 
 exports.getAllProducts = async (req, res, next) => {
   try {
-    console.log('shop')
     const products = await Product.findAll();
     return res.status(200).json(responseObj(false, 'All products', products));
   } catch (error) {
@@ -23,10 +22,20 @@ exports.getAllProducts = async (req, res, next) => {
 exports.getProducts = async (req, res, next) => {
   try {
 
-    let { page, limit } = req.query;
+    let { page, limit, includeCategory } = req.query;
     const { offset, size } = pagination(page, limit); 
 
-    const items = await Product.findAndCountAll({ limit: size, offset: offset });
+    let items;
+    if(includeCategory) {
+      items = await Product.findAndCountAll({
+        include: [{ model: Category, attributes: ['title'] }],
+        limit: size, 
+        offset: offset 
+      });
+    } else {
+      items = await Product.findAndCountAll({ limit: size, offset: offset });
+    }
+    
     const result = paginationMetaData(items, page, size);
     return res.status(200).json(responseObj(true, 'Paginated Products', {
       productCount: result.count,

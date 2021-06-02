@@ -9,6 +9,8 @@ import Cart from '../components/users/cart.vue';
 import Categories from '../components/users/categories.vue';
 import ShopByCategory from '../components/users/shop-by-category.vue';
 import AddCategory from '../components/admin/add-category.vue';
+import ManageProducts from '../components/admin/manage-products.vue';
+import EditProduct from '../components/admin/edit-product.vue';
 import VerifyEmail from '../components/verify-email.vue';
 import Payment from '../components/users/payment.vue';
 import RetryPayment from '../components/users/retry-payment.vue';
@@ -114,6 +116,22 @@ const routes = [
     path: '/admin/orders/:id',
     name: 'AdminOrderDetails',
     component: AdminOrderDetails  ,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/manage-products',
+    name: 'ManageProducts',
+    component: ManageProducts  ,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/edit-product/:id',
+    name: 'EditProduct',
+    component: EditProduct  ,
     meta: {
       requiresAuth: true, adminAuth: true, userAuth: false
     }

@@ -12,18 +12,18 @@
 
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" id="settingDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-user-circle mr-1"></i>Settings
+            <i class="fas fa-cog"></i>&nbsp;&nbsp;Settings
           </a>
 
           <div class="dropdown-menu" aria-labelledby="settingDropdown">
-            <router-link to="/admin/add-product" class="dropdown-item">Add Product</router-link>
+            <router-link to="/admin/manage-products" class="dropdown-item">Manage Products</router-link>
             <router-link to="/admin/add-category" class="dropdown-item">Add Category</router-link>
             <router-link to="/admin/add-subadmin" class="dropdown-item" v-if="userRole == allRoles.SuperAdmin">Add SubAdmin</router-link>
           </div>
         </li>
 
         <li class="nav-item">
-          <router-link to="/admin/orders" class="nav-link">Orders</router-link>
+          <router-link to="/admin/orders" class="nav-link"><i class="fas fa-receipt"></i>&nbsp;&nbsp;Orders</router-link>
         </li>
 
         <li class="nav-item dropdown ml-auto">
@@ -32,7 +32,7 @@
           </a>
 
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
-            <router-link to="/admin/edit-profile" class="dropdown-item">Edit Profile</router-link>
+            <router-link to="/admin/edit-profile" class="dropdown-item"><i class="fas fa-user-edit"></i>&nbsp;&nbsp;Edit Profile</router-link>
             <a class="dropdown-item" @click.prevent="logout"><i class="fas fa-power-off"></i>&nbsp;&nbsp;Logout</a>
           </div>
         </li>

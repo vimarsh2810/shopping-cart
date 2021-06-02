@@ -2,34 +2,34 @@
   <div>
     <AdminNavbar/>
     <div class="container">
-      <div class="card card-1 mb-4">
-        <h5 class="card-title">Add Product</h5>
+      <div class="card card-1 mb-4" v-if="!isLoading">
+        <h5 class="card-title">Edit Product</h5>
         <!-- Form starts -->
-        <form @submit.prevent="addProduct" method="POST">
-          <div class="alert alert-danger" role="alert" v-if="errors">
-            {{ errors }}
+        <form @submit.prevent="editProduct" method="POST">
+          <div class="alert alert-danger" role="alert" v-if="error">
+            {{ error }}
           </div>
           <div class="alert alert-success" role="alert" v-if="successMsg">
             {{ successMsg }}
           </div>
           <div class="form-group">
             <label for="title">Product Title</label>
-            <input type="text" name="title" id="title" class="form-control" v-model="title" placeholder="Enter product title">
+            <input type="text" name="title" id="title" class="form-control" v-model="product.title" placeholder="Enter product title">
           </div>
 
           <div class="form-group">
             <label for="description">Description</label>
-            <textarea id="description" class="form-control" name="description" v-model="description" placeholder="Enter product description"></textarea>
+            <textarea id="description" class="form-control" name="description" v-model="product.description" placeholder="Enter product description"></textarea>
           </div>
 
           <div class="form-group">
             <label for="title">Brand Name</label>
-            <input type="text" name="brandName" id="brandName" class="form-control" v-model="brandName" placeholder="Enter brand name">
+            <input type="text" name="brandName" id="brandName" class="form-control" v-model="product.brandName" placeholder="Enter brand name">
           </div>
 
           <div class="form-group">
             <label for="price">Price</label>
-            <input type="number" class="form-control" name="price" id="price" v-model="price" placeholder="Enter brand price">
+            <input type="number" class="form-control" name="price" id="price" v-model="product.price" placeholder="Enter brand price">
           </div>
 
           <div class="form-group">
@@ -48,12 +48,7 @@
             </select>
           </div>
 
-          <div class="form-group">
-            <label for="image">Image</label>
-            <input type="file" class="form-control" name="image" id="image" ref="file" @change="onFileChange" >
-          </div>
-
-          <button class="btn btn-primary material-button" type="submit">Add Product</button>
+          <button class="btn btn-primary material-button" type="submit">Edit Product</button>
         </form>
         <!-- Form ends -->
       </div>
@@ -66,29 +61,21 @@
 import AdminNavbar from '../shared/admin-navbar.vue';
 import axios from 'axios';
 export default {
-  name: 'AddProduct',
+  name: 'EditProduct',
   components: {
     AdminNavbar
   },
   data() {
     return {
-      title: '',
-      description: '',
-      price: null,
-      brandName: '',
-      image: null,
-      userId: this.$store.getters.userData.id,
+      isLoading: true,
+      product: null,
       parentCategories: this.$store.getters.categories,
       childCategories: null,
-      categoryId: null,
-      errors: null,
+      error: null,
       successMsg: null
     };
   },
   methods: {
-    onFileChange(event) {
-      this.image = this.$refs.file.files[0];
-    },
 
     onSelectParent() {
       let selectedParent = undefined;
@@ -101,32 +88,51 @@ export default {
       this.childCategories = selectedParent.children;
     },
     
-    async addProduct() {
-      const formData = new FormData();
-      this.categoryId = document.querySelector('#childCategory').value;
-      formData.append('file', this.image);
-      formData.append('description', this.description);
-      formData.append('title', this.title);
-      formData.append('brandName', this.brandName);
-      formData.append('price', this.price);
-      formData.append('userId', this.userId);
-      formData.append('categoryId', this.categoryId);
+    async editProduct() {
+      this.product.categoryId = document.querySelector('#childCategory').value;
+      if(!this.product.title || !this.product.brandName || !this.product.price || !this.product.description || !this.product.categoryId) {
+        this.error = 'Please fill all details';
+        return;
+      }
+
       try {  
-        const response = await axios.post(`${this.$store.getters.base_url}/admin/product`, formData, {
+        const response = await axios.put(`${this.$store.getters.base_url}/admin/product/${this.$route.params.id}`, this.product, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
         });
+
         if(response.data.success) {
-          this.errors = null;
+          this.error = null;
           this.successMsg = response.data.message;
         }
       } catch (error) {
         this.successMsg = null;
-        this.errors = error.response.data.message
+        this.error = error.response.data.message
+      }
+    },
+
+    async getProduct() {
+      try {
+        const response = await axios.get(`${this.$store.getters.base_url}/admin/product/${this.$route.params.id}`, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.token}`
+          }
+        });
+
+        if(response.data.success) {
+          this.product = response.data.payload;
+          this.isLoading = false;
+        }
+      } catch (error) {
+        this.successMsg = null;
+        this.error = error.response.data.message
       }
     }
+  },
 
+  created() {
+    this.getProduct();
   }
 }
 </script>
