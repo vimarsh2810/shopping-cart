@@ -28,6 +28,8 @@ router.post('/subAdmin', [validateToken, checkSuperAdmin, signupValidator(), val
 
 router.get('/categories', [validateToken, checkAdmin], adminController.getAllCategories);
 
+router.get('/limitedCategories', [validateToken, checkAdmin], adminController.getLimitedCategories);
+
 router.put('/profile', [validateToken, checkAdmin], adminController.editProfile);
 
 router.get('/orders', [validateToken, checkAdmin], adminController.getAllOrders);

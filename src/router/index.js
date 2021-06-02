@@ -10,6 +10,7 @@ import Categories from '../components/users/categories.vue';
 import ShopByCategory from '../components/users/shop-by-category.vue';
 import AddCategory from '../components/admin/add-category.vue';
 import ManageProducts from '../components/admin/manage-products.vue';
+import ManageCategories from '../components/admin/manage-categories.vue';
 import EditProduct from '../components/admin/edit-product.vue';
 import VerifyEmail from '../components/verify-email.vue';
 import Payment from '../components/users/payment.vue';
@@ -132,6 +133,14 @@ const routes = [
     path: '/admin/edit-product/:id',
     name: 'EditProduct',
     component: EditProduct  ,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/manage-categories',
+    name: 'ManageCategories',
+    component: ManageCategories  ,
     meta: {
       requiresAuth: true, adminAuth: true, userAuth: false
     }

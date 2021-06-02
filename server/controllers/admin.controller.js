@@ -6,6 +6,7 @@ const { Order } = require('../models/order.js');
 const { responseObj } = require('../helpers/responseObj.js');
 const { development } = require('../config/config.js');
 const { Category } = require('../models/category.js');
+const { pagination, paginationMetaData } = require('../helpers/pagination.js');
 
 /* @desc Create a SubAdmin */
 /* @route POST /admin/subAdmin */
@@ -177,6 +178,41 @@ exports.getAllCategories = async (req, res, next) => {
       category.dataValues.children = await category.getChildren();
     }
     return res.status(200).json(responseObj(true, 'Categories', categories));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Get limited categories */
+/* @route GET /admin/limitedCategories */
+
+exports.getLimitedCategories = async (req, res, next) => {
+  try {
+
+    let { page, limit, includeCategory } = req.query;
+    const { offset, size } = pagination(page, limit);
+    let items = await Category.findAndCountAll({
+      include: [{ 
+        model: Category,
+        as: 'parent',
+        attributes: ['id', 'title'] 
+      }, 
+      { 
+        model: User, 
+        attributes: ['id', 'name', 'username']
+      }],
+      limit: size,
+      offset: offset
+    });
+
+    const result = paginationMetaData(items, page, size);
+
+    return res.status(200).json(responseObj(true, 'Paginated Categories', {
+      categoryCount: result.count,
+      categories: result.rows,
+      totalPages: result.totalNoOfPages,
+      currentPage: result.currentPage
+    }));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

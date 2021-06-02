@@ -84,9 +84,13 @@ import axios from 'axios';
 
       async getProducts(requestedPage) {
         try {
-          const response = await axios.get(`${this.$store.getters.base_url}/shop/limitedProducts?page=${requestedPage}&limit=${this.limit}`, {
+          const response = await axios.get(`${this.$store.getters.base_url}/shop/limitedProducts`, {
             headers: {
               'Authorization': `Bearer ${this.$store.getters.token}`
+            }, params: {
+              page: requestedPage,
+              limit: this.limit,
+              includeCategory: false
             }
           });
 

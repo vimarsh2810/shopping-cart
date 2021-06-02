@@ -16,20 +16,19 @@ exports.getAllProducts = async (req, res, next) => {
   }
 };
 
-// @desc Get all products
-// @route GET /shop/getAllProducts
+// @desc Get limited products
+// @route GET /shop/limitedProducts
 
 exports.getProducts = async (req, res, next) => {
   try {
 
     let { page, limit, includeCategory } = req.query;
-    const { offset, size } = pagination(page, limit); 
-
+    const { offset, size } = pagination(page, limit);
     let items;
-    if(includeCategory) {
+    if(includeCategory === true) {
       items = await Product.findAndCountAll({
         include: [{ model: Category, attributes: ['title'] }],
-        limit: size, 
+        limit: size,
         offset: offset 
       });
     } else {
