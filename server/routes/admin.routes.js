@@ -16,6 +16,10 @@ router.put('/category/:id', [validateToken, checkAdmin, categoryValidator(), val
 
 router.delete('/category/:id', [validateToken, checkAdmin], adminController.deleteCategory);
 
+router.get('/categories', [validateToken, checkAdmin], adminController.getAllCategories);
+
+router.get('/limitedCategories', [validateToken, checkAdmin], adminController.getLimitedCategories);
+
 router.post('/product', [validateToken, checkAdmin, upload.single("file")], adminController.addProduct);
 
 router.put('/product/:id', [validateToken, checkAdmin], adminController.editProduct);
@@ -26,9 +30,11 @@ router.get('/product/:id', [validateToken, checkAdmin], adminController.getProdu
 
 router.post('/subAdmin', [validateToken, checkSuperAdmin, signupValidator(), validate], adminController.addSubAdmin);
 
-router.get('/categories', [validateToken, checkAdmin], adminController.getAllCategories);
+router.get('/subAdmin/:id', [validateToken, checkSuperAdmin], adminController.getSubAdmin);
 
-router.get('/limitedCategories', [validateToken, checkAdmin], adminController.getLimitedCategories);
+router.get('/subAdmins', [validateToken, checkSuperAdmin], adminController.getAllSubAdmins);
+
+router.put('/subAdmin/:id', [validateToken, checkSuperAdmin, signupValidator(), validate], adminController.editSubAdmin);
 
 router.put('/profile', [validateToken, checkAdmin], adminController.editProfile);
 

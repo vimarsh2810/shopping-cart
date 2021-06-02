@@ -44,26 +44,13 @@ const routes = [
     name: 'Login',
     component: Login
   },
+
+  /* User Routes */
+
   {
     path: '/user/home',
     name: 'UserHome',
     component: UserHome
-  },
-  {
-    path: '/admin/add-product',
-    name: 'AddProduct',
-    component: AddProduct,
-    meta: {
-      requiresAuth: true, adminAuth: true, userAuth: false
-    }
-  },
-  {
-    path: '/admin/add-subadmin',
-    name: 'AddSubAdmin',
-    component: AddSubAdmin,
-    meta: {
-      requiresAuth: true, adminAuth: false, superAdminAuth: true, userAuth: false
-    }
   },
   {
     path: '/user/cart',
@@ -88,70 +75,6 @@ const routes = [
     props: true,
     meta: {
       requiresAuth: true, adminAuth: false, userAuth: true
-    }
-  },
-  {
-    path: '/admin/add-category',
-    name: 'AddCategory',
-    component: AddCategory,
-    meta: {
-      requiresAuth: true, adminAuth: true, userAuth: false
-    }
-  },
-  {
-    path: '/admin/edit-profile',
-    name: 'AdminEditProfile',
-    component: AdminEditProfile,
-    meta: {
-      requiresAuth: true, adminAuth: true, userAuth: false
-    }
-  },
-  {
-    path: '/admin/orders',
-    name: 'AllOrders',
-    component: AllOrders,
-    meta: {
-      requiresAuth: true, adminAuth: true, userAuth: false
-    }
-  },
-  {
-    path: '/admin/orders/:id',
-    name: 'AdminOrderDetails',
-    component: AdminOrderDetails  ,
-    meta: {
-      requiresAuth: true, adminAuth: true, userAuth: false
-    }
-  },
-  {
-    path: '/admin/manage-products',
-    name: 'ManageProducts',
-    component: ManageProducts  ,
-    meta: {
-      requiresAuth: true, adminAuth: true, userAuth: false
-    }
-  },
-  {
-    path: '/admin/edit-product/:id',
-    name: 'EditProduct',
-    component: EditProduct  ,
-    meta: {
-      requiresAuth: true, adminAuth: true, userAuth: false
-    }
-  },
-  {
-    path: '/admin/manage-categories',
-    name: 'ManageCategories',
-    component: ManageCategories  ,
-    meta: {
-      requiresAuth: true, adminAuth: true, userAuth: false
-    }
-  },
-  {
-    path: '/admin/edit-category/:id',
-    name: 'EditCategory',
-    component: EditCategory  ,
-    meta: {
-      requiresAuth: true, adminAuth: true, userAuth: false
     }
   },
   {
@@ -192,6 +115,89 @@ const routes = [
     component: OrderDetails,
     meta: {
       requiresAuth: true, adminAuth: false, userAuth: true
+    }
+  },
+
+  /* Admin Routes */
+  
+  {
+    path: '/admin/add-product',
+    name: 'AddProduct',
+    component: AddProduct,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/manage-products',
+    name: 'ManageProducts',
+    component: ManageProducts  ,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/edit-product/:id',
+    name: 'EditProduct',
+    component: EditProduct  ,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/add-subadmin',
+    name: 'AddSubAdmin',
+    component: AddSubAdmin,
+    meta: {
+      requiresAuth: true, adminAuth: false, superAdminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/add-category',
+    name: 'AddCategory',
+    component: AddCategory,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/manage-categories',
+    name: 'ManageCategories',
+    component: ManageCategories  ,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/edit-category/:id',
+    name: 'EditCategory',
+    component: EditCategory  ,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/edit-profile',
+    name: 'AdminEditProfile',
+    component: AdminEditProfile,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/orders',
+    name: 'AllOrders',
+    component: AllOrders,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/orders/:id',
+    name: 'AdminOrderDetails',
+    component: AdminOrderDetails  ,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
     }
   },
   {

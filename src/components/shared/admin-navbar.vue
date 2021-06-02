@@ -1,6 +1,14 @@
 <template>
   <nav class="navbar navbar-expand-sm navbar-dark bg-primary fixed-top">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button
+      class="navbar-toggler" 
+      type="button" 
+      data-toggle="collapse" 
+      data-target="#navbarSupportedContent" 
+      aria-controls="navbarSupportedContent" 
+      aria-expanded="false" 
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -11,29 +19,78 @@
         </li>
 
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" id="settingDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a 
+            class="nav-link dropdown-toggle" 
+            id="settingDropdown" 
+            role="button" 
+            data-toggle="dropdown" 
+            aria-haspopup="true" 
+            aria-expanded="false"
+          >
             <i class="fas fa-cog"></i>&nbsp;&nbsp;Settings
           </a>
 
           <div class="dropdown-menu" aria-labelledby="settingDropdown">
-            <router-link to="/admin/manage-products" class="dropdown-item">Manage Products</router-link>
-            <router-link to="/admin/manage-categories" class="dropdown-item">Manage Categories</router-link>
-            <router-link to="/admin/add-subadmin" class="dropdown-item" v-if="userRole == allRoles.SuperAdmin">Add SubAdmin</router-link>
+            <router-link 
+              to="/admin/manage-products" 
+              class="dropdown-item"
+            > 
+              Manage Products
+            </router-link>
+
+            <router-link 
+              to="/admin/manage-categories" 
+              class="dropdown-item"
+            >
+              Manage Categories
+            </router-link>
+
+            <router-link 
+              to="/admin/add-subadmin" 
+              class="dropdown-item" 
+              v-if="userRole == allRoles.SuperAdmin"
+            >
+              Add SubAdmin
+            </router-link>
           </div>
         </li>
 
         <li class="nav-item">
-          <router-link to="/admin/orders" class="nav-link"><i class="fas fa-receipt"></i>&nbsp;&nbsp;Orders</router-link>
+          <router-link 
+            to="/admin/orders" 
+            class="nav-link"
+          >
+            <i class="fas fa-receipt"></i>&nbsp;&nbsp;Orders
+          </router-link>
         </li>
 
         <li class="nav-item dropdown ml-auto">
-          <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="profileDropdown"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
             <i class="fas fa-user-circle mr-1"></i>{{ username }}
           </a>
 
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
-            <router-link to="/admin/edit-profile" class="dropdown-item"><i class="fas fa-user-edit"></i>&nbsp;&nbsp;Edit Profile</router-link>
-            <a class="dropdown-item" @click.prevent="logout"><i class="fas fa-power-off"></i>&nbsp;&nbsp;Logout</a>
+            <router-link
+              to="/admin/edit-profile"
+              class="dropdown-item"
+            >
+              <i class="fas fa-user-edit"></i>&nbsp;&nbsp;Edit Profile
+            </router-link>
+
+            <a 
+              class="dropdown-item" 
+              @click.prevent="logout"
+            >
+              <i class="fas fa-power-off"></i>&nbsp;&nbsp;Logout
+            </a>
           </div>
         </li>
 

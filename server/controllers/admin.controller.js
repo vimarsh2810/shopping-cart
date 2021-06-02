@@ -28,6 +28,48 @@ exports.addSubAdmin = async (req, res, next) => {
   }
 };
 
+/* @desc Get a SubAdmin's Info by ID */
+/* @route GET /admin/subAdmin/:id */
+
+exports.getSubAdmin = async (req, res, next) => {
+  try {
+    const subAdmin = await User.findOne({ where: { id: req.params.id, userRoleId: development.roles.SubAdmin }});
+    return res.status(200).json(responseObj(true, `SubAdmin having ID = ${req.params.id}`, subAdmin));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Get all SubAdmins */
+/* @route GET /admin/subAdmins */
+
+exports.getAllSubAdmins = async (req, res, next) => {
+  try {
+    const subAdmins = await User.findAll({ where: { userRoleId: development.roles.SubAdmin }});
+    return res.status(200).json(responseObj(true, `All SubAdmins`, subAdmins));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Edit a subadmin's details */
+/* @route PUT /admin/subAdmin/:id */
+
+exports.editSubAdmin = async (req, res, next) => {
+  try {
+    const { name, username, email, password } = req.body;
+    const subAdmin = await User.findOne({ where: { id: req.params.id, userRoleId: development.roles.SubAdmin }});
+    subAdmin.name = name;
+    subAdmin.username = username;
+    subAdmin.email = email;
+    subAdmin.password = bcrypt.hashSync(password, parseInt(development.salt_value));
+    await subAdmin.save();
+    return res.status(200).json(responseObj(true, `SubAdmin details edited successfully`));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
 /* @desc Create a Product */
 /* @route POST /admin/product */
 
