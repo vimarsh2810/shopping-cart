@@ -8,6 +8,8 @@ const { categoryValidator, signupValidator, validate } = require('../middlewares
 
 const router = express.Router();
 
+/* Category Routes */
+
 router.get('/category/:id', [validateToken, checkAdmin], adminController.getCategoryById);
 
 router.post('/category', [validateToken, checkAdmin, categoryValidator(), validate], adminController.addCategory);
@@ -20,6 +22,8 @@ router.get('/categories', [validateToken, checkAdmin], adminController.getAllCat
 
 router.get('/limitedCategories', [validateToken, checkAdmin], adminController.getLimitedCategories);
 
+/* Product Routes */
+
 router.post('/product', [validateToken, checkAdmin, upload.single("file")], adminController.addProduct);
 
 router.put('/product/:id', [validateToken, checkAdmin], adminController.editProduct);
@@ -28,6 +32,8 @@ router.delete('/product/:id', [validateToken, checkAdmin], adminController.delet
 
 router.get('/product/:id', [validateToken, checkAdmin], adminController.getProductById);
 
+/* SubAdmin Routes */
+
 router.post('/subAdmin', [validateToken, checkSuperAdmin, signupValidator(), validate], adminController.addSubAdmin);
 
 router.get('/subAdmin/:id', [validateToken, checkSuperAdmin], adminController.getSubAdmin);
@@ -35,6 +41,10 @@ router.get('/subAdmin/:id', [validateToken, checkSuperAdmin], adminController.ge
 router.get('/subAdmins', [validateToken, checkSuperAdmin], adminController.getAllSubAdmins);
 
 router.put('/subAdmin/:id', [validateToken, checkSuperAdmin, signupValidator(), validate], adminController.editSubAdmin);
+
+router.delete('/subAdmin/:id', [validateToken, checkSuperAdmin], adminController.deleteSubAdmin);
+
+/* Other Routes */
 
 router.put('/profile', [validateToken, checkAdmin], adminController.editProfile);
 

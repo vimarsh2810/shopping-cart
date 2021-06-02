@@ -46,11 +46,11 @@
             </router-link>
 
             <router-link 
-              to="/admin/add-subadmin" 
+              to="/admin/manage-subadmins" 
               class="dropdown-item" 
               v-if="userRole == allRoles.SuperAdmin"
             >
-              Add SubAdmin
+              Manage SubAdmins
             </router-link>
           </div>
         </li>

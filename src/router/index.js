@@ -5,6 +5,8 @@ import Login from '../components/Login.vue';
 import UserHome from '../components/users/user-home.vue';
 import AddProduct from '../components/admin/add-product.vue';
 import AddSubAdmin from '../components/admin/add-subadmin.vue';
+import ManageSubAdmins from '../components/admin/manage-subadmins.vue';
+import EditSubAdmin from '../components/admin/edit-subadmin.vue';
 import Cart from '../components/users/cart.vue';
 import Categories from '../components/users/categories.vue';
 import ShopByCategory from '../components/users/shop-by-category.vue';
@@ -148,6 +150,22 @@ const routes = [
     path: '/admin/add-subadmin',
     name: 'AddSubAdmin',
     component: AddSubAdmin,
+    meta: {
+      requiresAuth: true, adminAuth: false, superAdminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/manage-subadmins',
+    name: 'ManageSubAdmins',
+    component: ManageSubAdmins,
+    meta: {
+      requiresAuth: true, adminAuth: false, superAdminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/edit-subadmin/:id',
+    name: 'EditSubAdmin',
+    component: EditSubAdmin,
     meta: {
       requiresAuth: true, adminAuth: false, superAdminAuth: true, userAuth: false
     }
