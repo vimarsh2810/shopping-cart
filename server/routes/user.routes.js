@@ -6,17 +6,15 @@ const { editProfileValidator, validate } = require('../middlewares/validator.js'
 
 const router = express.Router();
 
-router.get('/getUserData', validateToken, userController.getUserData);
-
 router.get('/orders', validateToken, userController.getOrders);
 
 router.get('/order/:id', validateToken, userController.getOrderProducts);
 
-router.put('/order/cancel/:id', validateToken, userController.cancelOrder);
+router.put('/order/:id/cancel', validateToken, userController.cancelOrder);
 
-router.post('/orderAmount/:id', validateToken, userController.getOrderAmount);
+router.post('/order/:id/amount', validateToken, userController.getOrderAmount);
 
-router.post('/retryOrder/:id', validateToken, userController.retryOrder);
+router.post('/order/:id/retry', validateToken, userController.retryOrder);
 
 router.get('/notifications', validateToken, userController.getNotifications);
 

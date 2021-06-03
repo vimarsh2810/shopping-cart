@@ -54,7 +54,7 @@ exports.deleteCartItem = async (req, res, next) => {
       where: { userId: req.userData.userId }, 
       include: [{ 
         model: Product, 
-        where: { id: req.params.productId } 
+        where: { id: req.params.id } 
       }],
       logging: false 
     });
@@ -72,7 +72,7 @@ exports.deleteCartItemSP = async (req, res, next) => {
     });
 
     const result = await sequelize.query('CALL remove_from_cart(:cartId, :productId)', {
-      replacements: { cartId: user.cart.id, productId: parseInt(req.params.productId) }
+      replacements: { cartId: user.cart.id, productId: parseInt(req.params.id) }
     });
 
     return res.status(200).json(responseObj(200, 'Product deleted from cart Cart'));
@@ -90,7 +90,7 @@ exports.updateQuantity = async (req, res, next) => {
       where: { userId: req.userData.userId }, 
       include: [{ 
         model: Product, 
-        where: { id: req.params.productId } 
+        where: { id: req.params.id } 
       }] 
     });
     cart.products[0].cartItem.quantity = parseInt(req.body.quantity);

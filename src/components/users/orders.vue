@@ -127,7 +127,7 @@ export default {
     async cancelOrder(orderId) {
       if(confirm('Are you sure you want to cancel this order?')) {
         try {
-          const response = await axios.put(`${this.$store.getters.base_url}/user/order/cancel/${orderId}`, 'Cancel Order', {
+          const response = await axios.put(`${this.$store.getters.base_url}/user/order/${orderId}/cancel`, 'Cancel Order', {
             headers: {
               'Authorization': `Bearer ${this.$store.getters.token}`
             }

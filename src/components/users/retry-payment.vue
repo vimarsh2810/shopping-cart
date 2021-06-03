@@ -99,7 +99,7 @@ export default {
     async makePayment(isSuccess) {
       try {
         const response = await axios.post(
-          `${this.$store.getters.base_url}/user/retryOrder/${this.$route.params.id}`, 
+          `${this.$store.getters.base_url}/user/order/${this.$route.params.id}/retry`, 
           { 
             paymentSuccess: isSuccess,
             couponCode: this.couponCode,
@@ -122,7 +122,7 @@ export default {
 
     async getPaymentAmount() {
       try {
-        const response = await axios.post(`${this.$store.getters.base_url}/user/orderAmount/${this.$route.params.id}`, { isCouponApplied: this.isCouponApplied }, {
+        const response = await axios.post(`${this.$store.getters.base_url}/user/order/${this.$route.params.id}/amount`, { isCouponApplied: this.isCouponApplied }, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }

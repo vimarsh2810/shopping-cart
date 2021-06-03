@@ -150,7 +150,7 @@ export default {
         return;
       }
       try {
-        const response = await axios.get(`${this.$store.getters.base_url}/cart/cartProducts`, {
+        const response = await axios.get(`${this.$store.getters.base_url}/cart/products`, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
@@ -170,7 +170,7 @@ export default {
     async deleteCartItem(productId) {
       if(confirm('Are you sure you want to delete this product from cart?')) {
         try {
-          const response = await axios.delete(`${this.$store.getters.base_url}/cart/cartProduct/${productId}`, {
+          const response = await axios.delete(`${this.$store.getters.base_url}/cart/products/${productId}`, {
             headers: {
               'Authorization': `Bearer ${this.$store.getters.token}`
             }
@@ -190,7 +190,7 @@ export default {
           return;
         }
         try {
-          const response = await axios.put(`${this.$store.getters.base_url}/cart/quantity/${productId}`, { quantity }, {
+          const response = await axios.put(`${this.$store.getters.base_url}/cart/${productId}/quantity`, { quantity }, {
             headers: {
               'Authorization': `Bearer ${this.$store.getters.token}`
             }

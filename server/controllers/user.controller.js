@@ -10,18 +10,6 @@ const { Coupon } = require('../models/coupon.js');
 const { Wallet } = require('../models/wallet.js');
 const { development } = require('../config/config.js');
 
-/* @desc Get data of logged in user */
-/* @route GET /user/getUserData */
-
-exports.getUserData = async (req, res, next) => {
-  try {
-    const user = await User.findByPk(req.userData.userId);
-    res.status(200).json(responseObj(true, 'Logged in user data', user));
-  } catch (error) {
-    return res.status(500).json(responseObj(500, false, error.message));
-  }
-};
-
 /* @desc Get all orders of logged in user */
 /* @route GET /user/orders */
 
@@ -127,7 +115,6 @@ exports.retryOrder = async (req, res, next) => {
       user.orders[0].status = development.orderStatus.InProcess;
       await user.orders[0].save();
       user.coupon.isUsed = true;
-      console.log(user.wallet.balance, user.orders[0].amount)
       user.wallet.balance -= user.orders[0].amount;
       await user.coupon.save();
       await user.wallet.save();
