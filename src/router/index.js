@@ -9,6 +9,7 @@ import ManageSubAdmins from '../components/admin/manage-subadmins.vue';
 import EditSubAdmin from '../components/admin/edit-subadmin.vue';
 import Cart from '../components/users/cart.vue';
 import Categories from '../components/users/categories.vue';
+import UserEditProfile from '../components/users/edit-profile.vue';
 import ShopByCategory from '../components/users/shop-by-category.vue';
 import AddCategory from '../components/admin/add-category.vue';
 import ManageProducts from '../components/admin/manage-products.vue';
@@ -79,6 +80,14 @@ const routes = [
     component: VerifyEmail,
     meta: {
       requiresAuth: true, adminAuth: false, userAuth: true, userNotActive: true
+    }
+  },
+  {
+    path: '/user/edit-profile',
+    name: 'UserEditProfile',
+    component: UserEditProfile,
+    meta: {
+      requiresAuth: true, adminAuth: false, userAuth: true
     }
   },
   {

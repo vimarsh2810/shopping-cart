@@ -2,6 +2,7 @@ const express = require('express');
 
 const { validateToken } = require('../middlewares/validateToken.js');
 const userController = require('../controllers/user.controller.js');
+const { editProfileValidator, validate } = require('../middlewares/validator.js');
 
 const router = express.Router();
 
@@ -18,5 +19,7 @@ router.post('/orderAmount/:id', validateToken, userController.getOrderAmount);
 router.post('/retryOrder/:id', validateToken, userController.retryOrder);
 
 router.get('/notifications', validateToken, userController.getNotifications);
+
+router.put('/profile', [validateToken, editProfileValidator(), validate ], userController.editProfile);
 
 module.exports = router;

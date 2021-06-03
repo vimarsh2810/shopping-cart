@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize');
+
 const { responseObj } = require('../helpers/responseObj.js');
 const { verifyCouponCode } = require('../helpers/verifyCouponCode.js');
 const { User } = require("../models/user.js");
@@ -180,6 +182,39 @@ exports.getNotifications = async (req, res, next) => {
     ];
 
     return res.status(200).json(responseObj(true, 'Notifications', notifications));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Edit User Profile */
+/* @route PUT /user/profile */
+
+exports.editProfile = async (req, res, next) => {
+  try {
+    const { name, username, email } = req.body;
+    const userExist = await User.findOne({ 
+      where: { 
+        [Sequelize.Op.or]: {
+          email: email, 
+          username: username
+        },
+        id: {
+          [Sequelize.Op.not]: req.userData.userId
+        }
+      } 
+    });
+
+    if(userExist) {
+      return res.status(409).json(responseObj(false, 'Username or email already in use'));
+    }
+
+    const user = await User.findByPk(req.userData.userId);
+    user.name = name;
+    user.username = username;
+    user.email = email;
+    await user.save();
+    return res.status(200).json(responseObj(true, 'Profile Updated'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

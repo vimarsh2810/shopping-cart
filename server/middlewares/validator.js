@@ -38,6 +38,21 @@ const loginValidator = () => {
   ]
 };
 
+const editProfileValidator = () => {
+  return [
+    body('name')
+      .matches(/^[a-zA-Z][a-z\s]+$/i)
+      .withMessage('Name must only contain alphabets & spaces.'),
+    
+    body('username')
+      .isAlphanumeric().withMessage('Username must only contain alphanumeric characters')
+      .isLength({ min: 6, max: 20 }).withMessage('Username length must be between 6 to 20'),
+
+    body('email')
+      .isEmail().withMessage('Email is invalid'),
+  ]
+}
+
 const categoryValidator = () => {
   return [
     body('title')
@@ -62,6 +77,7 @@ const validate = (req, res, next) => {
 module.exports = { 
   signupValidator,
   loginValidator,
+  editProfileValidator,
   categoryValidator, 
   validate 
 };
