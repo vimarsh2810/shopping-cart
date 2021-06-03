@@ -14,7 +14,8 @@ export default new Vuex.Store({
     user: null,
     isAuthenticated: false,
     base_url: 'http://localhost:3000',
-    categories: null
+    categories: null,
+    notifications: []
   },
   mutations: {
     setAuthData(state, loginData) {
@@ -23,10 +24,15 @@ export default new Vuex.Store({
       state.user = loginData.user;
     },
 
+    setNotifications(state, notifications) {
+      state.notifications = notifications;
+    },
+
     clearAuthData(state) {
       state.token = null;
       state.isLoggedIn = false;
       state.user = null;
+      state.notifications = [];
     },
 
     setCategories(state, categories) {
@@ -48,16 +54,17 @@ export default new Vuex.Store({
       }
     },
 
-    login({commit, dispatch}, authData) {
+    async login({commit, dispatch}, authData) {
       commit('setAuthData', {
         token: authData.accessToken,
         user: authData.payload
       });
       
       if(authData.payload.roleId === development.roles.User) {
+        await dispatch('getNotifications');
         router.push('/user/home');
       } else {
-        dispatch('getCategories');
+        await dispatch('getCategories');
         router.push('/admin/add-product');
       }
     },
@@ -65,6 +72,22 @@ export default new Vuex.Store({
     logout({commit}) {
       commit('clearAuthData');
       router.push('/login');
+    },
+
+    async getNotifications(context) {
+      try {
+        const response = await axios.get(`${context.getters.base_url}/user/notifications`, {
+          headers: {
+            'Authorization': `Bearer ${context.getters.token}`
+          }
+        });
+
+        if(response.data.success) {
+          context.commit('setNotifications', response.data.payload);
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
     },
 
     async addToCart(context, productId) {
@@ -88,6 +111,7 @@ export default new Vuex.Store({
     isLoggedIn: (state) => state.isLoggedIn,
     categories: (state) => state.categories,
     base_url: (state) => state.base_url,
-    authStatus: (state) => state.isAuthenticated
+    authStatus: (state) => state.isAuthenticated,
+    notifications: (state) => state.notifications
   }
 });

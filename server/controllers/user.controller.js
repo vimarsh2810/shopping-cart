@@ -138,10 +138,7 @@ exports.getNotifications = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.userData.userId);
     if(user.isActive) {
-      const notifications = [
-        'No Notifications'
-      ];
-      return res.status(200).json(responseObj(false, 'Email is already verified', notifications));
+      return res.status(200).json(responseObj(false, 'Email is already verified'));
     }
 
     const notifications = [

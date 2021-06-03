@@ -36,7 +36,8 @@ exports.getCart = async (req, res, next) => {
   try {
     const cart = await Cart.findOne({ 
       where: { userId:req.userData.userId },
-      include: [{ model: Product }]
+      include: [{ model: Product }],
+      logging: false
     });
     return res.status(200).json(responseObj(200, 'Your Cart', cart));
   } catch (error) {
@@ -49,13 +50,36 @@ exports.getCart = async (req, res, next) => {
 
 exports.deleteCartItem = async (req, res, next) => {
   try {
-    const cart = await Cart.findOne({ where: { userId: req.userData.userId }, include: [{ model: Product, where: { id: req.params.productId } }] });
+    const cart = await Cart.findOne({ 
+      where: { userId: req.userData.userId }, 
+      include: [{ 
+        model: Product, 
+        where: { id: req.params.productId } 
+      }],
+      logging: false 
+    });
     await cart.products[0].cartItem.destroy();
     return res.status(200).json(responseObj(true, 'Deleted'));
   } catch (error) {
     return res.status(500).json(responseObj(500, false, error.message));
   }
 };
+
+exports.deleteCartItemSP = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userData.userId, {
+      include: [{ model: Cart }]
+    });
+
+    const result = await sequelize.query('CALL remove_from_cart(:cartId, :productId)', {
+      replacements: { cartId: user.cart.id, productId: parseInt(req.params.productId) }
+    });
+
+    return res.status(200).json(responseObj(200, 'Product deleted from cart Cart'));
+  } catch (error) {
+    return res.status(500).json(responseObj(500, false, error.message));
+  }
+}
 
 /* @desc Update product quantity in cart */
 /* @route PUT /cart/updateQuantity/:productId */

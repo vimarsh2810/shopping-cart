@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-sm navbar-dark bg-primary fixed-top" v-if="!isLoading">
+  <nav class="navbar navbar-expand-sm navbar-dark bg-primary fixed-top">
     <button 
       class="navbar-toggler" 
       type="button" 
@@ -132,41 +132,18 @@
 </template>
 
 <script>
-import axios from 'axios';
 export default {
   name: "Navbar",
   data() {
     return {
-      notifications: [],
-      isLoading: true,
+      notifications: this.$store.getters.notifications || [],
       isUserActive: this.$store.getters.userData.isActive
     };
   },
   methods: {
     logout(event) {
       this.$store.dispatch("logout");
-    },
-
-    async getNotifications() {
-      try {
-        const response = await axios.get(`${this.$store.getters.base_url}/user/notifications`, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
-          }
-        });
-
-        if(response.data.success) {
-          this.notifications = response.data.payload;
-        }
-        this.isLoading = false;
-      } catch (error) {
-        this.isLoading = false;
-        console.log(error.response.data.message);
-      }
-    },
-  },
-  created() {
-    this.getNotifications();
+    }
   }
 };
 </script>
