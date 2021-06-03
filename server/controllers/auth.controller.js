@@ -31,7 +31,14 @@ exports.signup = async (req, res, next) => {
     await user.createWishList();
     const wallet = await user.createWallet();
     
-    deliverMail({ email: user.email, verificationOtp: user.verificationOtp });
+    deliverMail(
+      { 
+        email: user.email, 
+        otp: user.verificationOtp 
+      },
+      'Email Verification',
+      `Verify your emailId using this OTP: `
+    );
     
     return res.status(200).json(responseObj(true, `Registration Successful, check your email for verification`));
   } catch (error) {

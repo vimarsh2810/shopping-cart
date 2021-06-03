@@ -7,6 +7,8 @@ const { responseObj } = require('../helpers/responseObj.js');
 const { development } = require('../config/config.js');
 const { Category } = require('../models/category.js');
 const { pagination, paginationMetaData } = require('../helpers/pagination.js');
+const { generateOtp } = require('../helpers/generateOtp.js');
+const { deliverMail } = require('../helpers/nodeMailer.js');
 
 /* @desc Create a SubAdmin */
 /* @route POST /admin/subAdmin */
@@ -328,3 +330,44 @@ exports.getOrderById = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+/* @desc Send delivery otp to customer's email */
+/* @route GET /admin/orders/:id/otp */
+
+exports.sendDeliveryOtp = async (req, res, next) => {
+  try {
+    const order = await Order.findOne({ 
+      where: { id: req.params.id }, 
+      attributes: ['id', 'deliveryOtp'],
+      include: [{ model: User, attributes: ['id', 'username', 'email']}]
+    });
+    order.deliveryOtp = generateOtp();
+    await order.save();
+    deliverMail(
+      { 
+        email: order.user.email, 
+        otp: order.deliveryOtp 
+      }, 
+      'Delivery OTP',
+      'Share this OTP with delivery person: '
+    );
+    return res.status(200).json(responseObj(true, `Delivery OTP sent to Customer's Email ID`));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Verify delivery otp */
+/* @route POST /admin/orders/:id/otp */
+
+exports.verifyDeliveryOtp = async (req, res, next) => {
+  try {
+    const order = await Order.findByPk(req.params.id);
+    if(order.deliveryOtp !== req.body.deliveryOtp) {
+      return res.status(400).json(responseObj(false, 'Incorrect OTP'));
+    }
+    return res.status(200).json(responseObj(true, 'OTP Verified'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+}

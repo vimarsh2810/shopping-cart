@@ -15,8 +15,11 @@ const Order = sequelize.define('order', {
   amount: {
     type: Sequelize.DECIMAL
   },
+  deliveryOtp: {
+    type: Sequelize.INTEGER
+  },
   status: {
-    type: Sequelize.STRING(10)
+    type: Sequelize.STRING(20)
   }
 });
 

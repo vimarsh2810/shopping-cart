@@ -9,12 +9,12 @@ const transporter = nodeMailer.createTransport({
   }
 });
 
-const deliverMail = (userInfo) => {
+const deliverMail = (userInfo, subject, text) => {
   const mailOptions = {
     from: development.mail_id,
     to: userInfo.email,
-    subject: 'Email Verification',
-    text: `Verify your emailId using this OTP: ${userInfo.verificationOtp}`
+    subject: subject,
+    text: text + userInfo.otp
   };
   
   transporter.sendMail(mailOptions, (error, info) => {
