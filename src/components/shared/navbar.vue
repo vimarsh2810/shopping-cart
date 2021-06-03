@@ -32,7 +32,7 @@
           </router-link>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item" v-if="isAuthenticated">
           <router-link 
             to="/user/cart" 
             class="nav-link"
@@ -41,7 +41,7 @@
           </router-link>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item" v-if="isAuthenticated">
           <router-link 
             to="/user/orders" 
             class="nav-link"
@@ -52,7 +52,7 @@
 
         <div class="navbar-collapse">
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown mr-2">
+            <li class="nav-item dropdown mr-2" v-if="isAuthenticated">
               <a 
                 class="nav-link dropdown-toggle" 
                 href="#" 
@@ -80,7 +80,7 @@
                 <a class="dropdown-item">No Notifications</a>
               </div>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown" v-if="isAuthenticated">
               <a 
                 class="nav-link dropdown-toggle" 
                 href="#" 
@@ -123,6 +123,25 @@
                 </a>
               </div>
             </li>
+
+            <li class="nav-item" v-if="!isAuthenticated">
+              <router-link 
+                to="/login" 
+                class="nav-link"
+              >
+                Login
+              </router-link>
+            </li>
+
+            <li class="nav-item" v-if="!isAuthenticated">
+              <router-link 
+                to="/signup" 
+                class="nav-link"
+              >
+                Signup
+              </router-link>
+            </li>
+
           </ul>
         </div>
 
@@ -137,7 +156,8 @@ export default {
   data() {
     return {
       notifications: this.$store.getters.notifications || [],
-      isUserActive: this.$store.getters.userData.isActive
+      isUserActive: this.$store.getters.isActive,
+      isAuthenticated: this.$store.getters.authStatus
     };
   },
   methods: {

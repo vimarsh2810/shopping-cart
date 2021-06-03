@@ -4,7 +4,7 @@
     <div class="wrapper" style="margin-top: 100px">
       <div class="container" v-if="!isLoading">
         <h3 class="mbpx-30px">Products</h3>
-        <div class="alert alert-danger" role="alert" v-if="!user.isActive">
+        <div class="alert alert-danger" role="alert" v-if="!isActive">
           Verify Email Id to add products in cart
         </div>
         <div class="row" v-if="products.length > 0">
@@ -60,7 +60,7 @@ import axios from 'axios';
     data() {
       return {
         isLoading: true,
-        user: {},
+        isActive: this.$store.getters.isActive,
         products: [],
         error: null,
         totalPages: null,
@@ -118,8 +118,6 @@ import axios from 'axios';
       }
     }, 
     created() {
-      this.user = this.$store.getters.userData;
-      this.isLoggedIn = this.$store.getters.isLoggedIn;
       this.getProducts(1);
     }
   }

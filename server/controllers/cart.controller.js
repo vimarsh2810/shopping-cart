@@ -132,6 +132,7 @@ exports.getPaymentAmount = async (req, res, next) => {
     
     if(products.length > 0) {
       products.forEach((product) => {
+        product.price = parseFloat(product.price);
         amount += product.cartItem.quantity * product.price;
       });
       if(isCouponApplied) {
@@ -181,6 +182,7 @@ exports.payment = async (req, res, next) => {
       let amount = 0;
 
       products.forEach((product) => {
+        product.price = parseFloat(product.price);
         amount += product.price * product.cartItem.quantity;
       });
 
@@ -195,6 +197,8 @@ exports.payment = async (req, res, next) => {
         return product;
       }));
 
+      user.wallet.balance = parseFloat(user.wallet.balance);
+      order.amount = parseFloat(order.amount);
       if(user.wallet.balance < order.amount) {
         order.status = development.orderStatus.Failed;
         await order.save();

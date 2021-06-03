@@ -11,7 +11,14 @@ export default new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
     token: null,
-    user: null,
+    user: {
+      name: null,
+      username: null,
+      email: null,
+      roleId: null,
+      isActive: false,
+      tokenExpirationTime: null
+    },
     isAuthenticated: false,
     base_url: 'http://localhost:3000',
     categories: null,
@@ -30,9 +37,17 @@ export default new Vuex.Store({
 
     clearAuthData(state) {
       state.token = null;
-      state.isLoggedIn = false;
-      state.user = null;
+      state.isAuthenticated = false;
+      state.user = {
+        name: null,
+        username: null,
+        email: null,
+        roleId: null,
+        isActive: false,
+        tokenExpirationTime: null
+      };
       state.notifications = [];
+      state.categories = null;
     },
 
     setCategories(state, categories) {
@@ -69,8 +84,9 @@ export default new Vuex.Store({
       }
     },
 
-    logout({commit}) {
-      commit('clearAuthData');
+    logout(context) {
+      context.commit('clearAuthData');
+      console.log(context.state.user)
       router.push('/login');
     },
 
@@ -108,7 +124,7 @@ export default new Vuex.Store({
   getters: {
     token: (state) => state.token,
     userData: (state) => state.user,
-    isLoggedIn: (state) => state.isLoggedIn,
+    isActive: (state) => state.user.isActive,
     categories: (state) => state.categories,
     base_url: (state) => state.base_url,
     authStatus: (state) => state.isAuthenticated,
