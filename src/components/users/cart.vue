@@ -168,33 +168,37 @@ export default {
     },
 
     async deleteCartItem(productId) {
-      try {
-        const response = await axios.delete(`${this.$store.getters.base_url}/cart/cartProduct/${productId}`, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
-          }
-        });
-        console.log(response.data);
-        location.reload();
-      } catch (error) {
-        console.log(error.response);
+      if(confirm('Are you sure you want to delete this product from cart?')) {
+        try {
+          const response = await axios.delete(`${this.$store.getters.base_url}/cart/cartProduct/${productId}`, {
+            headers: {
+              'Authorization': `Bearer ${this.$store.getters.token}`
+            }
+          });
+          console.log(response.data);
+          location.reload();
+        } catch (error) {
+          console.log(error.response);
+        }
       }
     },
 
     async updateQuantity(productId, quantity) {
-      if(quantity == 0) {
-        await this.deleteCartItem(productId);
-        return;
-      }
-      try {
-        const response = await axios.put(`${this.$store.getters.base_url}/cart/quantity/${productId}`, { quantity }, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
-          }
-        });
-        location.reload();
-      } catch (error) {
-        console.log(error.response);
+      if(confirm('Are you sure you want to update quantity?')) {
+        if(quantity == 0) {
+          await this.deleteCartItem(productId);
+          return;
+        }
+        try {
+          const response = await axios.put(`${this.$store.getters.base_url}/cart/quantity/${productId}`, { quantity }, {
+            headers: {
+              'Authorization': `Bearer ${this.$store.getters.token}`
+            }
+          });
+          location.reload();
+        } catch (error) {
+          console.log(error.response);
+        }
       }
     },
 

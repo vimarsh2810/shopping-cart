@@ -85,7 +85,8 @@ exports.retryOrder = async (req, res, next) => {
     }
 
     const user = await User.findByPk(req.userData.userId, {
-      include: [{ model: Order, where: { id: req.params.id } }, { model: Coupon }, { model: Wallet }]
+      include: [{ model: Order, where: { id: req.params.id } }, { model: Coupon }, { model: Wallet }],
+      logging: false
     });
 
     if(!paymentSuccess) {
@@ -103,12 +104,16 @@ exports.retryOrder = async (req, res, next) => {
     if(products.length > 0) {
       let amount = 0;
       products.forEach((product) => {
+        product.price = parseFloat(product.price);
         amount += product.price * product.orderItem.quantity;
       });
 
       if(couponVerified) {
         amount /= 2;
       }
+
+      user.wallet.balance = parseFloat(user.wallet.balance);
+      user.orders[0].amount = parseFloat(user.orders[0].amount);
 
       if(user.wallet.balance < user.orders[0].amount) {
         user.orders[0].status = development.orderStatus.Failed;
@@ -120,12 +125,39 @@ exports.retryOrder = async (req, res, next) => {
       user.orders[0].status = development.orderStatus.InProcess;
       await user.orders[0].save();
       user.coupon.isUsed = true;
+      console.log(user.wallet.balance, user.orders[0].amount)
       user.wallet.balance -= user.orders[0].amount;
       await user.coupon.save();
       await user.wallet.save();
       return res.status(200).json(responseObj(true, 'Order Successful', user.orders[0]));
     }
     return res.status(404).json(responseObj(false, 'No products in this order'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Cancel an order by Id */
+/* @route PUT /user/order/cancel/:id */
+
+exports.cancelOrder = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userData.userId, {
+      include: [{ 
+        model: Order, 
+        where: { id: req.params.id }
+      }, 
+      { 
+        model: Wallet 
+      }]
+    });
+    user.orders[0].status = development.orderStatus.Cancelled;
+    user.wallet.balance = parseFloat(user.wallet.balance);
+    user.orders[0].amount = parseFloat(user.orders[0].amount);
+    user.wallet.balance += user.orders[0].amount;
+    await user.orders[0].save();
+    await user.wallet.save();
+    return res.status(200).json(responseObj(true, 'Order Cancelled'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

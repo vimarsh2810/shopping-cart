@@ -7,7 +7,7 @@
           <div class="col-12">
             <h4>Orders</h4>
           </div>
-          <div class="col-3 mb-4">
+          <div class="col-2 mb-4">
             <div class="status-select-div">
               <select name="status" id="status" class="form-control" @change="filterOrders(1)">
                 <option value="" selected hidden>Select Order Status</option>
@@ -49,10 +49,11 @@
                       <button 
                         v-if="order.status === 'in Process'"
                         class="btn btn-primary ml-2"
+                        @click="cancelOrder(order.id)"
                       >Cancel</button>
 
                       <button 
-                        v-else-if="order.status === 'failed'"
+                        v-else-if="order.status === 'failed' || order.status === 'cancelled'"
                         class="btn btn-primary ml-2"
                         @click="retryOrder(order.id)"
                       >Retry</button>
@@ -120,6 +121,24 @@ export default {
         }
       } catch (error) {
         console.log(error);
+      }
+    },
+
+    async cancelOrder(orderId) {
+      if(confirm('Are you sure you want to cancel this order?')) {
+        try {
+          const response = await axios.put(`${this.$store.getters.base_url}/user/order/cancel/${orderId}`, 'Cancel Order', {
+            headers: {
+              'Authorization': `Bearer ${this.$store.getters.token}`
+            }
+          });
+
+          if(response.data.success) {
+            this.getOrders();
+          }
+        } catch (error) {
+          console.log(error.response.data.message);
+        }
       }
     },
 

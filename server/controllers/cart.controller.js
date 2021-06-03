@@ -79,7 +79,7 @@ exports.deleteCartItemSP = async (req, res, next) => {
   } catch (error) {
     return res.status(500).json(responseObj(500, false, error.message));
   }
-}
+};
 
 /* @desc Update product quantity in cart */
 /* @route PUT /cart/updateQuantity/:productId */
