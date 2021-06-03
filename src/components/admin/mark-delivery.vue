@@ -1,15 +1,21 @@
 <template>
   <div class="main-div">
-    <Navbar/>
+    <AdminNavbar/>
     <div class="container">
       <div class="card card-1">
-        <h5 class="card-title">Verify Email</h5>
+        <h5 class="card-title">Mark Delivery</h5>
         <form method="POST">
-          <div class="form-group">
-            <label for="otp">OTP</label>
-            <input type="text" name="otp" id="otp" class="form-control" v-model="otp" placeholder="Enter OTP">
+          <div class="alert alert-danger" role="alert" v-if="error">
+            {{ error }}
           </div>
-          <button class="btn btn-primary material-button" @click.prevent="verifyOtp">Verify</button>
+          <div class="alert alert-success" role="alert" v-if="successMsg">
+            {{ successMsg }}
+          </div>
+          <div class="form-group">
+            <label for="deliveryOtp">Delivery OTP</label>
+            <input type="text" name="deliveryOtp" id="deliveryOtp" class="form-control" v-model="deliveryOtp" placeholder="Enter Delivery OTP">
+          </div>
+          <button class="btn btn-primary material-button" @click.prevent="verifyOtp">Mark Delivery</button>
         </form>
       </div>
     </div>
@@ -18,31 +24,32 @@
 
 <script>
 import axios from "axios";
-import Navbar from './shared/navbar.vue';
+import AdminNavbar from '../shared/admin-navbar.vue';
 export default {
-  name: "VerifyEmail",
-  components: { Navbar },
+  name: "MarkDelivery",
+  components: { AdminNavbar },
   data() {
     return {
-      otp: null,
-      email: "",
-      password: ""
+      deliveryOtp: null,
+      error: null,
+      successMsg: null
     };
   },
   methods: {
     async verifyOtp() {
       const formData = {
-        otp: this.otp
+        deliveryOtp: this.deliveryOtp
       };
       try {
-        const response = await axios.post(`${this.$store.getters.base_url}/auth/verifyEmail`, formData, {
+        const response = await axios.post(`${this.$store.getters.base_url}/admin/order/${this.$route.params.id}/otp`, formData, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
         });
         console.log(response.data);
         if(response.data.success) {
-          this.$router.push('/user/home');
+          this.error = null;
+          this.successMsg = response.data.message;
         }
       } catch (error) {
         console.log(error.response);

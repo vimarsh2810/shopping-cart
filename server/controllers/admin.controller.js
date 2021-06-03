@@ -317,6 +317,32 @@ exports.getAllOrders = async (req, res, next) => {
   }
 };
 
+/* @desc Get orders by Status */
+/* @route GET /admin/orders/:status */
+
+exports.getOrdersByStatus = async (req, res, next) => {
+  try {
+    let { page, limit, includeCategory } = req.query;
+    const { offset, size } = pagination(page, limit);
+
+    const items = await Order.findAndCountAll({
+      where: { status: req.params.status },
+      include: [{ model: User }],
+      limit: size,
+      offset: offset
+    });
+
+    const result = paginationMetaData(items, page, size);
+    return res.status(200).json(responseObj(true, `${req.params.status} Orders`, {
+      orders: result.rows,
+      totalPages: result.totalNoOfPages,
+      currentPage: result.currentPage
+    }));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
 /* @desc Get orders by Id and its products */
 /* @route GET /admin/orders/:id */
 
@@ -363,11 +389,13 @@ exports.sendDeliveryOtp = async (req, res, next) => {
 exports.verifyDeliveryOtp = async (req, res, next) => {
   try {
     const order = await Order.findByPk(req.params.id);
-    if(order.deliveryOtp !== req.body.deliveryOtp) {
+    if(order.deliveryOtp !== parseInt(req.body.deliveryOtp)) {
       return res.status(400).json(responseObj(false, 'Incorrect OTP'));
     }
+    order.status = development.orderStatus.Delivered;
+    await order.save();
     return res.status(200).json(responseObj(true, 'OTP Verified'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
-}
+};

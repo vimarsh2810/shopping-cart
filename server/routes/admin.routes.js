@@ -50,6 +50,8 @@ router.put('/profile', [validateToken, checkAdmin], adminController.editProfile)
 
 router.get('/orders', [validateToken, checkAdmin], adminController.getAllOrders);
 
+router.get('/orders/:status', [validateToken, checkAdmin], adminController.getOrdersByStatus);
+
 router.get('/order/:id', [validateToken, checkAdmin], adminController.getOrderById);
 
 router.get('/order/:id/otp', [validateToken, checkAdmin], adminController.sendDeliveryOtp);

@@ -80,7 +80,7 @@ export default new Vuex.Store({
         router.push('/user/home');
       } else {
         await dispatch('getCategories');
-        router.push('/admin/add-product');
+        router.push('/admin/dashboard');
       }
     },
 

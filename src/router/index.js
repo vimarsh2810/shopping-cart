@@ -11,6 +11,8 @@ import Cart from '../components/users/cart.vue';
 import Categories from '../components/users/categories.vue';
 import UserEditProfile from '../components/users/edit-profile.vue';
 import ShopByCategory from '../components/users/shop-by-category.vue';
+import AdminDashboard from '../components/admin/dashboard.vue';
+import MarkDelivery from '../components/admin/mark-delivery.vue';
 import AddCategory from '../components/admin/add-category.vue';
 import ManageProducts from '../components/admin/manage-products.vue';
 import ManageCategories from '../components/admin/manage-categories.vue';
@@ -217,6 +219,22 @@ const routes = [
     path: '/admin/orders/:id',
     name: 'AdminOrderDetails',
     component: AdminOrderDetails  ,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/dashboard',
+    name: 'AdminDashboard',
+    component: AdminDashboard  ,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/mark-delivery/:id',
+    name: 'MarkDelivery',
+    component: MarkDelivery,
     meta: {
       requiresAuth: true, adminAuth: true, userAuth: false
     }
