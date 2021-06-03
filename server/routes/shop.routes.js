@@ -9,8 +9,8 @@ router.get('/products', validateToken, shopController.getAllProducts);
 
 router.get('/limitedProducts', shopController.getProducts);
 
-router.get('/categories', validateToken, shopController.getCategories);
+router.get('/categories', shopController.getCategories);
 
-router.get('/productsByCategory/:categoryId', validateToken, shopController.getProductsByCategory);
+router.get('/productsByCategory/:categoryId', shopController.getProductsByCategory);
 
 module.exports = router;

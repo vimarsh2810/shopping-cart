@@ -31,17 +31,14 @@ export default {
   components: { Navbar },
   data() {
     return {
+      isAuthenticated: this.$store.getters.authStatus,
       parentCategories: []
     };
   },
   methods: {
     async getCategories() {
       try {
-        const response = await axios.get(`${this.$store.getters.base_url}/shop/categories`, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
-          }
-        });
+        const response = await axios.get(`${this.$store.getters.base_url}/shop/categories`);
         this.parentCategories = response.data.payload;
       } catch (error) {
         console.log(error.response);

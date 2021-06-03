@@ -33,7 +33,7 @@ const routes = [
   {
     path: '/',
     redirect: {
-      name: 'Login'
+      name: 'UserHome'
     }
   },
   {
@@ -65,19 +65,13 @@ const routes = [
   {
     path: '/user/category',
     name: 'Categories',
-    component: Categories,
-    meta: {
-      requiresAuth: true, adminAuth: false, userAuth: true
-    }
+    component: Categories
   },
   {
     path: '/user/category/:id',
     name: 'ShopByCategory',
     component: ShopByCategory,
-    props: true,
-    meta: {
-      requiresAuth: true, adminAuth: false, userAuth: true
-    }
+    props: true
   },
   {
     path: '/user/verify-email',

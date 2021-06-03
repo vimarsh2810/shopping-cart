@@ -5,8 +5,8 @@
       <!-- Container starts -->
       <div class="container">
         <h4 class="mbpx-30px">{{ categoryTitle }}</h4>
-        <div class="alert alert-danger" role="alert" v-if="!isUserActive">
-          Verify Email Id to add products in cart
+        <div class="alert alert-danger" role="alert" v-if="error">
+          {{ error }}
         </div>
         <!-- Row starts -->
         <div class="row" v-if="products.length > 0">
@@ -66,6 +66,7 @@ export default {
       categoryTitle: null,
       error: null,
       isUserActive: this.$store.getters.userData.isActive,
+      isAuthenticated: this.$store.getters.authStatus,
       currentPage: null,
       totalPages: null,
       limit: 4
@@ -85,9 +86,7 @@ export default {
     async getProductsByCategory(requestedPage) {
       try {
         const response = await axios.get(`http://localhost:3000/shop/productsByCategory/${this.$route.params.id}`, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
-          }, params: {
+          params: {
             page: requestedPage,
             limit: this.limit
           }
@@ -117,6 +116,11 @@ export default {
 
   created() {
     this.getProductsByCategory(1);
+    if(!this.isAuthenticated) {
+      this.error = 'Login to purchase products';
+    } else if(!this.isUserActive) {
+      this.error = 'Verify Email Id to add products in cart';
+    }
   }
 }
 </script>

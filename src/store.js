@@ -86,7 +86,6 @@ export default new Vuex.Store({
 
     logout(context) {
       context.commit('clearAuthData');
-      console.log(context.state.user)
       router.push('/login');
     },
 
