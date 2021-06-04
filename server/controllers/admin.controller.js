@@ -399,3 +399,25 @@ exports.verifyDeliveryOtp = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+/* @desc Get Admin Dashboard Statistics */
+/* @route GET /admin/statistics */
+
+exports.getStatistics = async (req, res, next) => {
+  try {
+    const productsCount = await Product.count();
+    const categoriesCount = await Category.count();
+    const ordersCount = await Order.count();
+    const totalAmountEarned = await Order.sum('amount', { 
+      where: { 
+        status: development.orderStatus.Delivered || development.orderStatus.InProcess
+      }
+    });
+
+    return res.status(200).json(responseObj(true, 'Statistics', {
+      productsCount, categoriesCount, ordersCount, totalAmountEarned
+    }));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+}

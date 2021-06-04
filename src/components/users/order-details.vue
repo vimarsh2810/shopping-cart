@@ -127,7 +127,7 @@ export default {
     },
 
     redirectToProductDetails(productId) {
-      this.$router.push({ name: 'ProductDetails', params: { id: productId } });
+      this.$router.push({ name: 'ProductDetailsUser', params: { id: productId } });
     }
   },
 

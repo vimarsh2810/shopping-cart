@@ -8,7 +8,7 @@
           <!-- product img div Starts -->
           <div class="col-md-6 col-12">
             <div class="product-details-img">
-              <img :src="product.imagePath" alt="">
+              <img :src="product.imagePath" alt="Product Image">
             </div>
             <div class="product-details-buttons">
               <button

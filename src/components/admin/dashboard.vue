@@ -5,6 +5,49 @@
       <div class="container" v-if="!isLoading">
         <div class="row">
           <div class="col-12">
+            <h4 class="mb-0">Dashboard</h4>
+          </div>
+          <div class="col-sm-3 col-6">
+            <div 
+              class="statistic-div" 
+              style="background-color: #be95ed"
+              @click="$router.push({ name: 'ManageProducts' })"
+            >
+              <h4 style="text-align: left">Products<span style="float: right">{{ statistics.productsCount }}</span></h4>
+            </div>
+          </div>
+          <div class="col-sm-3 col-6">
+            <div 
+              class="statistic-div" 
+              style="background-color: #f7678b"
+              @click="$router.push({ name: 'AllOrders' })"
+            >
+              <h4 style="text-align: left">Orders<span style="float: right">{{ statistics.ordersCount }}</span></h4>
+            </div>
+          </div>
+          <div class="col-sm-3 col-6">
+            <div 
+              class="statistic-div" 
+              style="background-color: #33d4f4"
+              @click="$router.push({ name: 'ManageCategories' })"
+            >
+              <h4 style="text-align: left">Categories<span style="float: right">{{ statistics.categoriesCount }}</span></h4>
+            </div>
+          </div>
+          <div class="col-sm-3 col-6">
+            <div 
+              class="statistic-div" 
+              style="background-color: #33f463"
+            >
+              <h4 style="text-align: left">Earnings<span style="float: right">{{ statistics.totalAmountEarned }}</span></h4>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <h4 class="mb-0">In Process Orders</h4>
+          </div>
+
+          <div class="col-12">
             <div class="table-responsive">
               <table class="table">
                 <thead>
@@ -68,6 +111,7 @@ export default {
     return {
       isLoading: true,
       orders: [],
+      statistics: [],
       totalPages: null,
       currentPage: null,
       limit: 10
@@ -87,6 +131,7 @@ export default {
         });
 
         if(response.data.success) {
+          this.getStatistics();
           this.orders = response.data.payload.orders;
           this.totalPages = response.data.payload.totalPages;
           this.currentPage = response.data.payload.currentPage;
@@ -94,6 +139,22 @@ export default {
         }
       } catch (error) {
         console.log(error.response.data.message);
+      }
+    },
+
+    async getStatistics() {
+      try {
+        const response = await axios.get(`${this.$store.getters.base_url}/admin/statistics`, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.token}`
+          }
+        });
+
+        if(response.data.success) {
+          this.statistics = response.data.payload;
+        }
+      } catch (error) {
+        
       }
     },
 
@@ -127,3 +188,44 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .wrapper {
+    max-width: 1450px;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .container {
+    min-width: 100% !important;
+  }
+
+  [class*="col-"] {
+    margin-bottom: 30px;
+  }
+
+  .statistic-div {
+    color: #ffffff;
+    height: 130px;
+    border: 1px solid none;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+  }
+
+  .statistic-div:hover {
+    cursor: pointer;
+  }
+
+  .statistic-div h4 {
+    width: 100%;
+    display: block;
+    margin-bottom: 0;
+    padding: 0 10px;
+  }
+
+  tr:last-child {
+    border-bottom: 1px solid #dee2e6;
+  }
+</style>
