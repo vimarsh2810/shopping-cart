@@ -16,8 +16,7 @@ export default new Vuex.Store({
       username: null,
       email: null,
       roleId: null,
-      isActive: false,
-      tokenExpirationTime: null
+      isActive: false
     },
     isAuthenticated: false,
     base_url: 'http://localhost:3000',
@@ -35,6 +34,10 @@ export default new Vuex.Store({
       state.notifications = notifications;
     },
 
+    setVerificationData(state, data) {
+      state.user = data;
+    },
+
     clearAuthData(state) {
       state.token = null;
       state.isAuthenticated = false;
@@ -43,8 +46,7 @@ export default new Vuex.Store({
         username: null,
         email: null,
         roleId: null,
-        isActive: false,
-        tokenExpirationTime: null
+        isActive: false
       };
       state.notifications = [];
       state.categories = null;
@@ -89,6 +91,22 @@ export default new Vuex.Store({
       router.push('/login');
     },
 
+    async getUserData(context) {
+      try {
+        const responseTwo = await axios.get(`${context.getters.base_url}/user/data`, {
+          headers: {
+            'Authorization': `Bearer ${context.getters.token}`
+          }
+        });
+  
+        context.commit('setVerificationData', responseTwo.data.payload);
+        context.commit('setNotifications', []);
+        router.push('/user/home');
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
+
     async getNotifications(context) {
       try {
         const response = await axios.get(`${context.getters.base_url}/user/notifications`, {
@@ -97,9 +115,7 @@ export default new Vuex.Store({
           }
         });
 
-        if(response.data.success) {
-          context.commit('setNotifications', response.data.payload);
-        }
+        context.commit('setNotifications', response.data.payload);
       } catch (error) {
         console.log(error.response.data.message);
       }

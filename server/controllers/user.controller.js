@@ -13,12 +13,31 @@ const { development } = require('../config/config.js');
 /* @desc Get all orders of logged in user */
 /* @route GET /user/orders */
 
+exports.getUserData = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userData.userId);
+    return res.status(200).json(responseObj(true, 'Logged in user data', {
+      name: user.name,
+      username: user.username,
+      email: user.username,
+      roleId: user.userRoleId,
+      isActive: user.isActive
+    }));
+    console.log(user);
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+}
+
+/* @desc Get all orders of logged in user */
+/* @route GET /user/orders */
+
 exports.getOrders = async (req, res, next) => {
   try {
     const orders = await Order.findAll({ where: { userId: req.userData.userId }});
     return res.status(200).json(responseObj(true, 'User orders', orders));
   } catch (error) {
-    return res.status(500).json(responseObj(500, false, error.message));
+    return res.status(500).json(responseObj(false, error.message));
   }
 };
 
@@ -159,7 +178,7 @@ exports.getNotifications = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.userData.userId);
     if(user.isActive) {
-      return res.status(200).json(responseObj(false, 'Email is already verified'));
+      return res.status(200).json(responseObj(false, 'Email is already verified', []));
     }
 
     const notifications = [

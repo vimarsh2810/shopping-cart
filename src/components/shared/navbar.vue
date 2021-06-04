@@ -164,6 +164,10 @@ export default {
     logout(event) {
       this.$store.dispatch("logout");
     }
+  },
+
+  created() {
+    // console.log(this.notifications);
   }
 };
 </script>

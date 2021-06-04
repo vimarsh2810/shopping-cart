@@ -116,6 +116,9 @@ import axios from 'axios';
       },
 
       async addToCart(productId) {
+        if(!this.isAuthenticated) {
+          return;
+        }
         try {
           const response = await this.$store.dispatch('addToCart', productId);
           if(response.data.success) {

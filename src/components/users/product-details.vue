@@ -5,6 +5,11 @@
       <!-- Container Starts -->
       <div class="container" v-if="!isLoading">
         <div class="row">
+          <div class="col-12">
+            <div class="alert alert-danger" role="alert" v-if="error">
+              {{ error }}
+            </div>
+          </div>
           <!-- product img div Starts -->
           <div class="col-md-6 col-12">
             <div class="product-details-img">
@@ -69,6 +74,7 @@ export default {
   components: { Navbar },
   data() {
     return {
+      isAuthenticated: this.$store.getters.authStatus,
       product: null,
       isLoading: true,
       error: null
@@ -91,6 +97,10 @@ export default {
     },
 
     async addToCart(productId) {
+      if(!this.isAuthenticated) {
+        this.error = 'Please login to purchase products!'
+        return;
+      }
       try {
         const response = await this.$store.dispatch('addToCart', productId);
         if(response.data.success) {
@@ -119,6 +129,12 @@ export default {
 
   .container {
     min-width: 100% !important;
+  }
+
+  .alert {
+    height: 40px;
+    display: flex;
+    align-items: center;
   }
 
   .product-details-img {

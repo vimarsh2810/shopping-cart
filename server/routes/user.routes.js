@@ -6,6 +6,8 @@ const { editProfileValidator, validate } = require('../middlewares/validator.js'
 
 const router = express.Router();
 
+router.get('/data', validateToken, userController.getUserData);
+
 router.get('/orders', validateToken, userController.getOrders);
 
 router.get('/order/:id', validateToken, userController.getOrderProducts);

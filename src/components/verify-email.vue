@@ -40,9 +40,14 @@ export default {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
         });
-        console.log(response.data);
         if(response.data.success) {
-          this.$router.push('/user/home');
+          const responseTwo = await axios.get(`${this.$store.getters.base_url}/user/data`, {
+            headers: {
+              'Authorization': `Bearer ${this.$store.getters.token}`
+            }
+          });
+
+          this.$store.dispatch('getUserData');
         }
       } catch (error) {
         console.log(error.response);

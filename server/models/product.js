@@ -34,8 +34,8 @@ const Product = sequelize.define('product',
   {
     hooks: {
       beforeCreate: async function(product, options) {
-        const reqProduct = await Product.findOne({ where: { title: product.title } });
-        if(reqProduct) {
+        const productExist = await Product.findOne({ where: { title: product.title } });
+        if(productExist) {
           throw new Sequelize.ValidationError('Product already exists!');
         }
       }
