@@ -15,7 +15,7 @@ const Wallet = sequelize.define('wallet', {
   }
 });
 
-Wallet.belongsTo(User);
+Wallet.belongsTo(User, { onDelete: 'CASCADE' });
 User.hasOne(Wallet);
 
 module.exports = { Wallet };

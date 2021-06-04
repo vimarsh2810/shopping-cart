@@ -10,8 +10,8 @@ const { Coupon } = require('../models/coupon.js');
 const { Wallet } = require('../models/wallet.js');
 const { development } = require('../config/config.js');
 
-/* @desc Get all orders of logged in user */
-/* @route GET /user/orders */
+/* @desc Get data of logged in user */
+/* @route GET /user/data */
 
 exports.getUserData = async (req, res, next) => {
   try {

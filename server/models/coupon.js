@@ -22,7 +22,7 @@ const Coupon = sequelize.define('coupon', {
   }
 });
 
-Coupon.belongsTo(User);
+Coupon.belongsTo(User, { onDelete: 'CASCADE' });
 User.hasOne(Coupon);
 
 module.exports = { Coupon };

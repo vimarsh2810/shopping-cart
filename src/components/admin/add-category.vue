@@ -68,14 +68,21 @@ export default {
         if(response.data.success) {
           this.errors = null;
           this.successMsg = response.data.message;
-          this.$store.dispatch('getCategories');
+          this.getCategories();
         }
       } catch (error) {
         this.successMsg = null;
         this.errors = error.response.data.payload;
       }
-    }
+    },
 
+    async getCategories() {
+      await this.$store.dispatch('getCategories');
+      this.parentCategories = this.$store.getters.categories;
+    }
+  },
+  created() {
+    this.parentCategories = this.$store.getters.categories;
   }
 
 }

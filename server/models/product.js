@@ -46,7 +46,7 @@ const Product = sequelize.define('product',
 Product.belongsTo(User);
 User.hasMany(Product);
 
-Product.belongsTo(Category);
+Product.belongsTo(Category, { onDelete: 'CASCADE'});
 Category.hasMany(Product);
 
 module.exports = { Product };

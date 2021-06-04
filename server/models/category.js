@@ -28,7 +28,7 @@ const Category = sequelize.define('category', {
 );
 
 Category.hasMany(Category, { as: 'children', foreignKey: 'parentId' });
-Category.belongsTo(Category, { as: 'parent', foreignKey: 'parentId' });
+Category.belongsTo(Category, { as: 'parent', foreignKey: 'parentId', onDelete: 'CASCADE' });
 
 Category.belongsTo(User);
 User.hasMany(Category);

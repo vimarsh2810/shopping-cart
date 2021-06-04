@@ -201,6 +201,9 @@ exports.editCategory = async (req, res, next) => {
     if(!title) {
       return res.status(400).json(responseObj(false, 'All details required'));
     }
+    if(req.params.id === parentId) {
+      return status(400).json(responseObj(false, 'A category can not be parent of itself'));
+    }
     const category = await Category.findByPk(req.params.id);
     category.title = title;
     category.parentId = parentId || null;

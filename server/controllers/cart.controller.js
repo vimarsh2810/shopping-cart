@@ -93,6 +93,7 @@ exports.updateQuantity = async (req, res, next) => {
         where: { id: req.params.id } 
       }] 
     });
+
     cart.products[0].cartItem.quantity = parseInt(req.body.quantity);
     await cart.products[0].cartItem.save();
     return res.status(200).json(responseObj(true, 'Quantity Updated'));
@@ -100,6 +101,21 @@ exports.updateQuantity = async (req, res, next) => {
     return res.status(500).json(responseObj(500, false, error.message));
   }
 };
+
+exports.updateQuantitySP = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userData.userId, {
+      include: [{ model: Cart }]
+    });
+
+    const result = await sequelize.query('CALL update_cartItem_quantity(:cartId, :productId, :quantity)', {
+      replacements: { cartId: user.cart.id, productId: parseInt(req.params.id), quantity: parseInt(req.body.quantity) }
+    });
+    return res.status(200).json(responseObj(true, 'Quantity Updated'));
+  } catch (error) {
+    return res.status(500).json(responseObj(500, false, error.message));
+  }
+}
 
 /* @desc Verify coupon applied is correct or not */
 /* @route POST /cart/verifyCoupon */
@@ -162,9 +178,6 @@ exports.payment = async (req, res, next) => {
   try {
 
     const { paymentSuccess, couponCode, isCouponApplied } = req.body;
-    if(!paymentSuccess) {
-      return res.status(400).json(responseObj(false, 'Payment Failed'));
-    }
 
     let couponVerified = false;
     if(isCouponApplied) {
@@ -205,6 +218,12 @@ exports.payment = async (req, res, next) => {
         return res.status(400).json(responseObj(false, 'Balance Insufficient'))
       }
 
+      if(!paymentSuccess) {
+        order.status = development.orderStatus.Failed;
+        await order.save();
+        await user.cart.setProducts(null);
+        return res.status(400).json(responseObj(true, 'Order Failed', order));
+      }
       order.status = development.orderStatus.InProcess;
       await order.save();
       user.coupon.isUsed = true;

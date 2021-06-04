@@ -69,7 +69,7 @@
               </div>
               <div class="modal-footer d-flex justify-content-center align-content-center">
                 <button type="button" class="btn btn-success" data-dismiss="modal" style="margin-right: 10px" @click.prevent="makePayment(true)">Success</button>
-                <button type="button" class="btn btn-danger" @click.prevent="makePayment(false)">Fail</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" @click.prevent="makePayment(false)">Fail</button>
               </div>
             </div>
           </div>
@@ -116,6 +116,9 @@ export default {
         if(response.data.success) {
           this.error = null;
           this.successMsg = response.data.message;
+        } else {
+          this.successMsg = null;
+          this.error = response.data.message;
         }
       } catch (error) {
         this.successMsg = null;

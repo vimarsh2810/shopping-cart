@@ -5,7 +5,7 @@
       <div class="card card-1 mb-4">
         <h5 class="card-title">Add Product</h5>
         <!-- Form starts -->
-        <form @submit.prevent="addProduct" method="POST">
+        <form method="POST">
           <div class="alert alert-danger" role="alert" v-if="errors">
             {{ errors }}
           </div>
@@ -53,7 +53,7 @@
             <input type="file" class="form-control" name="image" id="image" ref="file" @change="onFileChange" >
           </div>
 
-          <button class="btn btn-primary material-button" type="submit">Add Product</button>
+          <button type="button" class="btn btn-primary material-button" @click.prevent="addProduct">Add Product</button>
         </form>
         <!-- Form ends -->
       </div>

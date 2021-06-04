@@ -23,7 +23,7 @@
             <label for="parentCategory">Parent Category</label>
             <select name="parentCategory" class="form-control" id="parentCategory" v-model="selectedValue">
               <option :value="selectedValue" selected hidden v-if="!selectedValue">Select Parent Category If any</option>
-              <option :value="category.id" v-for="category in parentCategories" :key="category.id">{{ category.title }}</option>
+              <option :value="parentCategory.id" v-for="parentCategory in parentCategories" v-show="parentCategory.id !== category.id" :key="parentCategory.id">{{ parentCategory.title }}</option>
             </select>
           </div>
 
@@ -75,7 +75,11 @@ export default {
 
     async editCategory() {
       try {
-        const response = await axios.put(`${this.$store.getters.base_url}/admin/category/${this.$route.params.id}`, this.category, {
+        const data = {
+          title: this.category.title,
+          parentId: this.selectedValue
+        }
+        const response = await axios.put(`${this.$store.getters.base_url}/admin/category/${this.$route.params.id}`, data, {
           headers: {
             'Authorization': `Bearer ${this.$store.getters.token}`
           }
@@ -83,17 +87,23 @@ export default {
         if(response.data.success) {
           this.errors = null;
           this.successMsg = response.data.message;
-          this.$store.dispatch('getCategories');
+          this.getCategories();
         }
       } catch (error) {
         this.successMsg = null;
         this.errors = error.response.data.payload;
       }
+    },
+
+    async getCategories() {
+      await this.$store.dispatch('getCategories');
+      this.parentCategories = this.$store.getters.categories;
     }
   },
 
   created() {
     this.getCategory();
+    this.parentCategories = this.$store.getters.categories;
   }
 
 }

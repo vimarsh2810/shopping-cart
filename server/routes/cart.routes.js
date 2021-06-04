@@ -11,7 +11,7 @@ router.get('/products', validateToken, cartController.getCart);
 
 router.delete('/products/:id', validateToken, cartController.deleteCartItemSP);
 
-router.put('/:id/quantity', validateToken, cartController.updateQuantity);
+router.put('/:id/quantity', validateToken, cartController.updateQuantitySP);
 
 router.post('/verifyCoupon', validateToken, cartController.verifyCoupon);
 
