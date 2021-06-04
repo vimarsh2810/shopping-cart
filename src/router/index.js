@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import Signup from '../components/Signup.vue';
 import Login from '../components/Login.vue';
 import UserHome from '../components/users/user-home.vue';
+import ProductDetailsUser from '../components/users/product-details.vue';
 import AddProduct from '../components/admin/add-product.vue';
 import AddSubAdmin from '../components/admin/add-subadmin.vue';
 import ManageSubAdmins from '../components/admin/manage-subadmins.vue';
@@ -56,6 +57,11 @@ const routes = [
     path: '/user/home',
     name: 'UserHome',
     component: UserHome
+  },
+  {
+    path: '/user/product-details/:id',
+    name: 'ProductDetailsUser',
+    component: ProductDetailsUser
   },
   {
     path: '/user/cart',

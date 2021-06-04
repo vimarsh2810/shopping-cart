@@ -52,8 +52,15 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getProductById = async (req, res, next) => {
   try {
-    const products = await Product.findByPk(req.params.id);
-    return res.status(200).json(responseObj(false, 'All products', products));
+    const product = await Product.findByPk(req.params.id, {
+      include: [
+        { 
+          model: Category, 
+          attributes: ['id', 'title']
+        }
+      ]
+    });
+    return res.status(200).json(responseObj(true, `Product with ID = ${req.params.id}`, product));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

@@ -12,10 +12,18 @@
           <div class="col-lg-3 col-md-4 col-sm-6 col-12 mbpx-30px" v-for="product in products" :key="product.id">
             <div class="card">
               <div class="card-product-img">
-                <img :src="product.imagePath" alt="">
+                <img 
+                  :src="product.imagePath" 
+                  alt="Product Image" 
+                  @click.prevent="$router.push({ name: 'ProductDetailsUser', params: { id: product.id }})"
+                >
               </div>
               <div class="card-product-details">
-                <h4>{{ product.title }}</h4>
+                <h4 
+                  @click.prevent="$router.push({ name: 'ProductDetailsUser', params: { id: product.id }})"
+                >
+                  {{ product.title }}
+                </h4>
                 <p><span class=" d-inline-flex align-items-center badge badge-success">4.5&nbsp;&#11088;</span>&nbsp;&nbsp;&nbsp;&#8377;{{ product.price }}</p>
               </div>
               <div class="card-product-btn">
@@ -38,8 +46,8 @@
 
         <div class="no-products-found" v-else>
           <div class="no-product-found-inner">
-            <img src="/img/products/no-products-found-2021-05-26.jpg" alt="">
-            <h5>Sorry, No products found for this category!</h5>
+            <img src="/img/products/no-products-found-2021-05-26.jpg" alt="No Product Found">
+            <h5>Sorry, No products found</h5>
           </div>
         </div>
 
