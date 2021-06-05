@@ -9,6 +9,8 @@ const { Category } = require('../models/category.js');
 const { Coupon } = require('../models/coupon.js');
 const { Wallet } = require('../models/wallet.js');
 const { development } = require('../config/config.js');
+const { WishList } = require('../models/wishList.js');
+const { WishListItem } = require('../models/wishListItem.js');
 
 /* @desc Get data of logged in user */
 /* @route GET /user/data */
@@ -221,6 +223,59 @@ exports.editProfile = async (req, res, next) => {
     user.email = email;
     await user.save();
     return res.status(200).json(responseObj(true, 'Profile Updated'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Get User's WishList */
+/* @route GET /user/wishList */
+
+exports.getWishList = async (req, res, next) => {
+  try {
+    const wishList = await WishList.findOne({ 
+      where: { 
+        userId: req.userData.userId 
+      },
+      include: [{ model: Product }]
+    });
+
+    return res.status(200).json(responseObj(true, 'WishList', wishList));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Add product to User's WishList */
+/* @route POST /user/wishList/:id */
+
+exports.addToWishList = async (req, res, next) => {
+  try {
+    const wishList = await WishList.findOne({ where: { userId: req.userData.userId } });
+    const product = await Product.findByPk(req.params.id);
+    const alreadyHasProduct = await wishList.hasProduct(product);
+    if(alreadyHasProduct) {
+      return res.status(200).json(responseObj(false, 'Product is already in the wishList'));
+    }
+    await wishList.addProduct(product);
+    return res.status(200).json(responseObj(true, 'Product Added to wishList'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Remove product from User's WishList */
+/* @route DELETE /user/wishList/:id */
+
+exports.removeFromWishList = async (req, res, next) => {
+  try {
+    const wishList = await WishList.findOne({ where: { userId: req.userData.userId } });
+    const products = await wishList.getProducts({ where: { id: req.params.id }});
+    if(products.length <= 0) {
+      return res.status(200).json(responseObj(false, 'Product not in wishList'));
+    }
+    await products[0].wishListItem.destroy();
+    return res.status(200).json(responseObj(true, 'Product deleted from wishList'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

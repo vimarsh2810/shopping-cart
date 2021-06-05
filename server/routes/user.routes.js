@@ -22,4 +22,10 @@ router.get('/notifications', validateToken, userController.getNotifications);
 
 router.put('/profile', [validateToken, editProfileValidator(), validate ], userController.editProfile);
 
+router.get('/wishList', validateToken, userController.getWishList);
+
+router.post('/wishList/:id', validateToken, userController.addToWishList);
+
+router.delete('/wishList/:id', validateToken, userController.removeFromWishList);
+
 module.exports = router;
