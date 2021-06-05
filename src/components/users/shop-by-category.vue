@@ -17,7 +17,9 @@
                 <img :src="product.imagePath" alt="">
               </div>
               <div class="card-product-details">
-                <h4>{{ product.title }}</h4>
+                <h4
+                  @click.prevent="$router.push({ name: 'ProductDetailsUser', params: { id: product.id } })"
+                >{{ product.title }}</h4>
                 <p><span class=" d-inline-flex align-items-center badge badge-success">4.5&nbsp;&#11088;</span>&nbsp;&nbsp;&nbsp;&#8377;{{ product.price }}</p>
               </div>
               <div class="card-product-btn">

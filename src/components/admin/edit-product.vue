@@ -35,16 +35,36 @@
           <div class="form-group">
             <label for="parentCategory">Parent Category</label>
             <select name="parentCategory" class="form-control" id="parentCategory" @change="onSelectParent">
-              <option value="" selected hidden>Select Parent Category</option>
-              <option :value="category.id" v-for="category in parentCategories" :key="category.id">{{ category.title }}</option>
+              <option 
+                :value="category.id" 
+                v-for="category in parentCategories" 
+                :key="category.id" 
+                v-if="parseInt(product.category.parentId) === parseInt(category.id)" 
+                selected
+              >
+                {{ category.title }}
+              </option>
+              <option 
+                :value="category.id" 
+                v-for="category in parentCategories" 
+                :key="category.id"
+                v-if="parseInt(product.category.parentId) !== parseInt(category.id)"
+              >
+                {{ category.title }}
+              </option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="childCategory">Child Category</label>
             <select name="childCategory" class="form-control" id="childCategory">
-              <option value="" selected hidden>Select Child Category</option>
-              <option :value="category.id" v-for="category in childCategories" :key="category.id">{{ category.title }}</option>
+              <option 
+                :value="category.id" 
+                v-for="category in childCategories" 
+                :key="category.id"
+              >
+                {{ category.title }}
+              </option>
             </select>
           </div>
 
@@ -69,6 +89,7 @@ export default {
     return {
       isLoading: true,
       product: null,
+      selectedParentCategory: null,
       parentCategories: this.$store.getters.categories,
       childCategories: null,
       error: null,
@@ -122,11 +143,13 @@ export default {
 
         if(response.data.success) {
           this.product = response.data.payload;
+          this.selectedParentCategory = this.product.category.parentId;
+          this.childCategories = this.parentCategories.find(category => category.id === this.selectedParentCategory).children;
           this.isLoading = false;
         }
       } catch (error) {
         this.successMsg = null;
-        this.error = error.response.data.message
+        this.error = error.response.data.message;
       }
     }
   },

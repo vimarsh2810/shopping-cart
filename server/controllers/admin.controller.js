@@ -168,10 +168,14 @@ exports.deleteProduct = async (req, res, next) => {
 exports.getProductById = async (req, res, next) => {
   try {
     const product = await Product.findByPk(req.params.id, {
-      include: [{ model: Category, attributes: ['id', 'title'] }]
+      include: [{ 
+        model: Category,
+        attributes: ['id','title', 'parentId']
+      }]
     });
     return res.status(200).json(responseObj(true, `Product having ID = ${req.params.id}`, product));
   } catch (error) {
+    console.log(error)
     return res.status(500).json(responseObj(false, error.message));
   }
 };
