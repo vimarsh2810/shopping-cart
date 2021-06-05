@@ -14,7 +14,15 @@
           </div>
           <div class="form-group">
             <label for="title">Product Title</label>
-            <input type="text" name="title" id="title" class="form-control" v-model="title" placeholder="Enter product title">
+            <input 
+              type="text" 
+              name="title" 
+              id="title" 
+              class="form-control" 
+              v-model="title" 
+              placeholder="Enter product title"
+              @blur="checkProductExists"
+            >
           </div>
 
           <div class="form-group">
@@ -53,7 +61,21 @@
             <input type="file" class="form-control" name="image" id="image" ref="file" @change="onFileChange" >
           </div>
 
-          <button type="button" class="btn btn-primary material-button" @click.prevent="addProduct">Add Product</button>
+          <button 
+            type="button" 
+            class="btn btn-primary material-button" 
+            @click.prevent="addProduct"
+          >
+            Add Product
+          </button>
+
+          <button 
+            type="button" 
+            class="btn btn-primary material-button ml-3" 
+            @click.prevent="addProductInLastSelectedCategory"
+          >
+            Add Product(Last selected category)
+          </button>
         </form>
         <!-- Form ends -->
       </div>
@@ -90,6 +112,26 @@ export default {
       this.image = this.$refs.file.files[0];
     },
 
+    async checkProductExists() {
+      try {
+        const response = await axios.post(`${this.$store.getters.base_url}/admin/checkProductExists`, { title: this.title }, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.token}`
+          }
+        });
+
+        if(response.data.success) {
+          this.errors = null;
+          this.successMsg = response.data.payload;
+        } else {
+          this.successMsg = null;
+          this.errors = response.data.payload;
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
+
     onSelectParent() {
       let selectedParent = undefined;
       for(let category of this.parentCategories) {
@@ -100,10 +142,31 @@ export default {
       }
       this.childCategories = selectedParent.children;
     },
+
+    async addProductInLastSelectedCategory() {
+      try {
+        const response = await axios.get(`${this.$store.getters.base_url}/admin/lastSelectedCategory`, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.token}`
+          }
+        });
+
+        if(response.data.success) {
+          const lastSelectedCategory = response.data.payload;
+          this.categoryId = lastSelectedCategory.id;
+          await this.addProduct();
+          this.categoryId = null;
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
     
     async addProduct() {
       const formData = new FormData();
-      this.categoryId = document.querySelector('#childCategory').value;
+      if(!this.categoryId) {
+        this.categoryId = document.querySelector('#childCategory').value;
+      }
       formData.append('file', this.image);
       formData.append('description', this.description);
       formData.append('title', this.title);

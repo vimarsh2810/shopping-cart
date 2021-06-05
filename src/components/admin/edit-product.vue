@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
     <AdminNavbar/>
     <div class="container">
       <div class="card card-1 mb-4" v-if="!isLoading">

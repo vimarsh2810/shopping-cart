@@ -10,6 +10,8 @@ const router = express.Router();
 
 /* Category Routes */
 
+router.post('/checkCategoryExists', [validateToken, checkAdmin], adminController.checkCategoryExists);
+
 router.get('/category/:id', [validateToken, checkAdmin], adminController.getCategoryById);
 
 router.post('/category', [validateToken, checkAdmin, categoryValidator(), validate], adminController.addCategory);
@@ -22,7 +24,11 @@ router.get('/categories', [validateToken, checkAdmin], adminController.getAllCat
 
 router.get('/limitedCategories', [validateToken, checkAdmin], adminController.getLimitedCategories);
 
+router.get('/lastSelectedCategory', adminController.getLastSelectedCategory);
+
 /* Product Routes */
+
+router.post('/checkProductExists', [validateToken, checkAdmin], adminController.checkProductExists);
 
 router.post('/product', [validateToken, checkAdmin, upload.single("file")], adminController.addProduct);
 

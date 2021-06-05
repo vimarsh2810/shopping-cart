@@ -96,6 +96,22 @@ exports.deleteSubAdmin = async (req, res, next) => {
   }
 }
 
+/* @desc Check if Product title available */
+/* @route POST /admin/checkProductExists */
+
+exports.checkProductExists = async (req, res, next) => {
+  try {
+    const { title } = req.body;
+    const productExists = await Product.findOne({ where: { title: title } });
+    if(productExists) {
+      return res.status(200).json(responseObj(false, 'Product Exists', 'Product with this title already exists!'));
+    }
+    return res.status(200).json(responseObj(true, 'Product does not Exists', 'Product title available.'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
 /* @desc Create a Product */
 /* @route POST /admin/product */
 
@@ -176,6 +192,22 @@ exports.getProductById = async (req, res, next) => {
     return res.status(200).json(responseObj(true, `Product having ID = ${req.params.id}`, product));
   } catch (error) {
     console.log(error)
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Check category already Exists */
+/* @route POST /admin/checkCategoryExists */
+
+exports.checkCategoryExists = async (req, res, next) => {
+  try {
+    const { title } = req.body;
+    const categoryExists = await Category.findOne({ where: { title: title } });
+    if(categoryExists) {
+      return res.status(200).json(responseObj(false, 'Category Exists', 'Category with this title already exists!'));
+    }
+    return res.status(200).json(responseObj(true, 'Category does not Exists', 'Category title available.'));
+  } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
@@ -288,6 +320,27 @@ exports.getLimitedCategories = async (req, res, next) => {
       totalPages: result.totalNoOfPages,
       currentPage: result.currentPage
     }));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Get last selected category */
+/* @route GET /admin/lastSelectedCategory */
+
+exports.getLastSelectedCategory = async (req, res, next) => {
+  try {
+    const products = await Product.findAll({
+      order: [
+        ['createdAt', 'DESC']
+      ],
+      limit: 1,
+      include: [{
+        model: Category
+      }]
+    });
+
+    return res.status(200).json(responseObj(true, 'Last Inserted', products[0].category));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

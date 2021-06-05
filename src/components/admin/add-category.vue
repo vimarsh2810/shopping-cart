@@ -16,7 +16,15 @@
           </div>
           <div class="form-group">
             <label for="title">Category Title</label>
-            <input type="text" name="title" id="title" class="form-control" v-model="title" placeholder="Enter category title">
+            <input 
+              type="text" 
+              name="title" 
+              id="title" 
+              class="form-control" 
+              v-model="title" 
+              placeholder="Enter category title"
+              @blur="checkCategoryExists"
+            >
           </div>
 
           <div class="form-group">
@@ -52,6 +60,26 @@ export default {
   },
 
   methods: {
+
+    async checkCategoryExists() {
+      try {
+        const response = await axios.post(`${this.$store.getters.base_url}/admin/checkCategoryExists`, { title: this.title }, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.token}`
+          }
+        });
+
+        if(response.data.success) {
+          this.errors = [];
+          this.successMsg = response.data.payload;
+        } else {
+          this.successMsg = null;
+          this.errors = [response.data.payload];
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
 
     async addCategory() {
       this.parentId = document.querySelector('#parentCategory').value;
