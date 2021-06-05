@@ -9,7 +9,7 @@
         </div>
         <div class="row" v-if="products.length > 0">
 
-          <div class="col-lg-3 col-md-4 col-sm-6 col-12 mbpx-30px" v-for="product in products" :key="product.id">
+          <div class="col-md-4 col-sm-6 col-12 mbpx-30px" v-for="product in products" :key="product.id">
             <div class="card">
               <div class="card-product-img">
                 <img 
@@ -27,7 +27,18 @@
                 <p><span class=" d-inline-flex align-items-center badge badge-success">4.5&nbsp;&#11088;</span>&nbsp;&nbsp;&nbsp;&#8377;{{ product.price }}</p>
               </div>
               <div class="card-product-btn">
-                <button class="btn btn-primary material-button" type="button" @click.prevent="addToCart(product.id)">ADD TO CART</button>
+                <button 
+                  class="btn btn-primary material-button"
+                  id="cart-btn"
+                  type="button" 
+                  @click.prevent="addToCart(product.id)"
+                >ADD TO CART</button>
+                <button 
+                  class="btn btn-primary material-button"
+                  id="wishlist-btn"
+                  type="button" 
+                  @click.prevent="addToWishList(product.id)"
+                >ADD TO WISHLIST</button>
               </div>
             </div>
           </div>
@@ -75,7 +86,7 @@ import axios from 'axios';
         totalPages: null,
         totalProductsCount: null,
         currentPage: null,
-        limit: 4
+        limit: 6
       }
     },
     methods: {
@@ -126,6 +137,22 @@ import axios from 'axios';
           }
         } catch (error) {
           alert(error.response.data.message);
+        }
+      },
+
+      async addToWishList(productId) {
+        if(!this.isAuthenticated) {
+          return;
+        }
+        try {
+          const response = await this.$store.dispatch('addToWishList', productId);
+          if(response.data.success) {
+            this.$router.push('/user/wishlist');
+          } else {
+            alert(response.data.message);
+          }
+        } catch (error) {
+          console.log(error.response);
         }
       }
     }, 
@@ -243,6 +270,7 @@ import axios from 'axios';
     font-weight: 600;
     text-align: center;
   }
+  
   span {
     display: inline-block;
     height: 24px;
@@ -256,7 +284,11 @@ import axios from 'axios';
   .material-button {
     box-shadow: 0 2px 4px rgba(0,0,0,0.16), 0 2px 4px rgba(0,0,0,0.23);
     margin-bottom: 15px;
-    width: 200px;
+    font-size: 14px;
+  }
+
+  #wishlist-btn {
+    margin-left: 5px;
   }
 
   .form-control:focus,
@@ -273,6 +305,19 @@ import axios from 'axios';
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+  }
+
+  @media (min-width: 577px) and (max-width: 992px) {
+    #cart-btn, #wishlist-btn {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    #wishlist-btn {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
   }
 
 </style>

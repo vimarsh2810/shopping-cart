@@ -132,6 +132,14 @@ export default new Vuex.Store({
             'Authorization': `Bearer ${context.getters.token}`
         }
       });
+    },
+
+    async addToWishList(context, productId) {
+      return await axios.post(`${context.getters.base_url}/user/wishList/${productId}`, null, {
+        headers: {
+          'Authorization': `Bearer ${context.getters.token}`
+        }
+      });
     }
 
   },

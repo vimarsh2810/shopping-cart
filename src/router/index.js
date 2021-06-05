@@ -9,6 +9,7 @@ import AddSubAdmin from '../components/admin/add-subadmin.vue';
 import ManageSubAdmins from '../components/admin/manage-subadmins.vue';
 import EditSubAdmin from '../components/admin/edit-subadmin.vue';
 import Cart from '../components/users/cart.vue';
+import WishList from '../components/users/wishlist.vue';
 import Categories from '../components/users/categories.vue';
 import UserEditProfile from '../components/users/edit-profile.vue';
 import ShopByCategory from '../components/users/shop-by-category.vue';
@@ -67,6 +68,14 @@ const routes = [
     path: '/user/cart',
     name: 'Cart',
     component: Cart,
+    meta: {
+      requiresAuth: true, adminAuth: false, userAuth: true
+    }
+  },
+  {
+    path: '/user/wishlist',
+    name: 'WishList',
+    component: WishList,
     meta: {
       requiresAuth: true, adminAuth: false, userAuth: true
     }

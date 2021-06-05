@@ -109,6 +109,22 @@ export default {
       } catch (error) {
         console.log(error.response.data.message);
       }
+    },
+
+    async addToWishList(productId) {
+      if(!this.isAuthenticated) {
+        return;
+      }
+      try {
+        const response = await this.$store.dispatch('addToWishList', productId);
+        if(response.data.success) {
+          this.$router.push('/user/wishlist');
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
     }
   },
 
