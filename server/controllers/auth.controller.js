@@ -112,3 +112,35 @@ exports.login = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+// @desc Check Email available
+// @route POST /auth/checkEmailAvailable
+
+exports.checkEmailAvailable = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const emailExists = await User.findOne({ where: { email: email } });
+    if(emailExists) {
+      return res.status(200).json(responseObj(false, 'Email not available'));
+    }
+    return res.status(200).json(responseObj(true, 'Email available'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+// @desc Check Username available
+// @route POST /auth/checkUsernameAvailable
+
+exports.checkUsernameAvailable = async (req, res, next) => {
+  try {
+    const { username } = req.body;
+    const usernameExists = await User.findOne({ where: { username: username } });
+    if(usernameExists) {
+      return res.status(200).json(responseObj(false, 'Username not available'));
+    }
+    return res.status(200).json(responseObj(true, 'Username available'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};

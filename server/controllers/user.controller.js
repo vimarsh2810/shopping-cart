@@ -25,7 +25,6 @@ exports.getUserData = async (req, res, next) => {
       roleId: user.userRoleId,
       isActive: user.isActive
     }));
-    console.log(user);
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

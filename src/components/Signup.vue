@@ -17,11 +17,27 @@
         </div>
         <div class="form-group">
           <label for="username">Username</label>
-          <input type="text" name="username" id="username" class="form-control" v-model="username" placeholder="Enter your Username">
+          <input 
+            type="text" 
+            name="username" 
+            id="username" 
+            class="form-control" 
+            v-model="username" 
+            placeholder="Enter your Username"
+            @blur="checkUsernameAvailable"
+          >
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="text" name="email" id="email" class="form-control" v-model="email" placeholder="Enter your Email Id">
+          <input 
+            type="text" 
+            name="email" 
+            id="email" 
+            class="form-control" 
+            v-model="email" 
+            placeholder="Enter your Email Id"
+            @blur="checkEmailAvailable"
+          >
         </div>
         <div class="form-group">
           <label for="password">Password</label>
@@ -54,6 +70,46 @@ export default {
     };
   },
   methods: {
+
+    async checkUsernameAvailable() {
+      if(!this.username) {
+        this.errors = ['Username can not be empty'];
+        return;
+      }
+      try {
+        const response = await axios.post(`${this.$store.getters.base_url}/auth/checkUsernameAvailable`, { username: this.username });
+
+        if(response.data.success) {
+          this.errors = null;
+          this.successMsg = response.data.message;
+        } else {
+          this.successMsg = null;
+          this.errors = [response.data.message];
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
+
+    async checkEmailAvailable() {
+      if(!this.email) {
+        this.errors = ['Email can not be empty'];
+        return;
+      }
+      try {
+        const response = await axios.post(`${this.$store.getters.base_url}/auth/checkEmailAvailable`, { email: this.email });
+
+        if(response.data.success) {
+          this.errors = null;
+          this.successMsg = response.data.message;
+        } else {
+          this.successMsg = null;
+          this.errors = [response.data.message];
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
 
     async signup() {
       if(!this.name || !this.email || !this.username || !this.password || !this.confirmPassword) {

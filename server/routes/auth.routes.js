@@ -13,4 +13,8 @@ router.post('/login', [ loginValidator(), validate ], authController.login);
 
 router.post('/verifyEmail', validateToken, authController.verifyEmail);
 
+router.post('/checkUsernameAvailable', authController.checkUsernameAvailable);
+
+router.post('/checkEmailAvailable', authController.checkEmailAvailable);
+
 module.exports = router;
