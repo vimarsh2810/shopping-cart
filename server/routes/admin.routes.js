@@ -24,7 +24,7 @@ router.get('/categories', [validateToken, checkAdmin], adminController.getAllCat
 
 router.get('/limitedCategories', [validateToken, checkAdmin], adminController.getLimitedCategories);
 
-router.get('/lastSelectedCategory', adminController.getLastSelectedCategory);
+router.get('/lastSelectedCategory', [validateToken, checkAdmin], adminController.getLastSelectedCategory);
 
 /* Product Routes */
 

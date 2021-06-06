@@ -29,7 +29,23 @@ exports.getUserData = async (req, res, next) => {
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
-}
+};
+
+/* @desc Get wallet balance of logged in user */
+/* @route GET /user/walletBalance */
+
+exports.getWalletBalance = async (req, res, next) => {
+  try {
+    const wallet = await Wallet.findOne({ 
+      where: { userId: req.userData.userId }, 
+      attributes: ['id', 'balance', 'userId'] 
+    });
+
+    return res.status(200).json(responseObj(true, 'Wallet Balance', { balance: wallet.balance }));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
 
 /* @desc Get all orders of logged in user */
 /* @route GET /user/orders */

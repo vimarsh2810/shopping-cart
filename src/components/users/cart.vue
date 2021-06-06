@@ -4,8 +4,14 @@
     <div class="wrapper" style="margin-top: 100px">
       <!-- Container starts -->
       <div class="container" v-if="!isLoading">
-
         <div class="row">
+          <div class="col-6">
+            <h4 class="mb-3">My Cart</h4>
+          </div>
+
+          <div class="col-6">
+            <h4 class="mb-3 text-right">Wallet Balance: &#8377;&nbsp;{{ walletBalance }}</h4>
+          </div>
           <div class="col-12">
             <div class="alert alert-danger" role="alert" v-if="!isUserActive">
               Verify Email Id to add products in cart
@@ -34,7 +40,7 @@
                       </div>
                     </td>
                     <td class="vertical-center text-center">{{ product.title }}</td>
-                    <td class="vertical-center text-center">{{ product.price }}</td>
+                    <td class="vertical-center text-center">&#8377;&nbsp;{{ product.price }}</td>
                     <td class="vertical-center text-center" style="width: 200px">
                       <div class="quantity">
                         <button 
@@ -134,6 +140,7 @@ export default {
   components: { Navbar, Pagination },
   data() {
     return {
+      walletBalance: this.$store.getters.walletBalance,
       cartProducts: [],
       visibleCartProducts: [],
       isLoading: true,

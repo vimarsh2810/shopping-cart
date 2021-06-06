@@ -21,7 +21,8 @@ export default new Vuex.Store({
     isAuthenticated: false,
     base_url: 'http://localhost:3000',
     categories: null,
-    notifications: []
+    notifications: [],
+    walletBalance: 0
   },
   mutations: {
     setAuthData(state, loginData) {
@@ -54,6 +55,10 @@ export default new Vuex.Store({
 
     setCategories(state, categories) {
       state.categories = categories
+    },
+
+    setBalance(state, balance) {
+      state.walletBalance = balance;
     }
   },
   actions: {
@@ -71,6 +76,19 @@ export default new Vuex.Store({
       }
     },
 
+    async getWalletBalance(context) {
+      try {
+        const response = await axios.get(`${context.getters.base_url}/user/walletBalance`, {
+          headers: {
+            'Authorization': `Bearer ${context.getters.token}`
+          }
+        });
+        context.commit('setBalance', response.data.payload.balance);
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
+
     async login({commit, dispatch}, authData) {
       commit('setAuthData', {
         token: authData.accessToken,
@@ -79,6 +97,9 @@ export default new Vuex.Store({
       
       if(authData.payload.roleId === development.roles.User) {
         await dispatch('getNotifications');
+        if(authData.payload.isActive) {
+          await dispatch('getWalletBalance');
+        };
         router.push('/user/home');
       } else {
         await dispatch('getCategories');
@@ -151,6 +172,7 @@ export default new Vuex.Store({
     categories: (state) => state.categories,
     base_url: (state) => state.base_url,
     authStatus: (state) => state.isAuthenticated,
-    notifications: (state) => state.notifications
+    notifications: (state) => state.notifications,
+    walletBalance: (state) => state.walletBalance
   }
 });

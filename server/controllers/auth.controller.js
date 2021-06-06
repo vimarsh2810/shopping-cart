@@ -63,6 +63,14 @@ exports.verifyEmail = async (req, res, next) => {
     const coupon = await user.createCoupon({
       code: 'WELCOME' + user.username.toUpperCase()
     });
+    deliverMail(
+      { 
+        email: user.email, 
+        otp: coupon.code 
+      },
+      'Your Personalized Coupon',
+      `Use this coupon code get 50% off on your 1st order: `
+    );
     return res.status(200).json(responseObj(true, 'Email Verified'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));

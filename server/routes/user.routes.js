@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.get('/data', validateToken, userController.getUserData);
 
+router.get('/walletBalance', validateToken, userController.getWalletBalance);
+
 router.get('/orders', validateToken, userController.getOrders);
 
 router.get('/order/:id', validateToken, userController.getOrderProducts);
