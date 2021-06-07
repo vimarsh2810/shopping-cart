@@ -98,6 +98,9 @@ exports.login = async (req, res, next) => {
       userName: user.username,
       userRole: user.userRoleId
     }, tokenExpirationTime);
+
+    user.accessToken = token;
+    await user.save();
     
     return res.status(200).json(responseObj(true, 'Login Successful!', {
       id: user.id,

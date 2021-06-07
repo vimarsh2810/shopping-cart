@@ -1,6 +1,7 @@
 const express = require('express');
 
 const { validateToken } = require('../middlewares/validateToken.js');
+const { checkUser } = require('../middlewares/checkRole.js');
 const userController = require('../controllers/user.controller.js');
 const { editProfileValidator, validate } = require('../middlewares/validator.js');
 
@@ -8,26 +9,26 @@ const router = express.Router();
 
 router.get('/data', validateToken, userController.getUserData);
 
-router.get('/walletBalance', validateToken, userController.getWalletBalance);
+router.get('/walletBalance', [validateToken, checkUser ], userController.getWalletBalance);
 
-router.get('/orders', validateToken, userController.getOrders);
+router.get('/orders', [validateToken, checkUser], userController.getOrders);
 
-router.get('/order/:id', validateToken, userController.getOrderProducts);
+router.get('/order/:id', [validateToken, checkUser], userController.getOrderProducts);
 
-router.put('/order/:id/cancel', validateToken, userController.cancelOrder);
+router.put('/order/:id/cancel', [validateToken, checkUser], userController.cancelOrder);
 
-router.post('/order/:id/amount', validateToken, userController.getOrderAmount);
+router.post('/order/:id/amount', [validateToken, checkUser], userController.getOrderAmount);
 
-router.post('/order/:id/retry', validateToken, userController.retryOrder);
+router.post('/order/:id/retry', [validateToken, checkUser], userController.retryOrder);
 
-router.get('/notifications', validateToken, userController.getNotifications);
+router.get('/notifications', [validateToken, checkUser], userController.getNotifications);
 
-router.put('/profile', [validateToken, editProfileValidator(), validate ], userController.editProfile);
+router.put('/profile', [validateToken, checkUser, editProfileValidator(), validate ], userController.editProfile);
 
-router.get('/wishList', validateToken, userController.getWishList);
+router.get('/wishList', [validateToken, checkUser], userController.getWishList);
 
-router.post('/wishList/:id', validateToken, userController.addToWishList);
+router.post('/wishList/:id', [validateToken, checkUser], userController.addToWishList);
 
-router.delete('/wishList/:id', validateToken, userController.removeFromWishList);
+router.delete('/wishList/:id', [validateToken, checkUser], userController.removeFromWishList);
 
 module.exports = router;

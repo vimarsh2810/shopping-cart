@@ -27,7 +27,7 @@ exports.addSubAdmin = async (req, res, next) => {
 
     return res.status(200).json(responseObj(true, 'Sub Admin Created.'));
   } catch (error) {
-    return res.status(500).json(responseObj(false, error.name, [error.message]));
+    return res.status(500).json(responseObj(false, error.message));
   }
 };
 

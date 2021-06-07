@@ -99,7 +99,7 @@ export default {
         }
       } catch (error) {
         this.successMsg = null;
-        this.errors = error.response.data.payload;
+        this.errors = [error.response.data.message];
       }
     }
 

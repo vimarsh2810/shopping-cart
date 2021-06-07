@@ -23,7 +23,7 @@ const Order = sequelize.define('order', {
   }
 });
 
-Order.belongsTo(User);
+Order.belongsTo(User, { onDelete: 'CASCADE'});
 User.hasMany(Order);
 
 Order.belongsToMany(Product, { through: OrderItem });

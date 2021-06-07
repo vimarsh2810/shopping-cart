@@ -2,7 +2,6 @@ const { responseObj } = require('../helpers/responseObj.js');
 const { Category } = require('../models/category.js');
 const { Product } = require('../models/product.js');
 const { pagination, paginationMetaData } = require('../helpers/pagination.js');
-const Op = require('sequelize').Op;
 
 // @desc Get all products
 // @route GET /shop/getAllProducts
@@ -93,7 +92,12 @@ exports.getProductsByCategory = async (req, res, next) => {
     const category = await Category.findByPk(req.params.id, {
       attributes: ['title']
     });
-    const items = await Product.findAndCountAll({ where: { categoryId: req.params.id }, limit: size, offset: offset });
+
+    const items = await Product.findAndCountAll({ 
+      where: { categoryId: req.params.id }, 
+      limit: size, offset: offset 
+    });
+    
     const result = paginationMetaData(items, page, size);
     return res.status(200).json(responseObj(true, 'Paginated Products by category', {
       productCount: result.count,

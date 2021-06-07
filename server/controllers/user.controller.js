@@ -10,7 +10,6 @@ const { Coupon } = require('../models/coupon.js');
 const { Wallet } = require('../models/wallet.js');
 const { development } = require('../config/config.js');
 const { WishList } = require('../models/wishList.js');
-const { WishListItem } = require('../models/wishListItem.js');
 
 /* @desc Get data of logged in user */
 /* @route GET /user/data */
@@ -121,7 +120,8 @@ exports.retryOrder = async (req, res, next) => {
       return res.status(400).json(responseObj(false, 'Payment Failed'));
     }
 
-    if(user.orders[0].status == (development.orderStatus.InProcess || development.orderStatus.Delivered) ) {
+    // Check if payment already done
+    if(user.orders[0].status == development.orderStatus.InProcess || user.orders[0].status == development.orderStatus.Delivered) {
       return res.status(400).json(responseObj(false, 'Payment for this order is already done!'));
     }
 
@@ -129,6 +129,8 @@ exports.retryOrder = async (req, res, next) => {
 
     if(products.length > 0) {
       let amount = 0;
+
+      // Calculating total amount
       products.forEach((product) => {
         product.price = parseFloat(product.price);
         amount += product.price * product.orderItem.quantity;
@@ -141,6 +143,7 @@ exports.retryOrder = async (req, res, next) => {
       user.wallet.balance = parseFloat(user.wallet.balance);
       user.orders[0].amount = parseFloat(user.orders[0].amount);
 
+      // Checking for insufficient balance
       if(user.wallet.balance < user.orders[0].amount) {
         user.orders[0].status = development.orderStatus.Failed;
         await user.orders[0].save();
