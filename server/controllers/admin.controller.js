@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const Sequelize = require('sequelize');
 
 const { User } = require('../models/user.js');
 const { Product } = require('../models/product.js');
@@ -352,6 +353,21 @@ exports.getLastSelectedCategory = async (req, res, next) => {
 exports.editProfile = async (req, res, next) => {
   try {
     const { name, username, email } = req.body;
+    const userExist = await User.findOne({ 
+      where: { 
+        [Sequelize.Op.or]: {
+          email: email, 
+          username: username
+        },
+        id: {
+          [Sequelize.Op.not]: req.userData.userId
+        }
+      } 
+    });
+
+    if(userExist) {
+      return res.status(409).json(responseObj(false, 'Username or email already in use'));
+    }
     const user = await User.findByPk(req.userData.userId);
     user.name = name;
     user.username = username;
@@ -469,8 +485,10 @@ exports.getStatistics = async (req, res, next) => {
     const categoriesCount = await Category.count();
     const ordersCount = await Order.count();
     const totalAmountEarned = await Order.sum('amount', { 
-      where: { 
-        status: development.orderStatus.Delivered || development.orderStatus.InProcess
+      where: {
+        status: {
+          [Sequelize.Op.or]: [development.orderStatus.InProcess, development.orderStatus.Delivered]
+        }
       }
     });
 

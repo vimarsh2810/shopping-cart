@@ -7,6 +7,9 @@
 
         <div class="row">
           <div class="col-12">
+            <h4>My WishList</h4>
+          </div>
+          <div class="col-12">
             <div class="alert alert-danger" role="alert" v-if="!isUserActive">
               Verify Email Id to add products in WishList
             </div>

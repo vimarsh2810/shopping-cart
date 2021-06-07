@@ -51,6 +51,7 @@ export default new Vuex.Store({
       };
       state.notifications = [];
       state.categories = null;
+      state.walletBalance = 0;
     },
 
     setCategories(state, categories) {
@@ -120,9 +121,14 @@ export default new Vuex.Store({
           }
         });
   
-        context.commit('setVerificationData', responseTwo.data.payload);
-        context.commit('setNotifications', []);
-        router.push('/user/home');
+        if(responseTwo.data.payload.roleId === development.roles.User) {
+          context.commit('setVerificationData', responseTwo.data.payload);
+          context.commit('setNotifications', []);
+          router.push('/user/home');
+        } else {
+          context.commit('setVerificationData', responseTwo.data.payload);
+          location.reload();
+        }
       } catch (error) {
         console.log(error.response);
       }

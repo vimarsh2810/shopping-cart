@@ -182,8 +182,7 @@ export default {
               'Authorization': `Bearer ${this.$store.getters.token}`
             }
           });
-          console.log(response.data);
-          location.reload();
+          this.getCart();
         } catch (error) {
           console.log(error.response);
         }
@@ -202,7 +201,7 @@ export default {
               'Authorization': `Bearer ${this.$store.getters.token}`
             }
           });
-          location.reload();
+          this.getCart();
         } catch (error) {
           console.log(error.response);
         }

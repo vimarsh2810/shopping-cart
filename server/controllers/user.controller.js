@@ -21,7 +21,7 @@ exports.getUserData = async (req, res, next) => {
     return res.status(200).json(responseObj(true, 'Logged in user data', {
       name: user.name,
       username: user.username,
-      email: user.username,
+      email: user.email,
       roleId: user.userRoleId,
       isActive: user.isActive
     }));

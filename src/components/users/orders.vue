@@ -135,6 +135,7 @@ export default {
 
           if(response.data.success) {
             this.getOrders();
+            this.$store.dispatch('getWalletBalance');
           }
         } catch (error) {
           console.log(error.response.data.message);

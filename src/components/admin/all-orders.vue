@@ -7,7 +7,7 @@
           <div class="col-12">
             <h4>Orders</h4>
           </div>
-          <div class="col-3 mb-4">
+          <div class="col-2 mb-4">
             <div class="status-select-div">
               <select name="status" id="status" class="form-control" @change="filterOrders(1)">
                 <option value="" selected hidden>Select Order Status</option>

@@ -113,6 +113,7 @@ export default {
         if(response.data.success) {
           this.error = null;
           this.successMsg = response.data.message;
+          this.$store.dispatch('getWalletBalance');
         }
       } catch (error) {
         this.successMsg = null;

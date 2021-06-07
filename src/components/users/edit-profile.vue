@@ -79,10 +79,11 @@ export default {
         if(response.data.success) {
           this.errors = [];
           this.successMsg = response.data.message;
+          this.$store.dispatch('getUserData');
         }
       } catch (error) {
         this.successMsg = null;
-        this.errors = error.response.data.payload;
+        this.errors = [error.response.data.message];
       }
     }
   }

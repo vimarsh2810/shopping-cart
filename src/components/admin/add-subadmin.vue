@@ -35,7 +35,7 @@
           </div>
 
           <div class="form-group">
-            <label for="confirmPassword">Email</label>
+            <label for="confirmPassword">Confirm Password</label>
             <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" v-model="confirmPassword" placeholder="Confirm Password">
           </div>
 

@@ -30,11 +30,6 @@
                     <td class="text-center">{{ product.orderItem.quantity }}</td>
                     <td class="text-center">
                       <button
-                        v-if="orderStatus === 'in Process'"
-                        class="btn btn-primary mr-2"
-                        @click="removeProduct(product.id)"
-                      >Remove</button>
-                      <button
                         class="btn btn-primary"
                         @click="redirectToProductDetails(product.id)"
                       >Product Details</button>
@@ -103,7 +98,7 @@ export default {
           this.isLoading = false;
         }
       } catch (error) {
-        console.log(error.response.data);
+        console.log(error.response);
       }
     },
 

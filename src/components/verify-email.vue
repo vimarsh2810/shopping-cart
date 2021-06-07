@@ -48,6 +48,7 @@ export default {
           });
 
           this.$store.dispatch('getUserData');
+          this.$store.dispatch('getWalletBalance')
         }
       } catch (error) {
         console.log(error.response);
