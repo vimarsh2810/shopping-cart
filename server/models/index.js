@@ -13,6 +13,7 @@ const { WishList } = require('./wishList.js');
 const { WishListItem } = require('./wishListItem.js');
 const { Wallet } = require('./wallet.js');
 const { Coupon } = require('./coupon.js');
+const { Review } = require('./review.js')
 
 const db = {}
 
@@ -30,5 +31,6 @@ db.wallet = Wallet;
 db.coupon = Coupon;
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+db.review = Review;
 
 module.exports = { db };
