@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const path = require('path');
 
 const { responseObj } = require('../helpers/responseObj.js');
 const { verifyCouponCode } = require('../helpers/verifyCouponCode.js');
@@ -10,6 +11,8 @@ const { Coupon } = require('../models/coupon.js');
 const { Wallet } = require('../models/wallet.js');
 const { development } = require('../config/config.js');
 const { WishList } = require('../models/wishList.js');
+const { generateInvoice } = require('../helpers/invoice.helper.js');
+const { deliverInvoiceMail } = require('../helpers/nodeMailer.js');
 
 /* @desc Get data of logged in user */
 /* @route GET /user/data */
@@ -294,6 +297,66 @@ exports.removeFromWishList = async (req, res, next) => {
     }
     await products[0].wishListItem.destroy();
     return res.status(200).json(responseObj(true, 'Product deleted from wishList'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Generate Order Invoice */
+/* @route POST /user/order/:id/invoice */
+
+exports.generateInvoice = async (req, res, next) => {
+  try {
+    const order = await Order.findByPk(req.params.id, {
+      logging: false,
+      include: [
+        { 
+          model: User, 
+          attributes: ['id', 'name', 'username', 'email']
+        },
+        {
+          model: Product
+        }
+      ]
+    });
+
+    const orderResponse = {
+      id: order.id,
+      date: new Date(order.createdAt).toDateString().slice(4),
+      products: order.products.map(product => {
+        product.dataValues.totalPrice = parseFloat(product.price) * parseInt(product.orderItem.quantity);
+        return product;
+      }),
+      user: order.user,
+      amount: order.amount
+    };
+
+    const invoicePath = await generateInvoice(JSON.parse(JSON.stringify(orderResponse)));
+    order.invoicePath = invoicePath;
+    await order.save();
+    await deliverInvoiceMail(`Invoice for Order: ${orderResponse.id}`, order);
+    return res.status(200).json(responseObj(true, 'Invoice Created and Mailed on your email'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Get Order Invoice */
+/* @route GET /user/order/:id/invoice */
+
+exports.getOrderInvoice = async (req, res, next) => {
+  try {
+    const order = await Order.findByPk(req.params.id, {
+      logging: false,
+      include: [{ model: User, attributes: ['id', 'username']}],
+      attributes: ['id', 'invoicePath']
+    });
+    
+    res.download(order.invoicePath, `${order.user.username}-${order.id}.pdf`, (err) => {
+      if(err) {
+        console.log(err);
+      }
+    });
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

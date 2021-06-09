@@ -21,6 +21,10 @@ router.post('/order/:id/amount', [validateToken, checkUser], userController.getO
 
 router.post('/order/:id/retry', [validateToken, checkUser], userController.retryOrder);
 
+router.post('/order/:id/invoice', [validateToken, checkUser], userController.generateInvoice);
+
+router.get('/order/:id/invoice', [validateToken, checkUser], userController.getOrderInvoice);
+
 router.get('/notifications', [validateToken, checkUser], userController.getNotifications);
 
 router.put('/profile', [validateToken, checkUser, editProfileValidator(), validate ], userController.editProfile);

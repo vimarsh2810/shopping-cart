@@ -20,6 +20,9 @@ const Order = sequelize.define('order', {
   },
   status: {
     type: Sequelize.STRING(20)
+  },
+  invoicePath: {
+    type: Sequelize.STRING
   }
 });
 

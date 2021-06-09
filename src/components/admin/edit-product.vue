@@ -63,6 +63,17 @@
                 :value="category.id" 
                 v-for="category in childCategories" 
                 :key="category.id"
+                v-if="category.id === product.categoryId"
+                selected
+              >
+                {{ category.title }}
+              </option>
+
+              <option 
+                :value="category.id" 
+                v-for="category in childCategories" 
+                :key="category.id"
+                v-if="category.id !== product.categoryId"
               >
                 {{ category.title }}
               </option>

@@ -68,8 +68,23 @@
                 Final Amount: {{ finalAmount }} 
               </div>
               <div class="modal-footer d-flex justify-content-center align-content-center">
-                <button type="button" class="btn btn-success" data-dismiss="modal" style="margin-right: 10px" @click.prevent="makePayment(true)">Success</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" @click.prevent="makePayment(false)">Fail</button>
+                <button 
+                  type="button" 
+                  class="btn btn-success" 
+                  data-dismiss="modal" 
+                  style="margin-right: 10px" 
+                  @click.prevent="makePayment(true)"
+                >
+                  Success
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-danger" 
+                  data-dismiss="modal" 
+                  @click.prevent="makePayment(false)"
+                >
+                  Fail
+                </button>
               </div>
             </div>
           </div>
@@ -88,6 +103,7 @@ export default {
   components: { Navbar },
   data() {
     return {
+      orderId: null,
       totalAmount: 0,
       finalAmount: 0,
       discount: 0,
@@ -116,7 +132,9 @@ export default {
         if(response.data.success) {
           this.error = null;
           this.successMsg = response.data.message;
+          this.orderId = response.data.payload.id;
           this.$store.dispatch('getWalletBalance');
+          await this.generateInvoice();
         } else {
           this.successMsg = null;
           this.error = response.data.message;
@@ -135,9 +153,9 @@ export default {
           }
         });
         if(response.data.success) {
-          this.totalAmount = response.data.payload.totalAmount,
-          this.finalAmount = response.data.payload.finalAmount,
-          this.discount = response.data.payload.discount
+          this.totalAmount = response.data.payload.totalAmount;
+          this.finalAmount = response.data.payload.finalAmount;
+          this.discount = response.data.payload.discount;
         }
       } catch (error) {
         this.successMsg = null;
@@ -163,6 +181,21 @@ export default {
         this.getPaymentAmount();
         this.successMsg = null;
         this.error = error.response.data.message;
+      }
+    },
+
+    async generateInvoice() {
+      try {
+        const response = await axios.post(`${this.$store.getters.base_url}/user/order/${this.orderId}/invoice`, null, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.token}`
+          }
+        });
+        if(response.data.success) {
+          this.successMsg = response.data.message;
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
       }
     }
   },

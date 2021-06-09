@@ -53,6 +53,12 @@
                       >Cancel</button>
 
                       <button 
+                        v-if="order.status === 'in Process' || order.status === 'delivered'"
+                        class="btn btn-primary ml-2"
+                        @click="downloadInvoice(order.id)"
+                      >Invoice</button>
+
+                      <button 
                         v-else-if="order.status === 'failed' || order.status === 'cancelled'"
                         class="btn btn-primary ml-2"
                         @click="retryOrder(order.id)"
@@ -140,6 +146,26 @@ export default {
         } catch (error) {
           console.log(error.response.data.message);
         }
+      }
+    },
+
+    async downloadInvoice(orderId) {
+      try {
+        const response = await axios.get(`${this.$store.getters.base_url}/user/order/${orderId}/invoice`, {
+          responseType: 'blob',
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.token}`
+          }
+        });
+
+        let fileURL = window.URL.createObjectURL(new Blob([response.data]));
+        let fileLink = document.createElement('a');
+        fileLink.href = fileURL;
+        fileLink.setAttribute('download', `order-${orderId}.pdf`);
+        document.body.appendChild(fileLink);
+        fileLink.click();
+      } catch (error) {
+        console.log(error.response.data.message);
       }
     },
 

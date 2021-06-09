@@ -140,6 +140,7 @@ exports.verifyCoupon = async (req, res, next) => {
 exports.getPaymentAmount = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.userData.userId, {
+      logging: false,
       include: [{ model: Cart}]
     });
     const { isCouponApplied } = req.body;
