@@ -9,7 +9,9 @@ const router = express.Router();
 
 router.get('/data', validateToken, userController.getUserData);
 
-router.get('/walletBalance', [validateToken, checkUser ], userController.getWalletBalance);
+router.get('/wallet/balance', [validateToken, checkUser], userController.getWalletBalance);
+
+router.put('/wallet/balance', [validateToken, checkUser], userController.addAmountInWallet);
 
 router.get('/orders', [validateToken, checkUser], userController.getOrders);
 

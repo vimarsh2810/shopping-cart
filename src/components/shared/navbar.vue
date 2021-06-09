@@ -102,6 +102,14 @@
                 </router-link>
 
                 <router-link 
+                  to="/user/wallet" 
+                  class="dropdown-item" 
+                  v-if="isUserActive"
+                >
+                  <i class="fas fa-wallet"></i>&nbsp;&nbsp;My Wallet
+                </router-link>
+
+                <router-link 
                   to="/user/wishlist" 
                   class="dropdown-item"
                 >

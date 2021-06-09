@@ -79,7 +79,7 @@ export default new Vuex.Store({
 
     async getWalletBalance(context) {
       try {
-        const response = await axios.get(`${context.getters.base_url}/user/walletBalance`, {
+        const response = await axios.get(`${context.getters.base_url}/user/wallet/balance`, {
           headers: {
             'Authorization': `Bearer ${context.getters.token}`
           }

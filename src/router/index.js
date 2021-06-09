@@ -9,6 +9,7 @@ import AddSubAdmin from '../components/admin/add-subadmin.vue';
 import ManageSubAdmins from '../components/admin/manage-subadmins.vue';
 import EditSubAdmin from '../components/admin/edit-subadmin.vue';
 import Cart from '../components/users/cart.vue';
+import MyWallet from '../components/users/my-wallet.vue';
 import WishList from '../components/users/wishlist.vue';
 import Categories from '../components/users/categories.vue';
 import UserEditProfile from '../components/users/edit-profile.vue';
@@ -135,6 +136,14 @@ const routes = [
     path: '/user/orders/:id',
     name: 'OrderDetails',
     component: OrderDetails,
+    meta: {
+      requiresAuth: true, adminAuth: false, userAuth: true
+    }
+  },
+  {
+    path: '/user/wallet',
+    name: 'MyWallet',
+    component: MyWallet,
     meta: {
       requiresAuth: true, adminAuth: false, userAuth: true
     }

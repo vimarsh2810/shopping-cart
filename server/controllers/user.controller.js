@@ -33,7 +33,7 @@ exports.getUserData = async (req, res, next) => {
 };
 
 /* @desc Get wallet balance of logged in user */
-/* @route GET /user/walletBalance */
+/* @route GET /user/wallet/balance */
 
 exports.getWalletBalance = async (req, res, next) => {
   try {
@@ -43,6 +43,25 @@ exports.getWalletBalance = async (req, res, next) => {
     });
 
     return res.status(200).json(responseObj(true, 'Wallet Balance', { balance: wallet.balance }));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Add Amount into logged in user's wallet */
+/* @route PUT /user/wallet/balance */
+
+exports.addAmountInWallet = async (req, res, next) => {
+  try {
+    console.log(req.body.amount);
+    const wallet = await Wallet.findOne({ 
+      where: { userId: req.userData.userId }, 
+      attributes: ['id', 'balance', 'userId'] 
+    });
+    wallet.balance = parseFloat(wallet.balance);
+    wallet.balance += parseFloat(req.body.amount);
+    await wallet.save();
+    return res.status(200).json(responseObj(true, 'Amount Added into wallet'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
