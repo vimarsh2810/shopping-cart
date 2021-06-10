@@ -77,7 +77,20 @@
               <!-- product info div end -->
             </div>
 
-            <h4>Product Reviews</h4>
+            <div class="row mb-2">
+              <div class="col-6">
+                <h4 class="mb-0">Product Reviews</h4>
+              </div>
+              <div class="col-6">
+                <button
+                  class="btn btn-primary d-block ml-auto"
+                  data-toggle="modal" 
+                  data-target="#reviewModal"
+                >
+                  Add Review
+                </button>
+              </div>
+            </div>
             <div class="product-reviews" v-if="product.reviews.length > 0">
               <div class="reviews mb-3">
                 <div class="review" v-for="(review, index) in visibleReviews" :key="index">
@@ -104,6 +117,54 @@
               <p>No Reviews</p>
             </div>
           </div>
+          <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="reviewModalLabel">Add Review</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label for="ratings">Ratings</label>
+                    <select 
+                      class="form-control" 
+                      name="ratings" 
+                      id="ratings"
+                      @change="onSelect"
+                    >
+                      <option value="" selected hidden>Select Number of stars</option>
+                      <option :value="i" v-for="i in 5" :key="i">{{ parseInt(i) }}</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="review">Review</label>
+                    <textarea 
+                      id="review" 
+                      class="form-control" 
+                      name="review" 
+                      v-model="review" 
+                      placeholder="Write review"
+                    ></textarea>
+                    <span>{{ review }}</span>
+                  </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center align-content-center">
+                  <button 
+                    type="button" 
+                    class="btn btn-success" 
+                    data-dismiss="modal"
+                    @click.prevent="addReview()"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- product details div ends -->
         </div>
       </div>
@@ -124,6 +185,8 @@ export default {
     return {
       isAuthenticated: this.$store.getters.authStatus,
       product: null,
+      ratings: null,
+      review: null,
       isLoading: true,
       currentPage: null,
       totalPages: null,
@@ -194,6 +257,30 @@ export default {
     showNext() {
       return this.currentPage == this.totalPages ? false : true;
     },
+
+    onSelect() {
+      this.ratings = document.querySelector('#ratings').value;
+    },
+
+    async addReview() {
+      try {
+        const response = await axios.post(`${this.$store.getters.base_url}/user/review/${this.product.id}`, {
+          review: this.review,
+          ratings: this.ratings
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.token}`
+          }
+        });
+
+        if(response.data.success) {
+          this.getProduct();
+        }
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+    }
   },
 
   created() {

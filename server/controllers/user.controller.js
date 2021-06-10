@@ -399,8 +399,8 @@ exports.giveProductReview = async (req, res, next) => {
     }
 
     const review = await Review.create({
-      remark: req.body.remark,
-      rating: parseInt(req.body.rating),
+      remark: req.body.review,
+      rating: parseInt(req.body.ratings),
       productId: req.params.productId,
       userId: req.userData.userId
     });
@@ -411,16 +411,3 @@ exports.giveProductReview = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
-
-// exports.getProductReviewsAndRatings = async (req, res, next) => {
-//   try {
-//     const ratings = await Review.sum('rating', {
-//       where: {
-//         productId: req.params.productId
-//       }
-//     });
-//     const
-//   } catch (error) {
-    
-//   }
-// }

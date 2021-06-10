@@ -124,7 +124,6 @@ import axios from 'axios';
 
           if(response.data.success) {
             this.products = response.data.payload.products;
-            console.log(response.data.payload.products)
             this.totalPages = response.data.payload.totalPages;
             this.totalProductsCount = response.data.payload.productCount;
             this.currentPage = response.data.payload.currentPage;
