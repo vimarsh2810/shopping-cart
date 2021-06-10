@@ -77,6 +77,7 @@
               <!-- product info div end -->
             </div>
 
+            <!-- Product Review starts -->
             <div class="row mb-2">
               <div class="col-6">
                 <h4 class="mb-0">Product Reviews</h4>
@@ -89,6 +90,11 @@
                 >
                   Add Review
                 </button>
+              </div>
+              <div class="col-12">
+                <div class="alert alert-danger mt-2" role="alert" v-if="reviewError">
+                  {{ reviewError }}
+                </div>
               </div>
             </div>
             <div class="product-reviews" v-if="product.reviews.length > 0">
@@ -116,7 +122,10 @@
             <div v-else>
               <p>No Reviews</p>
             </div>
+            <!-- Product Review ends -->
           </div>
+
+          <!-- Product Review Modal starts -->
           <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
@@ -149,7 +158,6 @@
                       v-model="review" 
                       placeholder="Write review"
                     ></textarea>
-                    <span>{{ review }}</span>
                   </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-center align-content-center">
@@ -165,6 +173,7 @@
               </div>
             </div>
           </div>
+          <!-- Product Review Modal ends -->
           <!-- product details div ends -->
         </div>
       </div>
@@ -187,6 +196,7 @@ export default {
       product: null,
       ratings: null,
       review: null,
+      reviewError: null,
       isLoading: true,
       currentPage: null,
       totalPages: null,
@@ -276,6 +286,8 @@ export default {
 
         if(response.data.success) {
           this.getProduct();
+        } else {
+          this.reviewError = response.data.message;
         }
       } catch (error) {
         alert(error.response.data.message);
