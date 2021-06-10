@@ -45,7 +45,7 @@ exports.getProducts = async (req, res, next) => {
       item.reviews.forEach((review) => {
         sumRating += parseInt(review.rating);
       });
-      item.dataValues.avgRating = sumRating / item.reviews.length;
+      item.dataValues.avgRating = item.reviews.length > 0 ? Number(sumRating / item.reviews.length).toFixed(1) : null;
     });
     
     const result = paginationMetaData(items, page, size);

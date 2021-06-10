@@ -388,14 +388,32 @@ exports.getOrderInvoice = async (req, res, next) => {
 
 exports.giveProductReview = async (req, res, next) => {
   try {
-    const orderItem = await OrderItem.findOne({ 
+    const order = await Order.findOne({ 
       where: {
-        productId: req.params.productId 
+        userId: req.userData.userId 
+      },
+      include: [
+        { 
+          model: Product, 
+          where: { id: req.params.productId }, 
+          attributes: [] 
+        }
+      ]
+    });
+
+    if(!order) {
+      return res.status(200).json(responseObj(false, 'Purchase product to give review!'));
+    }
+
+    const reviewExists = await Review.findOne({
+      where: { 
+        userId: req.userData.userId,
+        productId: req.params.productId
       }
     });
 
-    if(!orderItem) {
-      return res.status(400).json(responseObj(false, 'You need to purchase the product to give review'));
+    if(reviewExists) {
+      return res.status(200).json(responseObj(false, 'Your have already reviewed this product!'));
     }
 
     const review = await Review.create({
@@ -411,3 +429,17 @@ exports.giveProductReview = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+exports.getOrderItem = async (req, res, next) => {
+  try {
+    const order = await Order.findAll({ 
+      where: { 
+        userId: req.userData.userId 
+      },
+      include: [{ model: Product, where: { id: req.params.productId }, attributes: [] }]
+    });
+    return res.status(200).json(responseObj(true, 'order', order));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+}
