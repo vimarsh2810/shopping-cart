@@ -66,4 +66,6 @@ router.post('/order/:id/otp', [validateToken, checkAdmin], adminController.verif
 
 router.get('/statistics', [validateToken, checkAdmin], adminController.getStatistics);
 
+router.get('/products', adminController.getAdminProducts);
+
 module.exports = router;

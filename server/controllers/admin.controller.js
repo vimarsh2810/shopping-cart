@@ -10,6 +10,7 @@ const { Category } = require('../models/category.js');
 const { pagination, paginationMetaData } = require('../helpers/pagination.js');
 const { generateOtp } = require('../helpers/generateOtp.js');
 const { deliverMail } = require('../helpers/nodeMailer.js');
+const { Review } = require('../models/review.js');
 
 /* @desc Create a SubAdmin */
 /* @route POST /admin/subAdmin */
@@ -499,3 +500,23 @@ exports.getStatistics = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+exports.getAdminProducts = async (req, res, next) => {
+  try {
+    const product = await Product.findByPk(1, {
+      attributes: [
+        'id', 'title', 
+        'price', 'description', 
+        'categoryId', 'imagePath', 
+        [Sequelize.fn('avg', Sequelize.col('reviews.rating')), 'avgRating']
+      ],
+      include: [{ model: Review, attributes: [] }]
+    });
+    const reviews = await product.getReviews();
+    product.dataValues.reviews = reviews;
+    console.log(product.reviews);
+    return res.status(200).json(responseObj(true, 'Products', product))
+  } catch (error) {
+    
+  }
+}

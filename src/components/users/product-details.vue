@@ -53,8 +53,55 @@
                 <div class="product-info-line">
                   <p style="text-align: left">Category<span style="float: right">{{ product.category.title }}</span></p>
                 </div>
+                <hr>
+                <div class="product-info-line">
+                  <p 
+                    style="text-align: left"
+                  >
+                    Ratings
+                    <span 
+                      style="float: right" 
+                      v-if="product.avgRating"
+                    >
+                      {{ Number(product.avgRating).toFixed(1) }}&nbsp;&#11088;
+                    </span>
+                    <span 
+                      style="float: right" 
+                      v-else
+                    >
+                      None
+                    </span>
+                  </p>
+                </div>
               </div>
               <!-- product info div end -->
+            </div>
+
+            <h4>Product Reviews</h4>
+            <div class="product-reviews" v-if="product.reviews.length > 0">
+              <div class="reviews mb-3">
+                <div class="review" v-for="(review, index) in visibleReviews" :key="index">
+                  <p>
+                    <span 
+                      class="d-inline-flex align-items-center badge badge-success"
+                    >
+                      {{ review.rating }}&nbsp;&#11088;
+                    </span>
+                    &nbsp;&nbsp;&nbsp;{{ review.user.username }}
+                  </p>
+                  <p>{{ review.remark }}</p>
+                </div>
+              </div>
+              <Pagination 
+                :currentPage="currentPage" 
+                :totalPages="totalPages" 
+                :showPrevious="showPrevious()" 
+                :showNext="showNext()"
+                @pageClicked="filterReviews($event)"
+              ></Pagination>
+            </div>
+            <div v-else>
+              <p>No Reviews</p>
             </div>
           </div>
           <!-- product details div ends -->
@@ -68,16 +115,21 @@
 <script>
 import axios from 'axios';
 import Navbar from '../shared/navbar.vue';
+import Pagination from '../shared/pagination.vue';
 
 export default {
   name: 'ProductDetailsUser',
-  components: { Navbar },
+  components: { Navbar, Pagination },
   data() {
     return {
       isAuthenticated: this.$store.getters.authStatus,
       product: null,
       isLoading: true,
-      error: null
+      currentPage: null,
+      totalPages: null,
+      error: null,
+      limit: 5,
+      visibleReviews: []
     };
   },
 
@@ -89,9 +141,10 @@ export default {
         if(response.data.success) {
           this.product = response.data.payload;
           this.isLoading = false;
+          this.totalPages = Math.ceil(this.product.reviews.length / this.limit);
+          this.filterReviews(1);
         }
       } catch (error) {
-        console.log(error)
         this.error = error.response.data.message;
       }
     },
@@ -125,7 +178,22 @@ export default {
       } catch (error) {
         console.log(error.response);
       }
-    }
+    },
+
+    filterReviews(requiredPage) {
+      const startIndex = (parseInt(requiredPage) - 1) * this.limit;
+      const endIndex = startIndex + this.limit - 1;
+      this.visibleReviews = this.product.reviews.filter((review, index) => index >= startIndex && index <= endIndex);
+      this.currentPage = requiredPage;
+    },
+
+    showPrevious() {
+      return this.currentPage == 1 ? false : true;
+    },
+
+    showNext() {
+      return this.currentPage == this.totalPages ? false : true;
+    },
   },
 
   created() {
@@ -216,6 +284,16 @@ export default {
     font-size: 20px;
     line-height: 60px;
     padding: 0 15px;
+  }
+
+  .review {
+    padding: 15px 10px;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 3px;
+  }
+
+  .review p {
+    margin-bottom: 0;
   }
 
   @media (max-width: 992px) {

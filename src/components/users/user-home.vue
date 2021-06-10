@@ -24,7 +24,15 @@
                 >
                   {{ product.title }}
                 </h4>
-                <p><span class=" d-inline-flex align-items-center badge badge-success">4.5&nbsp;&#11088;</span>&nbsp;&nbsp;&nbsp;&#8377;{{ product.price }}</p>
+                <p>
+                  <span 
+                    class="d-inline-flex align-items-center badge badge-success"
+                    v-if="product.avgRating"
+                  >
+                    {{ product.avgRating }}&nbsp;&#11088;
+                  </span>
+                  &nbsp;&nbsp;&nbsp;&#8377;{{ product.price }}
+                </p>
               </div>
               <div class="card-product-btn">
                 <button 
@@ -116,6 +124,7 @@ import axios from 'axios';
 
           if(response.data.success) {
             this.products = response.data.payload.products;
+            console.log(response.data.payload.products)
             this.totalPages = response.data.payload.totalPages;
             this.totalProductsCount = response.data.payload.productCount;
             this.currentPage = response.data.payload.currentPage;

@@ -13,6 +13,8 @@ const { development } = require('../config/config.js');
 const { WishList } = require('../models/wishList.js');
 const { generateInvoice } = require('../helpers/invoice.helper.js');
 const { deliverInvoiceMail } = require('../helpers/nodeMailer.js');
+const { OrderItem } = require('../models/orderItem.js');
+const { Review } = require('../models/review.js');
 
 /* @desc Get data of logged in user */
 /* @route GET /user/data */
@@ -380,3 +382,45 @@ exports.getOrderInvoice = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+/* @desc Give Ratings & Review for a product */
+/* @route POST /user/review/:productId */
+
+exports.giveProductReview = async (req, res, next) => {
+  try {
+    const orderItem = await OrderItem.findOne({ 
+      where: {
+        productId: req.params.productId 
+      }
+    });
+
+    if(!orderItem) {
+      return res.status(400).json(responseObj(false, 'You need to purchase the product to give review'));
+    }
+
+    const review = await Review.create({
+      remark: req.body.remark,
+      rating: parseInt(req.body.rating),
+      productId: req.params.productId,
+      userId: req.userData.userId
+    });
+
+    return res.status(200).json(responseObj(true, 'Review created!'));
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+// exports.getProductReviewsAndRatings = async (req, res, next) => {
+//   try {
+//     const ratings = await Review.sum('rating', {
+//       where: {
+//         productId: req.params.productId
+//       }
+//     });
+//     const
+//   } catch (error) {
+    
+//   }
+// }
