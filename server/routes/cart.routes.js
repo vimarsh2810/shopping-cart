@@ -5,7 +5,7 @@ const cartController = require('../controllers/cart.controller.js');
 
 const router = express.Router();
 
-router.post('/addToCart', validateToken, cartController.addToCart);
+router.post('/cartFunctionalities', validateToken, cartController.cartFunctionalities);
 
 router.get('/products', validateToken, cartController.getCart);
 

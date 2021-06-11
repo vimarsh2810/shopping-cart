@@ -239,3 +239,21 @@ exports.payment = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+exports.cartFunctionalities = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userData.userId, {
+      include: [{ model: Cart}]
+    });
+    if(!user.isActive) {
+      return res.status(403).json(responseObj(false, 'Verify Email Id to add products in cart'));
+    }
+    const result = await sequelize.query('CALL cart_functionalities(:cartId, :productId, :quantity)', {
+      replacements: { cartId: user.cart.id, productId: parseInt(req.body.productId), quantity: parseInt(req.body.quantity) }
+    });
+    const respMsg = parseInt(req.body.quantity) === 0 ? 'Product Removed from cart' : 'Cart Updated';
+    res.status(200).json(responseObj(true, respMsg));
+  } catch (error) {
+    return res.status(500).json(responseObj(500, false, 'Internal Server Error'));
+  }
+};

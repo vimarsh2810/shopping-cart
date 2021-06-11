@@ -154,7 +154,7 @@ export default new Vuex.Store({
         quantity: 1
       };
 
-      return await axios.post(`${context.getters.base_url}/cart/addToCart`, data, {
+      return await axios.post(`${context.getters.base_url}/cart/cartFunctionalities`, data, {
         headers: {
             'Authorization': `Bearer ${context.getters.token}`
         }
