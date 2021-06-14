@@ -1,4 +1,3 @@
-const pdf = require('pdf-creator-node');
 const fs = require('fs');
 
 const template = fs.readFileSync('./server/templates/invoice.html', 'utf-8');
