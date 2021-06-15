@@ -28,7 +28,7 @@ const deliverMail = (userInfo, subject, text) => {
   });
 };
 
-const deliverInvoiceMail = (subject, orderInfo) => {
+const deliverInvoiceMail = async (subject, orderInfo) => {
   const mailOptions = {
     from: development.mail_id,
     to: orderInfo.user.email,
@@ -42,13 +42,13 @@ const deliverInvoiceMail = (subject, orderInfo) => {
       }
     ]
   };
-  
-  transporter.sendMail(mailOptions, (error, info) => {
-    if(error) {
-      console.log(error.message);
-    } else {
-      console.log(info.response);
-    }
-  });
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(info.response);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 }
 module.exports = { deliverMail, deliverInvoiceMail };

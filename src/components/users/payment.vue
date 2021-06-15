@@ -156,6 +156,8 @@ export default {
           this.totalAmount = response.data.payload.totalAmount;
           this.finalAmount = response.data.payload.finalAmount;
           this.discount = response.data.payload.discount;
+        } else {
+          this.$router.push({ name: 'Cart' });
         }
       } catch (error) {
         this.successMsg = null;
@@ -192,6 +194,7 @@ export default {
           }
         });
         if(response.data.success) {
+          console.log(response.data.message)
           this.successMsg = response.data.message;
         }
       } catch (error) {

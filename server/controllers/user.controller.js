@@ -11,9 +11,8 @@ const { Coupon } = require('../models/coupon.js');
 const { Wallet } = require('../models/wallet.js');
 const { development } = require('../config/config.js');
 const { WishList } = require('../models/wishList.js');
-const { generateInvoice } = require('../helpers/invoice.helper.js');
+const { createInvoice } = require('../helpers/invoice.helper.js');
 const { deliverInvoiceMail } = require('../helpers/nodeMailer.js');
-const { OrderItem } = require('../models/orderItem.js');
 const { Review } = require('../models/review.js');
 
 /* @desc Get data of logged in user */
@@ -352,11 +351,13 @@ exports.generateInvoice = async (req, res, next) => {
       amount: order.amount
     };
 
-    const invoicePath = await generateInvoice(JSON.parse(JSON.stringify(orderResponse)));
-    order.invoicePath = invoicePath;
-    await order.save();
-    await deliverInvoiceMail(`Invoice for Order: ${orderResponse.id}`, order);
-    return res.status(200).json(responseObj(true, 'Invoice Created and Mailed on your email'));
+    createInvoice(JSON.parse(JSON.stringify(orderResponse)))
+      .then(async (invoicePath) => {
+        order.invoicePath = invoicePath;
+        await order.save();
+        deliverInvoiceMail(`Invoice for Order: ${orderResponse.id}`, order);
+        return res.status(200).json(responseObj(true, 'Invoice Created and Mailed on your email'));
+      });
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

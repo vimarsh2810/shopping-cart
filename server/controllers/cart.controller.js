@@ -166,7 +166,7 @@ exports.getPaymentAmount = async (req, res, next) => {
       }));
     }
     
-    return res.status(400).json(responseObj(false, 'No products in cart'));
+    return res.status(200).json(responseObj(false, 'No products in cart'));
   } catch (error) {
     return res.status(500).json(responseObj(500, false, error.message));
   }

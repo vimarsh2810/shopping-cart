@@ -18,6 +18,9 @@ const { development } = require('./server/config/config.js');
 
 const app = express();
 
+app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname, 'server/templates'));
+
 app.use(morgan('dev'));
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
