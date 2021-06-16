@@ -6,6 +6,8 @@ const { Review } = require('../models/review.js');
 const { Sequelize } = require('sequelize');
 const { User } = require('../models/user.js');
 
+const Op = require('sequelize').Op;
+
 // @desc Get all products
 // @route GET /shop/getAllProducts
 
@@ -131,6 +133,33 @@ exports.getProductsByCategory = async (req, res, next) => {
       productCount: result.count,
       products: result.rows,
       categoryTitle: category.title,
+      totalPages: result.totalNoOfPages,
+      currentPage: result.currentPage
+    }));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+exports.searchProduct = async (req, res, next) => {
+  try {
+    const { page, limit, searchText } = req.query;
+    const { offset, size } = pagination(page, limit);
+
+    const items = await Product.findAndCountAll({
+      where: {
+        title: {
+          [Op.like]: `%${searchText.toLowerCase()}%`
+        }
+      },
+      limit: size,
+      offset: offset
+    });
+
+    const result = paginationMetaData(items, page, size);
+    return res.status(200).json(responseObj(true, 'Paginated Products by category', {
+      productCount: result.count,
+      products: result.rows,
       totalPages: result.totalNoOfPages,
       currentPage: result.currentPage
     }));

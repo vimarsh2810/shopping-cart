@@ -1,6 +1,8 @@
 <template>
   <div class="main-div">
-    <Navbar />
+    <Navbar
+      @searchProduct="searchProduct($event)"
+    ></Navbar>
     <div class="wrapper" style="margin-top: 100px">
       <div class="container" v-if="!isLoading">
         <h3 class="mbpx-30px">Products</h3>
@@ -122,6 +124,33 @@ import axios from 'axios';
             }
           });
 
+          if(response.data.success) {
+            this.products = response.data.payload.products;
+            this.totalPages = response.data.payload.totalPages;
+            this.totalProductsCount = response.data.payload.productCount;
+            this.currentPage = response.data.payload.currentPage;
+            this.isLoading = false;
+          }
+        } catch (error) {
+          console.log(error.response.data.message);
+        }
+      },
+
+      async searchProduct(searchText) {
+        if(!searchText) {
+          return;
+        }
+        try {
+          const response = await axios.get(`${this.$store.getters.base_url}/shop/searchedProducts`, {
+            headers: {
+              'Authorization': `Bearer ${this.$store.getters.token}`
+            }, params: {
+              page: 1,
+              limit: this.limit,
+              searchText: searchText,
+              includeCategory: Boolean(false)
+            }
+          });
           if(response.data.success) {
             this.products = response.data.payload.products;
             this.totalPages = response.data.payload.totalPages;

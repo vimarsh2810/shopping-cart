@@ -19,7 +19,7 @@
             to="/user/home" 
             class="nav-link"
           >
-            <i class="fas fa-home"></i>&nbsp;&nbsp;Home
+            <i class="fas fa-home mr-1"></i>Home
           </router-link>
         </li>
 
@@ -28,7 +28,7 @@
             to="/user/category" 
             class="nav-link"
           >
-            <i class="fas fa-th-large"></i>&nbsp;&nbsp;Categories
+            <i class="fas fa-th-large mr-1"></i>Categories
           </router-link>
         </li>
 
@@ -37,7 +37,7 @@
             to="/user/cart" 
             class="nav-link"
           >
-            <i class="fas fa-shopping-cart"></i>&nbsp;&nbsp;My Cart
+            <i class="fas fa-shopping-cart mr-1"></i>My Cart
           </router-link>
         </li>
 
@@ -46,12 +46,16 @@
             to="/user/orders" 
             class="nav-link"
           >
-            <i class="fas fa-receipt"></i>&nbsp;&nbsp;My Orders
+            <i class="fas fa-receipt mr-1"></i>My Orders
           </router-link>
         </li>
 
         <div class="navbar-collapse">
           <ul class="navbar-nav ml-auto">
+            <form class="form-inline mr-2">
+              <input class="form-control mr-sm-2" type="search" placeholder="Search" v-model="searchText" aria-label="Search">
+              <button class="btn btn-search my-2 my-sm-0" type="button" @click.prevent="searchProduct">Search</button>
+            </form>
             <li class="nav-item dropdown mr-2" v-if="isAuthenticated">
               <a 
                 class="nav-link dropdown-toggle" 
@@ -62,7 +66,7 @@
                 aria-haspopup="true" 
                 aria-expanded="false"
               >
-                <i class="fas fa-bell"></i>&nbsp;&nbsp;&nbsp;<span id="notification-length">{{ notifications.length }}</span>
+                <i class="fas fa-bell mr-1"></i><span id="notification-length">{{ notifications.length }}</span>
               </a>
                 
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="orderDropdown" v-if="notifications.length > 0">
@@ -98,7 +102,7 @@
                   to="/user/edit-profile" 
                   class="dropdown-item"
                 >
-                  <i class="fas fa-user-edit"></i>&nbsp;&nbsp;Edit Profile
+                  <i class="fas fa-user-edit mr-1"></i>Edit Profile
                 </router-link>
 
                 <router-link 
@@ -106,14 +110,14 @@
                   class="dropdown-item" 
                   v-if="isUserActive"
                 >
-                  <i class="fas fa-wallet"></i>&nbsp;&nbsp;My Wallet
+                  <i class="fas fa-wallet mr-1"></i>My Wallet
                 </router-link>
 
                 <router-link 
                   to="/user/wishlist" 
                   class="dropdown-item"
                 >
-                  <i class="fas fa-heart"></i>&nbsp;&nbsp;My WishList
+                  <i class="fas fa-heart mr-1"></i>My WishList
                 </router-link>
 
                 <router-link 
@@ -121,13 +125,13 @@
                   class="dropdown-item" 
                   v-if="!isUserActive"
                 >
-                  <i class="fas fa-envelope"></i>&nbsp;&nbsp;Verify Email
+                  <i class="fas fa-envelope mr-1"></i>Verify Email
                 </router-link>
                 <a 
                   class="dropdown-item" 
                   @click.prevent="logout"
                 >
-                  <i class="fas fa-power-off"></i>&nbsp;&nbsp;Logout
+                  <i class="fas fa-power-off mr-1"></i>Logout
                 </a>
               </div>
             </li>
@@ -165,12 +169,17 @@ export default {
     return {
       notifications: this.$store.getters.notifications || [],
       isUserActive: this.$store.getters.isActive,
-      isAuthenticated: this.$store.getters.authStatus
+      isAuthenticated: this.$store.getters.authStatus,
+      searchText: null
     };
   },
   methods: {
     logout(event) {
       this.$store.dispatch("logout");
+    },
+
+    searchProduct() {
+      this.$emit('searchProduct', this.searchText);
     }
   },
 
@@ -198,9 +207,10 @@ a.dropdown-item:hover {
 }
 
 .router-link-active {
-  text-decoration: underline;
-  text-decoration-thickness: 3px;
-  text-underline-offset: 8px;
+  background-color: #ffffff;
+  color: #007bff !important;
+  border: none;
+  border-radius: 3px;
 }
 
 .menu-item:hover > .dropdown-menu {
@@ -232,6 +242,17 @@ a.dropdown-item:hover {
   background-color: rgb(247, 81, 59);
   border: 1px solid none;
   border-radius: 3px;
+}
+
+li a {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.btn-search {
+  border: 1px solid #ffffff;
+  color: #ffffff;
 }
 
 </style>
