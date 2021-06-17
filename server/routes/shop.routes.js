@@ -17,4 +17,8 @@ router.get('/categories', shopController.getCategories);
 
 router.get('/productsByCategory/:id', shopController.getProductsByCategory);
 
+router.get('/brand/:id', shopController.getBrandByID);
+
+router.get('/brands', shopController.getAllBrands);
+
 module.exports = router;

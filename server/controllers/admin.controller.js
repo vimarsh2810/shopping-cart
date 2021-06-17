@@ -11,6 +11,7 @@ const { pagination, paginationMetaData } = require('../helpers/pagination.js');
 const { generateOtp } = require('../helpers/generateOtp.js');
 const { deliverMail } = require('../helpers/nodeMailer.js');
 const { Review } = require('../models/review.js');
+const { Brand } = require('../models/brand.js');
 
 /* @desc Create a SubAdmin */
 /* @route POST /admin/subAdmin */
@@ -517,6 +518,46 @@ exports.getAdminProducts = async (req, res, next) => {
     console.log(product.reviews);
     return res.status(200).json(responseObj(true, 'Products', product))
   } catch (error) {
-    
+    return res.status(500).json(responseObj(false, error.message));
   }
-}
+};
+
+/* @desc POST Create a brand record in DB */
+/* @route POST /admin/brand */
+
+exports.createBrand = async (req, res, next) => {
+  try {
+    const brand = await Brand.create({
+      name: req.body.name
+    });
+    return res.status(200).json(responseObj(true, 'Brand Created'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc PUT Update a brand record in DB */
+/* @route PUT /admin/brand/:id */
+
+exports.updateBrand = async (req, res, next) => {
+  try {
+    const brand = await Brand.findByPk(req.params.id);
+    brand.name = req.body.name;
+    await brand.save();
+    return res.status(200).json(responseObj(true, 'Brand Updated'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc DELETE Delete a brand record from DB */
+/* @route DELETE /admin/brand/:id */
+
+exports.deleteBrand = async (req, res, next) => {
+  try {
+    const brand = await Brand.destroy({ where: { id: req.params.id } });
+    return res.status(200).json(responseObj(true, 'Brand Deleted'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};

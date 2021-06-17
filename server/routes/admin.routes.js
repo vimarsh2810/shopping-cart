@@ -50,6 +50,14 @@ router.put('/subAdmin/:id', [validateToken, checkSuperAdmin, signupValidator(), 
 
 router.delete('/subAdmin/:id', [validateToken, checkSuperAdmin], adminController.deleteSubAdmin);
 
+/* Brand Routes */
+
+router.post('/brand', [validateToken, checkAdmin], adminController.createBrand);
+
+router.put('/brand/:id', [validateToken, checkAdmin], adminController.updateBrand);
+
+router.delete('/brand/:id', [validateToken, checkAdmin], adminController.deleteBrand);
+
 /* Other Routes */
 
 router.put('/profile', [validateToken, checkAdmin], adminController.editProfile);

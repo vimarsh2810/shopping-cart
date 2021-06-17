@@ -5,6 +5,7 @@ const { pagination, paginationMetaData } = require('../helpers/pagination.js');
 const { Review } = require('../models/review.js');
 const { Sequelize } = require('sequelize');
 const { User } = require('../models/user.js');
+const { Brand } = require('../models/brand.js');
 
 const Op = require('sequelize').Op;
 
@@ -163,6 +164,30 @@ exports.searchProduct = async (req, res, next) => {
       totalPages: result.totalNoOfPages,
       currentPage: result.currentPage
     }));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc GET Get a brand by ID */
+/* @route GET /admin/brand/:id */
+
+exports.getBrandByID = async (req, res, next) => {
+  try {
+    const brand = await Brand.findByPk(req.params.id);
+    return res.status(200).json(responseObj(true, 'Brand Deleted', brand));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc GET Get all brands */
+/* @route GET /admin/brands */
+
+exports.getAllBrands = async (req, res, next) => {
+  try {
+    const brands = await Brand.findAll();
+    return res.status(200).json(responseObj(true, 'Brand Deleted', brands));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
