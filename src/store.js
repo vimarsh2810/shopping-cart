@@ -21,6 +21,7 @@ export default new Vuex.Store({
     isAuthenticated: false,
     base_url: 'http://localhost:3000',
     categories: null,
+    brands: null,
     notifications: [],
     walletBalance: 0
   },
@@ -60,6 +61,10 @@ export default new Vuex.Store({
 
     setBalance(state, balance) {
       state.walletBalance = balance;
+    },
+
+    setBrands(state, brands) {
+      state.brands = brands;
     }
   },
   actions: {
@@ -72,6 +77,15 @@ export default new Vuex.Store({
           }
         });
         context.commit('setCategories', response.data.payload);
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
+
+    async getBrands(context) {
+      try {
+        const response = await axios.get(`${context.getters.base_url}/shop/brands`);
+        context.commit('setBrands', response.data.payload);
       } catch (error) {
         console.log(error.response);
       }
@@ -104,6 +118,7 @@ export default new Vuex.Store({
         router.push('/user/home');
       } else {
         await dispatch('getCategories');
+        await dispatch('getBrands');
         router.push('/admin/dashboard');
       }
     },
@@ -176,6 +191,7 @@ export default new Vuex.Store({
     userData: (state) => state.user,
     isActive: (state) => state.user.isActive,
     categories: (state) => state.categories,
+    brands: (state) => state.brands,
     base_url: (state) => state.base_url,
     authStatus: (state) => state.isAuthenticated,
     notifications: (state) => state.notifications,

@@ -30,9 +30,17 @@
             <textarea id="description" class="form-control" name="description" v-model="description" placeholder="Enter product description"></textarea>
           </div>
 
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label for="title">Brand Name</label>
             <input type="text" name="brandName" id="brandName" class="form-control" v-model="brandName" placeholder="Enter brand name">
+          </div> -->
+          
+          <div class="form-group">
+            <label for="brand">Brand</label>
+            <select name="brand" class="form-control" id="brand">
+              <option value="" selected hidden>Select Brand</option>
+              <option :value="brand.id" v-for="brand in brands" :key="brand.id">{{ brand.name }}</option>
+            </select>
           </div>
 
           <div class="form-group">
@@ -97,7 +105,8 @@ export default {
       title: '',
       description: '',
       price: null,
-      brandName: '',
+      brands: this.$store.getters.brands,
+      selectedBrand: null,
       image: null,
       userId: this.$store.getters.userData.id,
       parentCategories: this.$store.getters.categories,
@@ -167,10 +176,11 @@ export default {
       if(!this.categoryId) {
         this.categoryId = document.querySelector('#childCategory').value;
       }
+      this.selectedBrand = document.querySelector('#brand').value;
       formData.append('file', this.image);
       formData.append('description', this.description);
       formData.append('title', this.title);
-      formData.append('brandName', this.brandName);
+      formData.append('brandId', this.selectedBrand);
       formData.append('price', this.price);
       formData.append('userId', this.userId);
       formData.append('categoryId', this.categoryId);

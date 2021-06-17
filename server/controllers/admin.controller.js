@@ -121,19 +121,19 @@ exports.checkProductExists = async (req, res, next) => {
 exports.addProduct = async (req, res, next) => {
   try {
 
-    const { title, brandName, price, description, categoryId } = req.body;
+    const { title, brandId, price, description, categoryId } = req.body;
     
-    if(!title || !brandName || !price || !description || !categoryId || !req.fileName ) {
+    if(!title || !brandId || !price || !description || !categoryId || !req.fileName ) {
       return res.status(400).json(responseObj(false, 'All details should be filled'));
     }
 
     const user = await User.findByPk(req.userData.userId);
     const product = await user.createProduct({
-      title: req.body.title,
-      price: req.body.price,
-      brandName: req.body.brandName,
-      description: req.body.description,
-      categoryId: req.body.categoryId,
+      title: title,
+      price: price,
+      brandId: brandId,
+      description: description,
+      categoryId: categoryId,
       imagePath: `/img/products/${req.fileName}`
     });
 
