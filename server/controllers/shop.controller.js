@@ -74,11 +74,14 @@ exports.getProductById = async (req, res, next) => {
         'id', 'title', 
         'price', 'description', 
         'categoryId', 'imagePath', 
-        'brandName', [Sequelize.fn('avg', Sequelize.col('reviews.rating')), 'avgRating']
+        [Sequelize.fn('avg', Sequelize.col('reviews.rating')), 'avgRating']
       ],
       include: [
         { 
           model: Category
+        },
+        {
+          model: Brand
         },
         {
           model: Review,

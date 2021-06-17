@@ -46,6 +46,13 @@
             </router-link>
 
             <router-link 
+              to="/admin/manage-brands" 
+              class="dropdown-item"
+            >
+              Manage Brands
+            </router-link>
+
+            <router-link 
               to="/admin/manage-subadmins" 
               class="dropdown-item" 
               v-if="userRole == allRoles.SuperAdmin"

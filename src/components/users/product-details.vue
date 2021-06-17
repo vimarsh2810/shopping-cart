@@ -47,7 +47,7 @@
                 </div>
                 <hr>
                 <div class="product-info-line">
-                  <p style="text-align: left">Brand<span style="float: right">{{ product.brandName }}</span></p>
+                  <p style="text-align: left">Brand<span style="float: right">{{ product.brand.name }}</span></p>
                 </div>
                 <hr>
                 <div class="product-info-line">

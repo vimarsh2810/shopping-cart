@@ -240,8 +240,7 @@ a.dropdown-item:hover {
   border-radius: 3px;
 }
 
-li a {
-  height: 100%;
+li.nav-item {
   display: flex;
   align-items: center;
 }

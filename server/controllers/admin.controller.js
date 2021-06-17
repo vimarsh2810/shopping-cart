@@ -485,7 +485,7 @@ exports.getStatistics = async (req, res, next) => {
   try {
     const productsCount = await Product.count();
     const categoriesCount = await Category.count();
-    const ordersCount = await Order.count();
+    const brandsCount = await Brand.count();
     const totalAmountEarned = await Order.sum('amount', { 
       where: {
         status: {
@@ -495,7 +495,7 @@ exports.getStatistics = async (req, res, next) => {
     });
 
     return res.status(200).json(responseObj(true, 'Statistics', {
-      productsCount, categoriesCount, ordersCount, totalAmountEarned
+      productsCount, categoriesCount, brandsCount, totalAmountEarned
     }));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
@@ -541,11 +541,21 @@ exports.createBrand = async (req, res, next) => {
 
 exports.updateBrand = async (req, res, next) => {
   try {
+    const brandExists = await Brand.findOne({ where: {
+      id: {
+        [Sequelize.Op.not]: req.params.id
+      },
+      name: req.body.name,
+    }});
+    if(brandExists) {
+      return res.status(404).json(responseObj(false, 'Brand Exists', 'Brand with this name already exists!'));
+    }
     const brand = await Brand.findByPk(req.params.id);
     brand.name = req.body.name;
     await brand.save();
     return res.status(200).json(responseObj(true, 'Brand Updated'));
   } catch (error) {
+    console.log(error)
     return res.status(500).json(responseObj(false, error.message));
   }
 };
@@ -557,6 +567,48 @@ exports.deleteBrand = async (req, res, next) => {
   try {
     const brand = await Brand.destroy({ where: { id: req.params.id } });
     return res.status(200).json(responseObj(true, 'Brand Deleted'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Check if Brand name available */
+/* @route POST /admin/checkBrandExists */
+
+exports.checkBrandExists = async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    const brandExists = await Brand.findOne({ where: { name: name } });
+    if(brandExists) {
+      return res.status(200).json(responseObj(false, 'Brand Exists', 'Brand with this name already exists!'));
+    }
+    return res.status(200).json(responseObj(true, 'Brand does not Exists', 'Brand name available.'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Get limited brands */
+/* @route GET /admin/limitedBrands */
+
+exports.getLimitedBrands = async (req, res, next) => {
+  try {
+
+    let { page, limit } = req.query;
+    const { offset, size } = pagination(page, limit);
+    let items = await Brand.findAndCountAll({
+      limit: size,
+      offset: offset
+    });
+
+    const result = paginationMetaData(items, page, size);
+
+    return res.status(200).json(responseObj(true, 'Paginated Brands', {
+      categoryCount: result.count,
+      brands: result.rows,
+      totalPages: result.totalNoOfPages,
+      currentPage: result.currentPage
+    }));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

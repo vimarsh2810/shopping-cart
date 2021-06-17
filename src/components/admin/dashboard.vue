@@ -20,9 +20,9 @@
             <div 
               class="statistic-div" 
               style="background-color: #f7678b"
-              @click="$router.push({ name: 'AllOrders' })"
+              @click="$router.push({ name: 'ManageBrands' })"
             >
-              <h4 style="text-align: left">Orders<span style="float: right">{{ statistics.ordersCount }}</span></h4>
+              <h4 style="text-align: left">Brands<span style="float: right">{{ statistics.brandsCount }}</span></h4>
             </div>
           </div>
           <div class="col-sm-3 col-6">
@@ -154,7 +154,7 @@ export default {
           this.statistics = response.data.payload;
         }
       } catch (error) {
-        
+        console.log(error.response.data.message);
       }
     },
 

@@ -58,6 +58,10 @@ router.put('/brand/:id', [validateToken, checkAdmin], adminController.updateBran
 
 router.delete('/brand/:id', [validateToken, checkAdmin], adminController.deleteBrand);
 
+router.get('/limitedBrands', [validateToken, checkAdmin], adminController.getLimitedBrands);
+
+router.post('/checkBrandExists', [validateToken, checkAdmin], adminController.checkBrandExists);
+
 /* Other Routes */
 
 router.put('/profile', [validateToken, checkAdmin], adminController.editProfile);

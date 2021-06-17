@@ -13,9 +13,6 @@ const Brand = sequelize.define('brand', {
       allowNull: false,
       unique: true
     }
-  },
-  {
-    timestamps: false
   }
 );
 
