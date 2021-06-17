@@ -82,6 +82,7 @@ export default {
       isAuthenticated: this.$store.getters.authStatus,
       currentPage: null,
       totalPages: null,
+      cartProducts: [],
       limit: 6
     };
   },
@@ -104,7 +105,7 @@ export default {
             limit: this.limit
           }
         });
-        
+
         this.products = response.data.payload.products;
         this.currentPage = response.data.payload.currentPage;
         this.totalPages = response.data.payload.totalPages
@@ -115,10 +116,40 @@ export default {
       }
     },
 
+    async getCart() {
+      if(!this.isUserActive) {
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${this.$store.getters.base_url}/cart/products`, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.token}`
+          }
+        });
+
+        if(response.data.success) {
+          this.cartProducts = response.data.payload.products;
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+
+    checkProductInCart(productId) {
+      return this.cartProducts.some(product => product.id === productId);
+    },
+
     async addToCart(productId) {
       if(!this.isAuthenticated) {
         return;
       }
+
+      if(this.checkProductInCart(productId)) {
+        alert('Product already in cart.');
+        return;
+      }
+
       try {
         const response = await this.$store.dispatch('addToCart', productId);
         if(response.data.success) {
@@ -133,6 +164,7 @@ export default {
       if(!this.isAuthenticated) {
         return;
       }
+
       try {
         const response = await this.$store.dispatch('addToWishList', productId);
         if(response.data.success) {
@@ -148,6 +180,7 @@ export default {
 
   created() {
     this.getProductsByCategory(1);
+    this.getCart();
     if(!this.isAuthenticated) {
       this.error = 'Login to purchase products';
     } else if(!this.isUserActive) {

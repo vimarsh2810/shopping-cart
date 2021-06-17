@@ -96,6 +96,7 @@ import axios from 'axios';
         totalPages: null,
         totalProductsCount: null,
         currentPage: null,
+        cartProducts: [],
         limit: 6
       }
     },
@@ -163,10 +164,39 @@ import axios from 'axios';
         }
       },
 
+      async getCart() {
+        if(!this.isActive) {
+          return;
+        }
+        try {
+          const response = await axios.get(`${this.$store.getters.base_url}/cart/products`, {
+            headers: {
+              'Authorization': `Bearer ${this.$store.getters.token}`
+            }
+          });
+          
+          if(response.data.success) {
+            this.cartProducts = response.data.payload.products;
+          }
+        } catch (error) {
+          console.log(error.response.data.message);
+        }
+      },
+
+      checkProductInCart(productId) {
+        return this.cartProducts.some(product => product.id === productId);
+      },
+
       async addToCart(productId) {
         if(!this.isAuthenticated) {
           return;
         }
+
+        if(this.checkProductInCart(productId)) {
+          alert('Product already in cart.');
+          return;
+        }
+        
         try {
           const response = await this.$store.dispatch('addToCart', productId);
           if(response.data.success) {
@@ -192,9 +222,11 @@ import axios from 'axios';
           console.log(error.response);
         }
       }
-    }, 
+    },
+
     created() {
       this.getProducts(1);
+      this.getCart();
       if(!this.isAuthenticated) {
         this.error = 'Login to purchase products';
       } else if(!this.isActive) {
