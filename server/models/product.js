@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 
 const sequelize = require('../config/db.js');
+const { Brand } = require('./brand.js');
 const { Category } = require('./category.js');
 const { User } = require('./user.js');
 
@@ -15,10 +16,6 @@ const Product = sequelize.define('product',
     title: {
       type: Sequelize.STRING(40),
       unique: true,
-      allowNull: false
-    },
-    brandName: {
-      type: Sequelize.STRING(40),
       allowNull: false
     },
     description: {
@@ -48,5 +45,8 @@ User.hasMany(Product);
 
 Product.belongsTo(Category, { onDelete: 'CASCADE'});
 Category.hasMany(Product);
+
+Product.belongsTo(Brand, { onDelete: 'CASCADE' });
+Brand.hasMany(Product);
 
 module.exports = { Product };

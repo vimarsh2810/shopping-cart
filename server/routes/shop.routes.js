@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/products', validateToken, shopController.getAllProducts);
 
-router.get('/searchedProducts', validateToken, shopController.searchProduct);
+router.get('/searchedProducts', shopController.searchProduct);
 
 router.get('/products/:id', shopController.getProductById);
 

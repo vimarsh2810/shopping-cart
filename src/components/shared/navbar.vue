@@ -52,7 +52,7 @@
 
         <div class="navbar-collapse">
           <ul class="navbar-nav ml-auto">
-            <form class="form-inline mr-2">
+            <form class="form-inline mr-2" v-if="$route.name === 'UserHome' || $route.name === 'ShopByCategory'">
               <input class="form-control mr-sm-2" type="search" placeholder="Search" v-model="searchText" aria-label="Search">
               <button class="btn btn-search my-2 my-sm-0" type="button" @click.prevent="searchProduct">Search</button>
             </form>
@@ -181,10 +181,6 @@ export default {
     searchProduct() {
       this.$emit('searchProduct', this.searchText);
     }
-  },
-
-  created() {
-    // console.log(this.notifications);
   }
 };
 </script>
