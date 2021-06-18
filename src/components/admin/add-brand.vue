@@ -6,8 +6,8 @@
         <h5 class="card-title">Add Brand</h5>
         <!-- Form starts -->
         <form @submit.prevent="addBrand" method="POST">
-          <div class="error-msgs" v-if="errors">
-            <div class="alert alert-danger" role="alert" v-for="(error, index) in errors" :key="index">
+          <div class="error-msgs" v-if="error">
+            <div class="alert alert-danger" role="alert" v-if="error">
               {{ error }}
             </div>
           </div>
@@ -23,7 +23,6 @@
               class="form-control" 
               v-model="name" 
               placeholder="Enter brand name"
-              @blur="checkBrandExists"
             >
           </div>
 
@@ -44,32 +43,12 @@ export default {
   data() {
     return {
       name: null,
-      errors: null,
+      error: null,
       successMsg: null
     };
   },
 
   methods: {
-
-    async checkBrandExists() {
-      try {
-        const response = await axios.post(`${this.$store.getters.base_url}/admin/checkBrandExists`, { name: this.name }, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
-          }
-        });
-
-        if(response.data.success) {
-          this.errors = [];
-          this.successMsg = response.data.payload;
-        } else {
-          this.successMsg = null;
-          this.errors = [response.data.payload];
-        }
-      } catch (error) {
-        console.log(error.response);
-      }
-    },
 
     async addBrand() {
       const formData = { name: this.name };
@@ -80,13 +59,13 @@ export default {
           }
         });
         if(response.data.success) {
-          this.errors = null;
+          this.error = null;
           this.successMsg = response.data.message;
           await this.$store.dispatch('getBrands');
         }
       } catch (error) {
         this.successMsg = null;
-        this.errors = error.response.data.payload;
+        this.error = error.response.data.message;
       }
     }
   }

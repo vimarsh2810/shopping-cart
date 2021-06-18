@@ -148,16 +148,15 @@ exports.addProduct = async (req, res, next) => {
 
 exports.editProduct = async (req, res, next) => {
   try {
-    const { title, brandName, price, description, categoryId } = req.body;
-    console.log(req.body);
+    const { title, brandId, price, description, categoryId } = req.body;
 
-    if(!title || !brandName || !price || !description || !categoryId) {
+    if(!title || !brandId || !price || !description || !categoryId) {
       return res.status(400).json(responseObj(false, 'All details should be filled'));
     }
 
     const product = await Product.findByPk(req.params.id);
     product.title = title;
-    product.brandName = brandName;
+    product.brandId = brandId;
     product.description = description;
     product.price = price;
     product.categoryId = categoryId;

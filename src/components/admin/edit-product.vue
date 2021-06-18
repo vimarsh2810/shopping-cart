@@ -24,8 +24,11 @@
           </div>
 
           <div class="form-group">
-            <label for="title">Brand Name</label>
-            <input type="text" name="brandName" id="brandName" class="form-control" v-model="product.brandName" placeholder="Enter brand name">
+            <label for="brand">Brand</label>
+            <select name="brand" id="brand" class="form-control">
+              <option :value="brand.id" v-for="brand in brands" :key="brand.id" v-if="product.brandId === brand.id" selected>{{ brand.name }}</option>
+              <option :value="brand.id" v-for="brand in brands" :key="brand.id" v-if="product.brandId !== brand.id">{{ brand.name }}</option>
+            </select>
           </div>
 
           <div class="form-group">
@@ -101,6 +104,7 @@ export default {
     return {
       isLoading: true,
       product: null,
+      brands: this.$store.getters.brands,
       selectedParentCategory: null,
       parentCategories: this.$store.getters.categories,
       childCategories: null,
@@ -123,7 +127,8 @@ export default {
     
     async editProduct() {
       this.product.categoryId = document.querySelector('#childCategory').value;
-      if(!this.product.title || !this.product.brandName || !this.product.price || !this.product.description || !this.product.categoryId) {
+      this.product.brandId = document.querySelector('#brand').value;
+      if(!this.product.title || !this.product.brandId || !this.product.price || !this.product.description || !this.product.categoryId) {
         this.error = 'Please fill all details';
         return;
       }

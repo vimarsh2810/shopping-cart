@@ -139,6 +139,10 @@ export default {
   color: #ffffff !important;
 }
 
+a.dropdown-item:hover {
+  cursor: pointer;
+}
+
 .router-link-active {
   text-decoration: underline;
   text-decoration-thickness: 3px;
