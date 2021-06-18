@@ -51,7 +51,7 @@
                 <button 
                   type="button" 
                   class="btn btn-primary w-100"
-                  @click.prevent="filterProducts(1)"
+                  @click.prevent="filterProducts()"
                 >Filter
                 </button>
               </div>
@@ -139,6 +139,7 @@ import axios from 'axios';
     data() {
       return {
         isLoading: true,
+        isFiltered: false,
         isActive: this.$store.getters.isActive,
         isAuthenticated: this.$store.getters.authStatus,
         products: [],
@@ -169,15 +170,35 @@ import axios from 'axios';
 
       async getProducts(requestedPage) {
         try {
-          const response = await axios.get(`${this.$store.getters.base_url}/shop/limitedProducts`, {
-            headers: {
-              'Authorization': `Bearer ${this.$store.getters.token}`
-            }, params: {
-              page: requestedPage,
-              limit: this.limit,
-              includeCategory: Boolean(false)
+          let response;
+          if(this.isFiltered) {
+            if(!this.minPrice) {
+              this.minPrice = 0;
             }
-          });
+            if(!this.maxPrice) {
+              this.maxPrice = 10000000;
+            }
+
+            response = await axios.get(`${this.$store.getters.base_url}/shop/filteredProducts`, {
+              params: {
+                brandId: this.selectedBrand,
+                minPrice: this.minPrice,
+                maxPrice: this.maxPrice,
+                page: requestedPage,
+                limit: this.limit
+              }
+            });
+          } else {
+            response = await axios.get(`${this.$store.getters.base_url}/shop/limitedProducts`, {
+              headers: {
+                'Authorization': `Bearer ${this.$store.getters.token}`
+              }, params: {
+                page: requestedPage,
+                limit: this.limit,
+                includeCategory: Boolean(false)
+              }
+            });
+          }
 
           if(response.data.success) {
             this.products = response.data.payload.products;
@@ -191,6 +212,11 @@ import axios from 'axios';
         } catch (error) {
           console.log(error.response.data.message);
         }
+      },
+      
+      filterProducts() {
+        this.isFiltered = true;
+        this.getProducts();
       },
 
       async searchProduct(searchText) {
@@ -222,35 +248,6 @@ import axios from 'axios';
 
       onSelectBrand() {
         this.selectedBrand = document.querySelector('#brand').value;
-      },
-
-      async filterProducts(requestedPage) {
-        if(!this.minPrice) {
-          this.minPrice = 0;
-        }
-        if(!this.maxPrice) {
-          this.maxPrice = 10000000;
-        }
-        try {
-          const response = await axios.get(`${this.$store.getters.base_url}/shop/filteredProducts`, {
-            params: {
-              brandId: this.selectedBrand,
-              minPrice: this.minPrice,
-              maxPrice: this.maxPrice,
-              page: requestedPage,
-              limit: this.limit
-            }
-          });
-
-          if(response.data.success) {
-            this.products = response.data.payload.products;
-            this.totalPages = response.data.payload.totalPages;
-            this.totalProductsCount = response.data.payload.productCount;
-            this.currentPage = response.data.payload.currentPage;
-          }
-        } catch (error) {
-          console.log(error.response.data.message);
-        }
       },
 
       async getCart() {
