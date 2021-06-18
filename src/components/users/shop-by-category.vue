@@ -120,14 +120,9 @@ export default {
       if(!this.isUserActive) {
         return;
       }
-
       try {
-        const response = await axios.get(`${this.$store.getters.base_url}/cart/products`, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
-          }
-        });
-
+        const response = await this.$store.dispatch(`getCart`);
+        
         if(response.data.success) {
           this.cartProducts = response.data.payload.products;
         }

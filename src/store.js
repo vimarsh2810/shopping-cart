@@ -176,6 +176,14 @@ export default new Vuex.Store({
       });
     },
 
+    async getCart(context) {
+      return await axios.get(`${context.getters.base_url}/cart/products`, {
+        headers: {
+          'Authorization': `Bearer ${context.getters.token}`
+        }
+      });
+    },
+
     async addToWishList(context, productId) {
       return await axios.post(`${context.getters.base_url}/user/wishList/${productId}`, null, {
         headers: {

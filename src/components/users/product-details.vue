@@ -193,7 +193,9 @@ export default {
   data() {
     return {
       isAuthenticated: this.$store.getters.authStatus,
+      isUserActive: this.$store.getters.userData.isActive,
       product: null,
+      cartProducts: null,
       ratings: null,
       review: null,
       reviewError: null,
@@ -222,11 +224,36 @@ export default {
       }
     },
 
+    async getCart() {
+      if(!this.isUserActive) {
+        return;
+      }
+      try {
+        const response = await this.$store.dispatch(`getCart`);
+        
+        if(response.data.success) {
+          this.cartProducts = response.data.payload.products;
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+
+    checkProductInCart(productId) {
+      return this.cartProducts.some(product => product.id === productId);
+    },
+
     async addToCart(productId) {
       if(!this.isAuthenticated) {
         this.error = 'Please login to purchase products!'
         return;
       }
+
+      if(this.checkProductInCart(productId)) {
+        alert('Product already in cart.');
+        return;
+      }
+
       try {
         const response = await this.$store.dispatch('addToCart', productId);
         if(response.data.success) {
@@ -297,6 +324,7 @@ export default {
 
   created() {
     this.getProduct();
+    this.getCart();
   }
 }
 </script>
