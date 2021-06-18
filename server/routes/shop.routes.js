@@ -21,4 +21,6 @@ router.get('/brand/:id', shopController.getBrandByID);
 
 router.get('/brands', shopController.getAllBrands);
 
+router.get('/filteredProducts', shopController.filterProducts);
+
 module.exports = router;

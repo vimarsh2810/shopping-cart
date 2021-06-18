@@ -9,8 +9,58 @@
         <div class="alert alert-danger" role="alert" v-if="error">
           {{ error }}
         </div>
-        <div class="row" v-if="products.length > 0">
+        <div class="row">
+          <div class="col-12 mb-5">
+            <div class="row">
 
+              <div class="col-3">
+                <select name="brand" id="brand" class="form-control" @change="onSelectBrand">
+                  <option value="" selected hidden>Select Brand</option>
+                  <option 
+                    :value="brand.id" 
+                    v-for="brand in brands" 
+                    :key="brand.id"
+                  >{{ brand.name }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-3">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  name="minPrice" 
+                  id="minPrice"
+                  v-model="minPrice"
+                  placeholder="Minimun Price"
+                >
+              </div>
+
+              <div class="col-3">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  name="maxPrice" 
+                  id="maxPrice" 
+                  v-model="maxPrice"
+                  placeholder="Maximun Price"
+                >
+              </div>
+
+              <div class="col-3">
+                <button 
+                  type="button" 
+                  class="btn btn-primary w-100"
+                  @click.prevent="filterProducts(1)"
+                >Filter
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="row" v-if="products.length > 0">
+          
           <div class="col-md-4 col-sm-6 col-12 mbpx-30px" v-for="product in products" :key="product.id">
             <div class="card">
               <div class="card-product-img">
@@ -92,6 +142,10 @@ import axios from 'axios';
         isActive: this.$store.getters.isActive,
         isAuthenticated: this.$store.getters.authStatus,
         products: [],
+        brands: null,
+        selectedBrand: null,
+        minPrice: null,
+        maxPrice: null,
         error: null,
         totalPages: null,
         totalProductsCount: null,
@@ -130,6 +184,8 @@ import axios from 'axios';
             this.totalPages = response.data.payload.totalPages;
             this.totalProductsCount = response.data.payload.productCount;
             this.currentPage = response.data.payload.currentPage;
+            await this.$store.dispatch('getBrands');
+            this.brands = this.$store.getters.brands;
             this.isLoading = false;
           }
         } catch (error) {
@@ -158,6 +214,39 @@ import axios from 'axios';
             this.totalProductsCount = response.data.payload.productCount;
             this.currentPage = response.data.payload.currentPage;
             this.isLoading = false;
+          }
+        } catch (error) {
+          console.log(error.response.data.message);
+        }
+      },
+
+      onSelectBrand() {
+        this.selectedBrand = document.querySelector('#brand').value;
+      },
+
+      async filterProducts(requestedPage) {
+        if(!this.minPrice) {
+          this.minPrice = 0;
+        }
+        if(!this.maxPrice) {
+          this.maxPrice = 10000000;
+        }
+        try {
+          const response = await axios.get(`${this.$store.getters.base_url}/shop/filteredProducts`, {
+            params: {
+              brandId: this.selectedBrand,
+              minPrice: this.minPrice,
+              maxPrice: this.maxPrice,
+              page: requestedPage,
+              limit: this.limit
+            }
+          });
+
+          if(response.data.success) {
+            this.products = response.data.payload.products;
+            this.totalPages = response.data.payload.totalPages;
+            this.totalProductsCount = response.data.payload.productCount;
+            this.currentPage = response.data.payload.currentPage;
           }
         } catch (error) {
           console.log(error.response.data.message);

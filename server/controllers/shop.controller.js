@@ -195,3 +195,47 @@ exports.getAllBrands = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+exports.filterProducts = async (req, res, next) => {
+  try {
+    const { brandId, minPrice, maxPrice, page, limit  } = req.query;
+    const { offset, size } = pagination(page, limit);
+    let items;
+    if(!brandId) {
+      items = await Product.findAndCountAll({
+        where: {
+          price: {
+            [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
+          }
+        },
+  
+        limit: size,
+        offset: offset
+      });
+    } else {
+      items = await Product.findAndCountAll({
+        where: { 
+          brandId: brandId,
+          price: {
+            [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
+          }
+        },
+  
+        limit: size,
+        offset: offset
+      });
+    }
+
+    const result = paginationMetaData(items, page, size);
+    
+    return res.status(200).json(responseObj(true, 'Filtered Paginated Products', {
+      productCount: result.count,
+      products: result.rows,
+      totalPages: result.totalNoOfPages,
+      currentPage: result.currentPage
+    }));
+
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+}
