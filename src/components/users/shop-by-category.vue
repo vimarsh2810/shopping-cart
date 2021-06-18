@@ -1,6 +1,8 @@
 <template>
   <div class="main-div">
-    <Navbar />
+    <Navbar
+      @searchProduct="searchProduct($event)"
+    ></Navbar>
     <div class="wrapper" style="margin-top: 100px" v-if="!isLoading">
       <!-- Container starts -->
       <div class="container">
@@ -130,6 +132,7 @@ export default {
       maxPrice: null,
       categoryTitle: null,
       error: null,
+      searchText: null,
       isFiltered: false,
       isUserActive: this.$store.getters.userData.isActive,
       isAuthenticated: this.$store.getters.authStatus,
@@ -213,6 +216,35 @@ export default {
         
         if(response.data.success) {
           this.cartProducts = response.data.payload.products;
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+
+    async searchProduct(searchText) {
+      if(!searchText) {
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${this.$store.getters.base_url}/shop/searchedProducts`, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.token}`
+          }, params: {
+            page: 1,
+            limit: this.limit,
+            searchText: searchText,
+            categoryId: this.$route.params.id
+          }
+        });
+
+        if(response.data.success) {
+          this.products = response.data.payload.products;
+          this.totalPages = response.data.payload.totalPages;
+          this.totalProductsCount = response.data.payload.productCount;
+          this.currentPage = response.data.payload.currentPage;
+          this.isLoading = false;
         }
       } catch (error) {
         console.log(error.response.data.message);

@@ -147,18 +147,34 @@ exports.getProductsByCategory = async (req, res, next) => {
 
 exports.searchProduct = async (req, res, next) => {
   try {
-    const { page, limit, searchText } = req.query;
+    const { page, limit, searchText, categoryId } = req.query;
     const { offset, size } = pagination(page, limit);
 
-    const items = await Product.findAndCountAll({
-      where: {
-        title: {
-          [Op.like]: `%${searchText.toLowerCase()}%`
-        }
-      },
-      limit: size,
-      offset: offset
-    });
+    let items;
+
+    if(!categoryId) {
+      items = await Product.findAndCountAll({
+        where: {
+          title: {
+            [Op.like]: `%${searchText.toLowerCase()}%`
+          }
+        },
+        limit: size,
+        offset: offset
+      });
+    } else {
+      items = await Product.findAndCountAll({
+        where: {
+          categoryId: categoryId,
+          title: {
+            [Op.like]: `%${searchText.toLowerCase()}%`
+          }
+        },
+        limit: size,
+        offset: offset
+      });
+    }
+    
 
     const result = paginationMetaData(items, page, size);
     return res.status(200).json(responseObj(true, 'Paginated Products by category', {

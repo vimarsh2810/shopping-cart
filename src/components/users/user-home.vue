@@ -231,9 +231,10 @@ import axios from 'axios';
               page: 1,
               limit: this.limit,
               searchText: searchText,
-              includeCategory: Boolean(false)
+              categoryId: null
             }
           });
+
           if(response.data.success) {
             this.products = response.data.payload.products;
             this.totalPages = response.data.payload.totalPages;
