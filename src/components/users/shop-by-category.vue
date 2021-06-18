@@ -8,6 +8,54 @@
         <div class="alert alert-danger" role="alert" v-if="error">
           {{ error }}
         </div>
+
+        <div class="row mb-5">
+
+          <div class="col-3">
+            <select name="brand" id="brand" class="form-control" @change="onSelectBrand">
+              <option value="" selected hidden>Select Brand</option>
+              <option 
+                :value="brand.id" 
+                v-for="brand in brands" 
+                :key="brand.id"
+              >{{ brand.name }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="col-3">
+            <input 
+              type="text" 
+              class="form-control" 
+              name="minPrice" 
+              id="minPrice"
+              v-model="minPrice"
+              placeholder="Minimun Price"
+            >
+          </div>
+
+          <div class="col-3">
+            <input 
+              type="text" 
+              class="form-control" 
+              name="maxPrice" 
+              id="maxPrice" 
+              v-model="maxPrice"
+              placeholder="Maximun Price"
+            >
+          </div>
+
+          <div class="col-3">
+            <button 
+              type="button" 
+              class="btn btn-primary w-100"
+              @click.prevent="filterProducts()"
+            >Filter
+            </button>
+          </div>
+
+        </div>
+
         <!-- Row starts -->
         <div class="row" v-if="products.length > 0">
 
@@ -76,8 +124,13 @@ export default {
     return {
       isLoading: true,
       products: [],
+      brands: null,
+      selectedBrand: null,
+      minPrice: null,
+      maxPrice: null,
       categoryTitle: null,
       error: null,
+      isFiltered: false,
       isUserActive: this.$store.getters.userData.isActive,
       isAuthenticated: this.$store.getters.authStatus,
       currentPage: null,
@@ -97,20 +150,55 @@ export default {
       return this.currentPage == this.totalPages ? false : true;
     },
 
+    onSelectBrand() {
+      this.selectedBrand = document.querySelector('#brand').value;
+    },
+
+    filterProducts() {
+      this.isFiltered = true;
+      this.getProductsByCategory(1);
+    },
+
     async getProductsByCategory(requestedPage) {
       try {
-        const response = await axios.get(`http://localhost:3000/shop/productsByCategory/${this.$route.params.id}`, {
-          params: {
-            page: requestedPage,
-            limit: this.limit
+        let response;
+        if(this.isFiltered) {
+          if(!this.minPrice) {
+            this.minPrice = 0;
           }
-        });
 
-        this.products = response.data.payload.products;
-        this.currentPage = response.data.payload.currentPage;
-        this.totalPages = response.data.payload.totalPages
-        this.categoryTitle = response.data.payload.categoryTitle;
-        this.isLoading = false;
+          if(!this.maxPrice) {
+            this.maxPrice = 10000000;
+          }
+
+          response = await axios.get(`${this.$store.getters.base_url}/shop/filteredProductsCategory`, {
+            params: {
+              brandId: this.selectedBrand,
+              minPrice: this.minPrice,
+              maxPrice: this.maxPrice,
+              page: requestedPage,
+              limit: this.limit,
+              categoryId: this.$route.params.id
+            }
+          });
+        } else {
+          response = await axios.get(`${this.$store.getters.base_url}/shop/productsByCategory/${this.$route.params.id}`, {
+            params: {
+              page: requestedPage,
+              limit: this.limit
+            }
+          });
+        }
+
+        if(response.data.success) {
+          this.products = response.data.payload.products;
+          this.currentPage = response.data.payload.currentPage;
+          this.totalPages = response.data.payload.totalPages
+          this.categoryTitle = response.data.payload.categoryTitle;
+          await this.$store.dispatch('getBrands');
+          this.brands = this.$store.getters.brands;
+          this.isLoading = false;
+        }
       } catch (error) {
         console.log(error.response);
       }

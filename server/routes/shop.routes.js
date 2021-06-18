@@ -23,4 +23,6 @@ router.get('/brands', shopController.getAllBrands);
 
 router.get('/filteredProducts', shopController.filterProducts);
 
+router.get('/filteredProductsCategory', shopController.filterProductsCategory);
+
 module.exports = router;

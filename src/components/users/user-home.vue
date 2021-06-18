@@ -216,7 +216,7 @@ import axios from 'axios';
       
       filterProducts() {
         this.isFiltered = true;
-        this.getProducts();
+        this.getProducts(1);
       },
 
       async searchProduct(searchText) {
