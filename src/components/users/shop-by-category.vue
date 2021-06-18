@@ -30,7 +30,7 @@
               name="minPrice" 
               id="minPrice"
               v-model="minPrice"
-              placeholder="Minimun Price"
+              placeholder="Minimum Price"
             >
           </div>
 
@@ -41,7 +41,7 @@
               name="maxPrice" 
               id="maxPrice" 
               v-model="maxPrice"
-              placeholder="Maximun Price"
+              placeholder="Maximum Price"
             >
           </div>
 
@@ -274,114 +274,5 @@ export default {
 </script>
 
 <style scoped>
-  .wrapper {
-    max-width: 1450px;
-    height: 100%;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .mbpx-30px {
-    margin-bottom: 30px;
-  }
-
-  .container {
-    min-width: 100% !important;
-  }
-
-  .card {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-
-  .card-product-img {
-    height: 280px;
-    max-width: 330.5px;
-    padding: 20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .card-product-img img {
-    max-height: 100%;
-    max-width: 100%;
-    transition: all 0.15s ease-in-out;
-    object-fit: cover;
-  }
-
-  .card-product-img img:hover {
-    cursor: pointer;
-    transform: scale(1.03);
-  }
-
-  .card-product-details h4 {
-    text-align: center;
-    padding-left: 20px;
-    padding-right: 20px;
-    text-overflow: ellipsis;
-    white-space: nowrap; 
-    overflow: hidden;
-  }
-
-  .card-product-details h4:hover {
-    cursor: pointer;
-    text-decoration: underline;
-  }
-
-  .card-product-details p {
-    font-weight: 600;
-    text-align: center;
-  }
-
-  span {
-    display: inline-block;
-    height: 24px;
-  }
-
-  .card-product-btn {
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .material-button {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.16), 0 2px 4px rgba(0,0,0,0.23);
-    margin-bottom: 15px;
-    font-size: 14px;
-  }
-
-  #wishlist-btn {
-    margin-left: 5px;
-  }
-
-  .form-control:focus,
-  .btn:focus {
-    box-shadow:none !important;
-  }
-
-  .no-product-found {
-    margin-top: 60px;
-  }
-
-  .no-product-found-inner {
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-  }
-
-  @media (min-width: 577px) and (max-width: 992px) {
-    #cart-btn, #wishlist-btn {
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    
-    #wishlist-btn {
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
-  }
+  @import '../../assets/css/product-listing.css';
 </style>
