@@ -305,6 +305,4 @@ export default {
 }
 </script>
 
-<style scoped>
-  @import '../../assets/css/product-listing.css';
-</style>
+<style scoped src="../../assets/css/product-listing.css"></style>
