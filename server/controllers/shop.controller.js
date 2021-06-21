@@ -116,7 +116,7 @@ exports.getCategories = async (req, res, next) => {
 };
 
 // @desc Get products by categoryId
-// @route GET /shop/getProductsByCategory/:categoryId
+// @route GET /shop/productsByCategory/:categoryId
 
 exports.getProductsByCategory = async (req, res, next) => {
   try {
@@ -128,8 +128,18 @@ exports.getProductsByCategory = async (req, res, next) => {
     });
 
     const items = await Product.findAndCountAll({ 
-      where: { categoryId: req.params.id }, 
-      limit: size, offset: offset 
+      where: { categoryId: req.params.id },
+      include: [{ model: Review }],
+      limit: size, 
+      offset: offset 
+    });
+
+    items.rows.forEach((item) => {
+      let sumRating = 0;
+      item.reviews.forEach((review) => {
+        sumRating += parseInt(review.rating);
+      });
+      item.dataValues.avgRating = item.reviews.length > 0 ? Number(sumRating / item.reviews.length).toFixed(1) : null;
     });
     
     const result = paginationMetaData(items, page, size);
@@ -159,6 +169,7 @@ exports.searchProduct = async (req, res, next) => {
             [Op.like]: `%${searchText.toLowerCase()}%`
           }
         },
+        include: [{ model: Review }],
         limit: size,
         offset: offset
       });
@@ -170,11 +181,19 @@ exports.searchProduct = async (req, res, next) => {
             [Op.like]: `%${searchText.toLowerCase()}%`
           }
         },
+        include: [{ model: Review }],
         limit: size,
         offset: offset
       });
     }
-    
+
+    items.rows.forEach((item) => {
+      let sumRating = 0;
+      item.reviews.forEach((review) => {
+        sumRating += parseInt(review.rating);
+      });
+      item.dataValues.avgRating = item.reviews.length > 0 ? Number(sumRating / item.reviews.length).toFixed(1) : null;
+    });
 
     const result = paginationMetaData(items, page, size);
     return res.status(200).json(responseObj(true, 'Paginated Products by category', {
@@ -227,7 +246,7 @@ exports.filterProducts = async (req, res, next) => {
             [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
           }
         },
-  
+        include: [{ model: Review }],
         limit: size,
         offset: offset
       });
@@ -239,11 +258,19 @@ exports.filterProducts = async (req, res, next) => {
             [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
           }
         },
-  
+        include: [{ model: Review }],
         limit: size,
         offset: offset
       });
     }
+
+    items.rows.forEach((item) => {
+      let sumRating = 0;
+      item.reviews.forEach((review) => {
+        sumRating += parseInt(review.rating);
+      });
+      item.dataValues.avgRating = item.reviews.length > 0 ? Number(sumRating / item.reviews.length).toFixed(1) : null;
+    });
 
     const result = paginationMetaData(items, page, size);
     
@@ -275,7 +302,7 @@ exports.filterProductsCategory = async (req, res, next) => {
             [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
           }
         },
-  
+        include: [{ model: Review }], 
         limit: size,
         offset: offset
       });
@@ -288,11 +315,19 @@ exports.filterProductsCategory = async (req, res, next) => {
             [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
           }
         },
-  
+        include: [{ model: Review }],
         limit: size,
         offset: offset
       });
     }
+
+    items.rows.forEach((item) => {
+      let sumRating = 0;
+      item.reviews.forEach((review) => {
+        sumRating += parseInt(review.rating);
+      });
+      item.dataValues.avgRating = item.reviews.length > 0 ? Number(sumRating / item.reviews.length).toFixed(1) : null;
+    });
 
     const result = paginationMetaData(items, page, size);
     
