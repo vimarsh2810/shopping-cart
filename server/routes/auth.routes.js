@@ -2,7 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 
 const authController = require('../controllers/auth.controller.js');
-const { validateToken } = require('../middlewares/validateToken.js');
+const { validateToken, validateRefreshToken } = require('../middlewares/validateToken.js');
 const { signupValidator, loginValidator, validate } = require('../middlewares/validator.js');
 
 const router = express.Router();
@@ -16,5 +16,9 @@ router.post('/verifyEmail', validateToken, authController.verifyEmail);
 router.post('/checkUsernameAvailable', authController.checkUsernameAvailable);
 
 router.post('/checkEmailAvailable', authController.checkEmailAvailable);
+
+router.get('/renewAccessToken', validateRefreshToken, authController.renewAccessToken);
+
+router.get('/logout', validateToken, authController.logout);
 
 module.exports = router;

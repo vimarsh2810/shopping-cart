@@ -15,7 +15,7 @@ const shopRouter = require('./server/routes/shop.routes.js');
 // importing configs & sequelizeModel file
 const { db } = require('./server/models/index.js');
 const { development } = require('./server/config/config.js');
-
+const { createAdminEntry } = require('./server/helpers/createAdminEntry.js');
 const app = express();
 
 app.set('view engine', 'ejs')
@@ -39,8 +39,14 @@ app.use('/shop', shopRouter);
 app.use('/cart', cartRouter);
 
 const PORT = development.app_port;
-db.sequelize.sync({ force: false, logging: false })
-  .then(result => {
+
+const isForceSync = false;
+
+db.sequelize.sync({ force: isForceSync, logging: false })
+  .then(async (result) => {
+    if(isForceSync) {
+      await createAdminEntry();
+    }
     app.listen(PORT, () => {
       console.log(`Backend server running on port ${PORT}`);
     });

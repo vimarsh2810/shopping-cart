@@ -1,9 +1,10 @@
-const responseObj = (success, message, payload, accessToken) => {
+const responseObj = (success, message, payload, accessToken, refreshToken) => {
   return {
     success,
     message,
     payload,
-    accessToken
+    accessToken,
+    refreshToken
   };
 };
 

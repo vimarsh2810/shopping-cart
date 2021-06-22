@@ -9,7 +9,8 @@ const { User } = require('../models/user.js');
 const { generateOtp } = require('../helpers/generateOtp.js');
 const { development } = require('../config/config.js');
 
-const tokenExpirationTime = 60*60;
+const accessTokenExpirationTime = 20;
+const refreshTokenExpirationTime = 60*60*24*7;
 
 // @desc User Signup
 // @route POST /auth/signup 
@@ -93,13 +94,20 @@ exports.login = async (req, res, next) => {
       return res.status(401).json(responseObj(false, 'Invalid Credentails'));
     }
     
-    const token = createToken({
+    const accessToken = createToken({
       userId: user.id,
       userName: user.username,
       userRole: user.userRoleId
-    }, tokenExpirationTime);
+    }, accessTokenExpirationTime, true);
 
-    user.accessToken = token;
+    const refreshToken = createToken({
+      userId: user.id,
+      userName: user.username,
+      userRole: user.userRoleId
+    }, refreshTokenExpirationTime, false);
+
+    user.accessToken = accessToken;
+    user.refreshToken = refreshToken;
     await user.save();
     
     return res.status(200).json(responseObj(true, 'Login Successful!', {
@@ -109,7 +117,7 @@ exports.login = async (req, res, next) => {
       email: user.email,
       roleId: user.userRoleId,
       isActive: user.isActive
-    }, token));
+    }, accessToken, refreshToken));
     
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
@@ -143,6 +151,37 @@ exports.checkUsernameAvailable = async (req, res, next) => {
       return res.status(200).json(responseObj(false, 'Username not available'));
     }
     return res.status(200).json(responseObj(true, 'Username available'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+exports.renewAccessToken = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userData.userId);
+
+    const accessToken = createToken({
+      userId: user.id,
+      userName: user.username,
+      userRole: user.userRoleId
+    }, accessTokenExpirationTime, true);
+
+    user.accessToken = accessToken;
+    await user.save();
+    return res.status(200).json(responseObj(true, 'Access Token', null, accessToken));
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+exports.logout = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userData.userId);
+    user.accessToken = null;
+    user.refreshToken = null;
+    await user.save();
+    return res.status(200).json(responseObj(true, 'User Logged Out'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

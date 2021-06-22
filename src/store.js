@@ -11,6 +11,7 @@ export default new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
     token: null,
+    refreshToken: null,
     user: {
       name: null,
       username: null,
@@ -28,6 +29,7 @@ export default new Vuex.Store({
   mutations: {
     setAuthData(state, loginData) {
       state.token = loginData.token;
+      state.refreshToken = loginData.refreshToken;
       state.isAuthenticated = !!(loginData.token);
       state.user = loginData.user;
     },
@@ -42,6 +44,7 @@ export default new Vuex.Store({
 
     clearAuthData(state) {
       state.token = null;
+      state.refreshToken = null;
       state.isAuthenticated = false;
       state.user = {
         name: null,
@@ -65,6 +68,10 @@ export default new Vuex.Store({
 
     setBrands(state, brands) {
       state.brands = brands;
+    },
+
+    setAccessToken(state, accessToken) {
+      state.token = accessToken;
     }
   },
   actions: {
@@ -107,6 +114,7 @@ export default new Vuex.Store({
     async login({commit, dispatch}, authData) {
       commit('setAuthData', {
         token: authData.accessToken,
+        refreshToken: authData.refreshToken,
         user: authData.payload
       });
       
@@ -123,7 +131,16 @@ export default new Vuex.Store({
       }
     },
 
-    logout(context) {
+    async logout(context) {
+      try {
+        const response = await axios.get(`${context.getters.base_url}/auth/logout`, {
+          headers: {
+            'Authorization': `Bearer ${context.getters.token}`
+          }
+        });
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
       context.commit('clearAuthData');
       router.push('/login');
     },
@@ -190,12 +207,29 @@ export default new Vuex.Store({
           'Authorization': `Bearer ${context.getters.token}`
         }
       });
+    },
+
+    async renewAccessToken(context) {
+      try {
+        const response = await axios.get(`${context.getters.base_url}/auth/renewAccessToken`, {
+          headers: {
+            'Authorization': `Bearer ${context.getters.refreshToken}`
+          }
+        });
+
+        if(response.data.success) {
+          context.commit('setAccessToken', response.data.accessToken);
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
     }
 
   },
 
   getters: {
     token: (state) => state.token,
+    refreshToken: (state) => state.refreshToken,
     userData: (state) => state.user,
     isActive: (state) => state.user.isActive,
     categories: (state) => state.categories,

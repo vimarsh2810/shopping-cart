@@ -36,6 +36,9 @@ const User = sequelize.define('user', {
     },
     accessToken: {
       type: Sequelize.STRING
+    },
+    refreshToken: {
+      type: Sequelize.STRING
     }
   },
   {

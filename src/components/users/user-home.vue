@@ -262,7 +262,13 @@ import axios from 'axios';
             this.cartProducts = response.data.payload.products;
           }
         } catch (error) {
-          console.log(error.response.data.message);
+          if(error.response.status === 401) {
+            try {
+              await this.$store.dispatch('renewAccessToken');
+            } catch (error) {
+              console.log(error.response.data);
+            }
+          }
         }
       },
 
