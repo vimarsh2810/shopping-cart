@@ -188,7 +188,9 @@ export default new Vuex.Store({
 
       return await axios.post(`${context.getters.base_url}/cart/cartFunctionalities`, data, {
         headers: {
-            'Authorization': `Bearer ${context.getters.token}`
+            'Authorization': `Bearer ${context.getters.refreshToken}`
+        }, params: {
+          accessToken: context.getters.token
         }
       });
     },
@@ -196,7 +198,9 @@ export default new Vuex.Store({
     async getCart(context) {
       return await axios.get(`${context.getters.base_url}/cart/products`, {
         headers: {
-          'Authorization': `Bearer ${context.getters.token}`
+          'Authorization': `Bearer ${context.getters.refreshToken}`
+        }, params: {
+          accessToken: context.getters.token
         }
       });
     },
@@ -223,6 +227,10 @@ export default new Vuex.Store({
       } catch (error) {
         console.log(error.response);
       }
+    },
+
+    refreshAccessToken(context, accessToken) {
+      context.commit('setAccessToken', accessToken);
     }
 
   },

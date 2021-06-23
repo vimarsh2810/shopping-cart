@@ -159,7 +159,9 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/cart/products`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
         
@@ -168,28 +170,67 @@ export default {
           this.totalPages = Math.ceil(this.cartProducts.length / this.limit);
           this.isLoading = false;
           this.filterItems(1);
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getCart();
         }
       } catch (error) {
         console.log(error.response.data.message);
       }
     },
 
+    async deleteCartItemMethod(productId) {
+      try {
+        const data = {
+          productId: productId,
+          quantity: 0
+        };
+        const response = await axios.post(`${this.$store.getters.base_url}/cart/cartFunctionalities`, data, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
+          }
+        });
+        
+        if(response.data.success) {
+          this.getCart();
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.deleteCartItemMethod(productId);
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
+
     async deleteCartItem(productId) {
       if(confirm('Are you sure you want to delete this product from cart?')) {
-        try {
-          const data = {
-            productId: productId,
-            quantity: 0
-          };
-          const response = await axios.post(`${this.$store.getters.base_url}/cart/cartFunctionalities`, data, {
-            headers: {
-              'Authorization': `Bearer ${this.$store.getters.token}`
-            }
-          });
+        await this.deleteCartItemMethod(productId);
+      }
+    },
+
+    async updateQuantityMethod(productId, quantity) {
+      try {
+        const data = {
+          productId: productId,
+          quantity: quantity
+        };
+        const response = await axios.post(`${this.$store.getters.base_url}/cart/cartFunctionalities`, data, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
+          }
+        });
+        if(response.data.success) {
           this.getCart();
-        } catch (error) {
-          console.log(error.response);
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.updateQuantityMethod(productId, quantity);
         }
+      } catch (error) {
+        console.log(error.response);
       }
     },
 
@@ -199,20 +240,7 @@ export default {
           alert('Quantity can not be negative');
           return;
         }
-        try {
-          const data = {
-            productId: productId,
-            quantity: quantity
-          };
-          const response = await axios.post(`${this.$store.getters.base_url}/cart/cartFunctionalities`, data, {
-            headers: {
-              'Authorization': `Bearer ${this.$store.getters.token}`
-            }
-          });
-          this.getCart();
-        } catch (error) {
-          console.log(error.response);
-        }
+        await this.updateQuantityMethod(productId, quantity);
       }
     },
 

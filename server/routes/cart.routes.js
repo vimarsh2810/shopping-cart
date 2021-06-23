@@ -1,13 +1,14 @@
 const express = require('express');
 
 const { validateToken } = require('../middlewares/validateToken.js');
+const { checkAuth } = require('../middlewares/checkAuth.js');
 const cartController = require('../controllers/cart.controller.js');
 
 const router = express.Router();
 
-router.post('/cartFunctionalities', validateToken, cartController.cartFunctionalities);
+router.post('/cartFunctionalities', checkAuth, cartController.cartFunctionalities);
 
-router.get('/products', validateToken, cartController.getCart);
+router.get('/products', checkAuth, cartController.getCart);
 
 router.delete('/products/:id', validateToken, cartController.deleteCartItemSP);
 

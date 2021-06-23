@@ -190,9 +190,7 @@ import axios from 'axios';
             });
           } else {
             response = await axios.get(`${this.$store.getters.base_url}/shop/limitedProducts`, {
-              headers: {
-                'Authorization': `Bearer ${this.$store.getters.token}`
-              }, params: {
+              params: {
                 page: requestedPage,
                 limit: this.limit,
                 includeCategory: Boolean(false)
@@ -225,9 +223,7 @@ import axios from 'axios';
         }
         try {
           const response = await axios.get(`${this.$store.getters.base_url}/shop/searchedProducts`, {
-            headers: {
-              'Authorization': `Bearer ${this.$store.getters.token}`
-            }, params: {
+            params: {
               page: 1,
               limit: this.limit,
               searchText: searchText,
@@ -260,15 +256,12 @@ import axios from 'axios';
           
           if(response.data.success) {
             this.cartProducts = response.data.payload.products;
+          } else {
+            this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+            await this.getCart();
           }
         } catch (error) {
-          if(error.response.status === 401) {
-            try {
-              await this.$store.dispatch('renewAccessToken');
-            } catch (error) {
-              console.log(error.response.data);
-            }
-          }
+          console.log(error.response.data.message);
         }
       },
 
@@ -290,9 +283,12 @@ import axios from 'axios';
           const response = await this.$store.dispatch('addToCart', productId);
           if(response.data.success) {
             this.$router.push('/user/cart');
+          } else {
+            this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+            await this.addToCart(productId);
           }
         } catch (error) {
-          alert(error.response.data.message);
+          console.log(error.response);
         }
       },
 
@@ -308,7 +304,19 @@ import axios from 'axios';
             alert(response.data.message);
           }
         } catch (error) {
-          console.log(error.response);
+          if(error.response.status === 401) {
+            try {
+              await this.$store.dispatch('renewAccessToken');
+              const response = await this.$store.dispatch('addToWishList', productId);
+              if(response.data.success) {
+                this.$router.push('/user/wishlist');
+              }
+            } catch (error) {
+              console.log(error.response);
+            }
+          } else {
+            console.log(error.response);
+          }
         }
       }
     },

@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-const { validationResult } = require('express-validator');
 require('dotenv').config();
 
 const { createToken } = require('../helpers/createToken.js');
@@ -9,8 +8,8 @@ const { User } = require('../models/user.js');
 const { generateOtp } = require('../helpers/generateOtp.js');
 const { development } = require('../config/config.js');
 
-const accessTokenExpirationTime = 20;
-const refreshTokenExpirationTime = 60*60*24*7;
+const accessTokenExpirationTime = development.accessTokenExpirationTime;
+const refreshTokenExpirationTime = development.refreshTokenExpirationTime;
 
 // @desc User Signup
 // @route POST /auth/signup 
