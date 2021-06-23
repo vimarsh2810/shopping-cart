@@ -12,11 +12,11 @@ router.get('/data', validateToken, userController.getUserData);
 
 router.get('/wallet/balance', [validateToken, checkUser], userController.getWalletBalance);
 
-router.put('/wallet/balance', [validateToken, checkUser], userController.addAmountInWallet);
+router.put('/wallet/balance', [checkAuth, checkUser], userController.addAmountInWallet);
 
 router.get('/orders', [checkAuth, checkUser], userController.getOrders);
 
-router.get('/order/:id', [validateToken, checkUser], userController.getOrderProducts);
+router.get('/order/:id', [checkAuth, checkUser], userController.getOrderProducts);
 
 router.put('/order/:id/cancel', [checkAuth, checkUser], userController.cancelOrder);
 
@@ -30,7 +30,7 @@ router.get('/order/:id/invoice', [validateToken, checkUser], userController.getO
 
 router.get('/notifications', [validateToken, checkUser], userController.getNotifications);
 
-router.put('/profile', [validateToken, checkUser, editProfileValidator(), validate ], userController.editProfile);
+router.put('/profile', [checkAuth, checkUser, editProfileValidator(), validate ], userController.editProfile);
 
 router.get('/wishList', [checkAuth, checkUser], userController.getWishList);
 
@@ -41,4 +41,5 @@ router.delete('/wishList/:id', [checkAuth, checkUser], userController.removeFrom
 router.post('/review/:productId', [checkAuth, checkUser], userController.giveProductReview);
 
 router.get('/getOrder/:productId', validateToken, userController.getOrderItem);
+
 module.exports = router;

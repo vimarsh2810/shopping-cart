@@ -72,7 +72,9 @@ export default {
       try {
         const response = await axios.put(`${this.$store.getters.base_url}/user/profile`, userData, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
@@ -80,6 +82,9 @@ export default {
           this.errors = [];
           this.successMsg = response.data.message;
           this.$store.dispatch('getUserData');
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.editProfile();
         }
       } catch (error) {
         this.successMsg = null;
