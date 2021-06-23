@@ -303,8 +303,8 @@ import axios from 'axios';
           } else if(response.data.message !== 'Refreshed AccessToken') {
             alert(response.data.message);
           } else {
-            await this.$store.dispatch('renewAccessToken');
-            this.addToWishList(productId);
+            this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+            await this.addToWishList(productId);
           }
         } catch (error) {
           console.log(error.response);

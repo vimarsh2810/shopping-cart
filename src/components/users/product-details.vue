@@ -233,6 +233,9 @@ export default {
         
         if(response.data.success) {
           this.cartProducts = response.data.payload.products;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getCart();
         }
       } catch (error) {
         console.log(error.response.data.message);
@@ -245,7 +248,6 @@ export default {
 
     async addToCart(productId) {
       if(!this.isAuthenticated) {
-        this.error = 'Please login to purchase products!'
         return;
       }
 
@@ -253,14 +255,17 @@ export default {
         alert('Product already in cart.');
         return;
       }
-
+        
       try {
         const response = await this.$store.dispatch('addToCart', productId);
         if(response.data.success) {
           this.$router.push('/user/cart');
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.addToCart(productId);
         }
       } catch (error) {
-        console.log(error.response.data.message);
+        console.log(error.response);
       }
     },
 
@@ -272,8 +277,11 @@ export default {
         const response = await this.$store.dispatch('addToWishList', productId);
         if(response.data.success) {
           this.$router.push('/user/wishlist');
-        } else {
+        } else if(response.data.message !== 'Refreshed AccessToken') {
           alert(response.data.message);
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.addToWishList(productId);
         }
       } catch (error) {
         console.log(error.response);
@@ -307,12 +315,17 @@ export default {
         },
         {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
         if(response.data.success) {
           this.getProduct();
+        } else if(response.data.message === 'Refreshed AccessToken') {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.addReview();
         } else {
           this.reviewError = response.data.message;
         }

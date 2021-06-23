@@ -38,7 +38,7 @@ router.post('/wishList/:id', [checkAuth, checkUser], userController.addToWishLis
 
 router.delete('/wishList/:id', [checkAuth, checkUser], userController.removeFromWishList);
 
-router.post('/review/:productId', [validateToken, checkUser], userController.giveProductReview);
+router.post('/review/:productId', [checkAuth, checkUser], userController.giveProductReview);
 
 router.get('/getOrder/:productId', validateToken, userController.getOrderItem);
 module.exports = router;

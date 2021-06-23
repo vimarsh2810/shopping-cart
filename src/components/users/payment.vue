@@ -126,7 +126,9 @@ export default {
           }, 
           {
             headers: {
-              'Authorization': `Bearer ${this.$store.getters.token}`
+              'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
         if(response.data.success) {
@@ -135,6 +137,9 @@ export default {
           this.orderId = response.data.payload.id;
           this.$store.dispatch('getWalletBalance');
           await this.generateInvoice();
+        } else if(response.data.message === 'Refreshed AccessToken') {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.makePayment(isSuccess);
         } else {
           this.successMsg = null;
           this.error = response.data.message;
@@ -149,13 +154,18 @@ export default {
       try {
         const response = await axios.post(`${this.$store.getters.base_url}/cart/paymentAmount`, { isCouponApplied: this.isCouponApplied }, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
         if(response.data.success) {
           this.totalAmount = response.data.payload.totalAmount;
           this.finalAmount = response.data.payload.finalAmount;
           this.discount = response.data.payload.discount;
+        } else if(response.data.message === 'Refreshed AccessToken') {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getPaymentAmount();
         } else {
           this.$router.push({ name: 'Cart' });
         }
@@ -169,14 +179,20 @@ export default {
       try {
         const response = await axios.post(`${this.$store.getters.base_url}/cart/verifyCoupon`, { couponCode: this.couponCode }, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
+        
         if(response.data.success) {
           this.isCouponApplied = true;
           this.error = null;
           this.successMsg = response.data.message;
           this.getPaymentAmount();
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.verifyCoupon();
         }
       } catch (error) {
         this.isCouponApplied = false;
@@ -196,6 +212,9 @@ export default {
         if(response.data.success) {
           console.log(response.data.message)
           this.successMsg = response.data.message;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getPaymentAmount();
         }
       } catch (error) {
         console.log(error.response.data.message);

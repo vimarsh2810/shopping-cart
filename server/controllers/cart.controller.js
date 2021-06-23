@@ -124,13 +124,13 @@ exports.verifyCoupon = async (req, res, next) => {
   try {
     const { couponCode } = req.body;
     const couponVerified = await verifyCouponCode(couponCode, req.userData.userId);
-    console.log(couponVerified)
+    
     if(!couponVerified) {
       return res.status(400).json(responseObj(false, 'Invalid Coupon Code'));
     }
     return res.status(200).json(responseObj(true, 'Valid Coupon Code'));
   } catch (error) {
-    return res.status(500).json(responseObj(500, false, error.message));
+    return res.status(500).json(responseObj(false, error.message));
   }
 };
 
@@ -177,7 +177,6 @@ exports.getPaymentAmount = async (req, res, next) => {
 
 exports.payment = async (req, res, next) => {
   try {
-
     const { paymentSuccess, couponCode, isCouponApplied } = req.body;
 
     let couponVerified = false;

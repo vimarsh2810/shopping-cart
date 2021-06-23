@@ -149,8 +149,8 @@ export default {
           this.getOrders();
           this.$store.dispatch('getWalletBalance');
         } else {
-          await this.$store.dispatch('renewAccessToken');
-          this.cancelOrderMethod(orderId);
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.cancelOrderMethod(orderId);
         }
       } catch (error) {
         console.log(error.response.data.message);

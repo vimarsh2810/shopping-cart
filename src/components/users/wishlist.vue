@@ -117,7 +117,7 @@ export default {
           this.filterItems(1);
         } else {
           this.$store.dispatch('refreshAccessToken', response.data.accessToken);
-          await this.addToCart(productId);
+          await this.getWishList();
         }
       } catch (error) {
         console.log(error.response);

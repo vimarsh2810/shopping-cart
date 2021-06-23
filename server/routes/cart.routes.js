@@ -14,10 +14,10 @@ router.delete('/products/:id', validateToken, cartController.deleteCartItemSP);
 
 router.put('/:id/quantity', validateToken, cartController.updateQuantitySP);
 
-router.post('/verifyCoupon', validateToken, cartController.verifyCoupon);
+router.post('/verifyCoupon', checkAuth, cartController.verifyCoupon);
 
-router.post('/paymentAmount', validateToken, cartController.getPaymentAmount);
+router.post('/paymentAmount', checkAuth, cartController.getPaymentAmount);
 
-router.post('/payment', validateToken, cartController.payment);
+router.post('/payment', checkAuth, cartController.payment);
 
 module.exports = router;
