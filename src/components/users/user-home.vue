@@ -270,7 +270,7 @@ import axios from 'axios';
       },
 
       async addToCart(productId) {
-        if(!this.isAuthenticated) {
+        if(!this.isAuthenticated || !this.isActive) {
           return;
         }
 
@@ -288,12 +288,12 @@ import axios from 'axios';
             await this.addToCart(productId);
           }
         } catch (error) {
-          console.log(error.response);
+          console.log(error.response.data.message);
         }
       },
 
       async addToWishList(productId) {
-        if(!this.isAuthenticated) {
+        if(!this.isAuthenticated || !this.isActive) {
           return;
         }
         try {

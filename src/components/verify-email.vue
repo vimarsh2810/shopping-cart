@@ -37,18 +37,18 @@ export default {
       try {
         const response = await axios.post(`${this.$store.getters.base_url}/auth/verifyEmail`, formData, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
-        if(response.data.success) {
-          const responseTwo = await axios.get(`${this.$store.getters.base_url}/user/data`, {
-            headers: {
-              'Authorization': `Bearer ${this.$store.getters.token}`
-            }
-          });
 
-          this.$store.dispatch('getUserData');
-          this.$store.dispatch('getWalletBalance')
+        if(response.data.success) {
+          await this.$store.dispatch('getUserData');
+          await this.$store.dispatch('getWalletBalance')
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.verifyOtp();
         }
       } catch (error) {
         console.log(error.response);

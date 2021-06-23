@@ -14,8 +14,10 @@ const checkAuth = async (req, res, next) => {
     const refreshToken = req.headers.authorization.split(' ')[1];
     jwt.verify(refreshToken, development.refresh_secret, async (err, decoded) => {
       if(err) {
+        console.log(err);
         switch(err.name) {
           case 'JsonWebTokenError':
+            console.log('{{{{{{{{{{{{{{{{ Ref }}}}}}}}}}}}}}}}}}}}')
             return res.status(403).json(responseObj(false, 'Invalid Token'));
           case 'TokenExpiredError':
             return res.status(401).json(responseObj(false, 'Token Expired'));
