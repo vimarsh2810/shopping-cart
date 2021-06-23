@@ -4,6 +4,7 @@ const { validateToken } = require('../middlewares/validateToken.js');
 const { checkUser } = require('../middlewares/checkRole.js');
 const userController = require('../controllers/user.controller.js');
 const { editProfileValidator, validate } = require('../middlewares/validator.js');
+const { checkAuth } = require('../middlewares/checkAuth.js');
 
 const router = express.Router();
 
@@ -31,11 +32,11 @@ router.get('/notifications', [validateToken, checkUser], userController.getNotif
 
 router.put('/profile', [validateToken, checkUser, editProfileValidator(), validate ], userController.editProfile);
 
-router.get('/wishList', [validateToken, checkUser], userController.getWishList);
+router.get('/wishList', [checkAuth, checkUser], userController.getWishList);
 
-router.post('/wishList/:id', [validateToken, checkUser], userController.addToWishList);
+router.post('/wishList/:id', [checkAuth, checkUser], userController.addToWishList);
 
-router.delete('/wishList/:id', [validateToken, checkUser], userController.removeFromWishList);
+router.delete('/wishList/:id', [checkAuth, checkUser], userController.removeFromWishList);
 
 router.post('/review/:productId', [validateToken, checkUser], userController.giveProductReview);
 

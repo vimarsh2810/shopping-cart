@@ -27,7 +27,7 @@ const checkAuth = async (req, res, next) => {
       }
 
       const user = await User.findByPk(decoded.userId, {
-        
+        logging: false
       });
 
       if(!user.refreshToken) {
@@ -54,7 +54,7 @@ const checkAuth = async (req, res, next) => {
                 userName: user.username,
                 userRole: user.userRoleId
               }, development.accessTokenExpirationTime, true);
-
+              console.log('===============Refreshing Token=========================')
               user.accessToken = newAccessToken;
               await user.save();
               return res.status(200).json(responseObj(false, 'Refreshed AccessToken', null, newAccessToken));

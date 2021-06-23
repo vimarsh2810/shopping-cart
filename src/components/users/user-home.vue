@@ -300,23 +300,14 @@ import axios from 'axios';
           const response = await this.$store.dispatch('addToWishList', productId);
           if(response.data.success) {
             this.$router.push('/user/wishlist');
-          } else {
+          } else if(response.data.message !== 'Refreshed AccessToken') {
             alert(response.data.message);
+          } else {
+            await this.$store.dispatch('renewAccessToken');
+            this.addToWishList(productId);
           }
         } catch (error) {
-          if(error.response.status === 401) {
-            try {
-              await this.$store.dispatch('renewAccessToken');
-              const response = await this.$store.dispatch('addToWishList', productId);
-              if(response.data.success) {
-                this.$router.push('/user/wishlist');
-              }
-            } catch (error) {
-              console.log(error.response);
-            }
-          } else {
-            console.log(error.response);
-          }
+          console.log(error.response);
         }
       }
     },

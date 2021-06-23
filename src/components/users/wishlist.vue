@@ -86,6 +86,7 @@ export default {
     return {
       wishListProducts: [],
       visibleProducts: [],
+      cartProducts: [],
       isLoading: true,
       currentPage: null,
       totalPages: null,
@@ -103,7 +104,9 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/user/wishList`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
         
@@ -112,38 +115,84 @@ export default {
           this.totalPages = Math.ceil(this.wishListProducts.length / this.limit);
           this.isLoading = false;
           this.filterItems(1);
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.addToCart(productId);
         }
       } catch (error) {
         console.log(error.response);
       }
     },
 
-    async addToCart(productId) {
-      if(!this.isAuthenticated) {
+    async getCart() {
+      if(!this.isUserActive) {
         return;
       }
       try {
-        const response = await this.$store.dispatch('addToCart', productId);
+        const response = await this.$store.dispatch(`getCart`);
+        
         if(response.data.success) {
-          this.$router.push('/user/cart');
+          this.cartProducts = response.data.payload.products;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getCart();
         }
       } catch (error) {
         console.log(error.response.data.message);
       }
     },
 
+    checkProductInCart(productId) {
+      return this.cartProducts.some(product => product.id === productId);
+    },
+
+    async addToCart(productId) {
+      if(!this.isAuthenticated || !this.isUserActive) {
+        return;
+      }
+
+      if(this.checkProductInCart(productId)) {
+        alert('Product already in cart.');
+        return;
+      }
+      
+      try {
+        const response = await this.$store.dispatch('addToCart', productId);
+        if(response.data.success) {
+          this.$router.push('/user/cart');
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.addToCart(productId);
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
+
+    async removeFromWishListMethod(productId) {
+      try {
+        const response = await axios.delete(`${this.$store.getters.base_url}/user/wishList/${productId}`, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
+          }
+        });
+          
+        if(response.data.success) {
+          this.getWishList();
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.removeFromWishListMethod(productId);
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
+
     async removeFromWishList(productId) {
       if(confirm('Are you sure you want to remove this product from wishList?')) {
-        try {
-          const response = await axios.delete(`${this.$store.getters.base_url}/user/wishList/${productId}`, {
-            headers: {
-              'Authorization': `Bearer ${this.$store.getters.token}`
-            }
-          });
-          this.getWishList();
-        } catch (error) {
-          console.log(error.response);
-        }
+        await this.removeFromWishListMethod(productId);
       }
     },
 
@@ -165,6 +214,7 @@ export default {
 
   created() {
     this.getWishList();
+    this.getCart();
   }
 };
 </script>

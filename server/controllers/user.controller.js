@@ -278,7 +278,8 @@ exports.getWishList = async (req, res, next) => {
       where: { 
         userId: req.userData.userId 
       },
-      include: [{ model: Product }]
+      include: [{ model: Product }],
+      logging: false
     });
 
     return res.status(200).json(responseObj(true, 'WishList', wishList));
@@ -292,13 +293,27 @@ exports.getWishList = async (req, res, next) => {
 
 exports.addToWishList = async (req, res, next) => {
   try {
-    const wishList = await WishList.findOne({ where: { userId: req.userData.userId } });
-    const product = await Product.findByPk(req.params.id);
-    const alreadyHasProduct = await wishList.hasProduct(product);
+    const wishList = await WishList.findOne({ 
+      where: { 
+        userId: req.userData.userId 
+      }, 
+      logging: false 
+    });
+    
+    const product = await Product.findByPk(req.params.id, {
+      logging: false
+    });
+
+    const alreadyHasProduct = await wishList.hasProduct(product, {
+      logging: false
+    });
+
     if(alreadyHasProduct) {
       return res.status(200).json(responseObj(false, 'Product is already in the wishList'));
     }
-    await wishList.addProduct(product);
+    await wishList.addProduct(product, {
+      logging: false
+    });
     return res.status(200).json(responseObj(true, 'Product Added to wishList'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));

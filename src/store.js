@@ -208,7 +208,9 @@ export default new Vuex.Store({
     async addToWishList(context, productId) {
       return await axios.post(`${context.getters.base_url}/user/wishList/${productId}`, null, {
         headers: {
-          'Authorization': `Bearer ${context.getters.token}`
+          'Authorization': `Bearer ${context.getters.refreshToken}`
+        }, params: {
+          accessToken: context.getters.token
         }
       });
     },
