@@ -14,7 +14,7 @@ router.get('/wallet/balance', [validateToken, checkUser], userController.getWall
 
 router.put('/wallet/balance', [validateToken, checkUser], userController.addAmountInWallet);
 
-router.get('/orders', [validateToken, checkUser], userController.getOrders);
+router.get('/orders', [checkAuth, checkUser], userController.getOrders);
 
 router.get('/order/:id', [validateToken, checkUser], userController.getOrderProducts);
 

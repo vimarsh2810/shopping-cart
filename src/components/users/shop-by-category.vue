@@ -224,6 +224,9 @@ export default {
         
         if(response.data.success) {
           this.cartProducts = response.data.payload.products;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getCart();
         }
       } catch (error) {
         console.log(error.response.data.message);
@@ -272,14 +275,17 @@ export default {
         alert('Product already in cart.');
         return;
       }
-
+      
       try {
         const response = await this.$store.dispatch('addToCart', productId);
         if(response.data.success) {
           this.$router.push('/user/cart');
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.addToCart(productId);
         }
       } catch (error) {
-        this.error = error.response.data.message;
+        console.log(error.response);
       }
     },
 
@@ -287,13 +293,15 @@ export default {
       if(!this.isAuthenticated) {
         return;
       }
-
       try {
         const response = await this.$store.dispatch('addToWishList', productId);
         if(response.data.success) {
           this.$router.push('/user/wishlist');
-        } else {
+        } else if(response.data.message !== 'Refreshed AccessToken') {
           alert(response.data.message);
+        } else {
+          await this.$store.dispatch('renewAccessToken');
+          this.addToWishList(productId);
         }
       } catch (error) {
         console.log(error.response);

@@ -116,7 +116,9 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/user/orders`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
@@ -124,28 +126,40 @@ export default {
           this.allOrders = response.data.payload;
           this.totalPages = Math.ceil(this.allOrders.length / this.limit);
           this.filterOrders(1);
+        } else {
+          await this.$store.dispatch('renewAccessToken');
+          this.getOrders();
         }
       } catch (error) {
         console.log(error);
       }
     },
 
+    async cancelOrderMethod(orderId) {
+      try {
+        const response = await axios.put(`${this.$store.getters.base_url}/user/order/${orderId}/cancel`, 'Cancel Order', {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
+          }
+        });
+
+        if(response.data.success) {
+          this.getOrders();
+          this.$store.dispatch('getWalletBalance');
+        } else {
+          await this.$store.dispatch('renewAccessToken');
+          this.cancelOrderMethod(orderId);
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+
     async cancelOrder(orderId) {
       if(confirm('Are you sure you want to cancel this order?')) {
-        try {
-          const response = await axios.put(`${this.$store.getters.base_url}/user/order/${orderId}/cancel`, 'Cancel Order', {
-            headers: {
-              'Authorization': `Bearer ${this.$store.getters.token}`
-            }
-          });
-
-          if(response.data.success) {
-            this.getOrders();
-            this.$store.dispatch('getWalletBalance');
-          }
-        } catch (error) {
-          console.log(error.response.data.message);
-        }
+        await this.cancelOrderMethod(orderId);
       }
     },
 
