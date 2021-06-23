@@ -18,13 +18,13 @@ router.get('/orders', [checkAuth, checkUser], userController.getOrders);
 
 router.get('/order/:id', [validateToken, checkUser], userController.getOrderProducts);
 
-router.put('/order/:id/cancel', [validateToken, checkUser], userController.cancelOrder);
+router.put('/order/:id/cancel', [checkAuth, checkUser], userController.cancelOrder);
 
-router.post('/order/:id/amount', [validateToken, checkUser], userController.getOrderAmount);
+router.post('/order/:id/amount', [checkAuth, checkUser], userController.getOrderAmount);
 
-router.post('/order/:id/retry', [validateToken, checkUser], userController.retryOrder);
+router.post('/order/:id/retry', [checkAuth, checkUser], userController.retryOrder);
 
-router.post('/order/:id/invoice', [validateToken, checkUser], userController.generateInvoice);
+router.post('/order/:id/invoice', [checkAuth, checkUser], userController.generateInvoice);
 
 router.get('/order/:id/invoice', [validateToken, checkUser], userController.getOrderInvoice);
 

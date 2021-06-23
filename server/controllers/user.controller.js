@@ -299,7 +299,7 @@ exports.addToWishList = async (req, res, next) => {
       }, 
       logging: false 
     });
-    
+
     const product = await Product.findByPk(req.params.id, {
       logging: false
     });
@@ -395,6 +395,7 @@ exports.getOrderInvoice = async (req, res, next) => {
       }
     });
   } catch (error) {
+    console.log(error)
     return res.status(500).json(responseObj(false, error.message));
   }
 };

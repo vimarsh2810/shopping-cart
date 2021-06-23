@@ -214,7 +214,7 @@ export default {
           this.successMsg = response.data.message;
         } else {
           this.$store.dispatch('refreshAccessToken', response.data.accessToken);
-          await this.getPaymentAmount();
+          await this.generateInvoice();
         }
       } catch (error) {
         console.log(error.response.data.message);

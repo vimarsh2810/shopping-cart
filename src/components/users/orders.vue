@@ -179,7 +179,7 @@ export default {
         document.body.appendChild(fileLink);
         fileLink.click();
       } catch (error) {
-        console.log(error.response.data.message);
+        console.log(error.response);
       }
     },
 
