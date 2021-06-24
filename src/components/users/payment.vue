@@ -131,6 +131,7 @@ export default {
             accessToken: this.$store.getters.token
           }
         });
+        
         if(response.data.success) {
           this.error = null;
           this.successMsg = response.data.message;
@@ -206,7 +207,9 @@ export default {
       try {
         const response = await axios.post(`${this.$store.getters.base_url}/user/order/${this.orderId}/invoice`, null, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
         if(response.data.success) {

@@ -20,6 +20,6 @@ router.post('/checkEmailAvailable', authController.checkEmailAvailable);
 
 router.get('/renewAccessToken', validateRefreshToken, authController.renewAccessToken);
 
-router.get('/logout', validateToken, authController.logout);
+router.get('/logout', checkAuth, authController.logout);
 
 module.exports = router;

@@ -144,14 +144,22 @@ export default new Vuex.Store({
       try {
         const response = await axios.get(`${context.getters.base_url}/auth/logout`, {
           headers: {
-            'Authorization': `Bearer ${context.getters.token}`
+            'Authorization': `Bearer ${context.getters.refreshToken}`
+          }, params: {
+            accessToken: context.getters.token
           }
         });
+
+        if(!response.data.success) {
+          context.dispatch('refreshAccessToken', response.data.accessToken);
+          await context.dispatch('logout');
+        } else {
+          context.commit('clearAuthData');
+          router.push('/login');
+        }
       } catch (error) {
         console.log(error.response.data.message);
       }
-      context.commit('clearAuthData');
-      router.push('/login');
     },
 
     async getUserData(context) {

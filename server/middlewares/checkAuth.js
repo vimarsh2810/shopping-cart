@@ -54,7 +54,7 @@ const checkAuth = async (req, res, next) => {
                 userName: user.username,
                 userRole: user.userRoleId
               }, development.accessTokenExpirationTime, true);
-              
+
               user.accessToken = newAccessToken;
               await user.save({ logging: false });
               return res.status(200).json(responseObj(false, 'Refreshed AccessToken', null, newAccessToken));
