@@ -16,7 +16,6 @@ const checkAuth = async (req, res, next) => {
       if(err) {
         switch(err.name) {
           case 'JsonWebTokenError':
-            console.log('{{{{{{{{{{{{{{{{ Ref }}}}}}}}}}}}}}}}}}}}')
             return res.status(403).json(responseObj(false, 'Invalid Token'));
           case 'TokenExpiredError':
             return res.status(401).json(responseObj(false, 'Token Expired'));
@@ -55,7 +54,7 @@ const checkAuth = async (req, res, next) => {
                 userName: user.username,
                 userRole: user.userRoleId
               }, development.accessTokenExpirationTime, true);
-              console.log('===============Refreshing Token=========================')
+              
               user.accessToken = newAccessToken;
               await user.save({ logging: false });
               return res.status(200).json(responseObj(false, 'Refreshed AccessToken', null, newAccessToken));

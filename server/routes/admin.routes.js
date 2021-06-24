@@ -41,15 +41,15 @@ router.get('/product/:id', [checkAuth, checkAdmin], adminController.getProductBy
 
 /* SubAdmin Routes */
 
-router.post('/subAdmin', [validateToken, checkSuperAdmin, signupValidator(), validate], adminController.addSubAdmin);
+router.post('/subAdmin', [checkAuth, checkSuperAdmin, signupValidator(), validate], adminController.addSubAdmin);
 
-router.get('/subAdmin/:id', [validateToken, checkSuperAdmin], adminController.getSubAdmin);
+router.get('/subAdmin/:id', [checkAuth, checkSuperAdmin], adminController.getSubAdmin);
 
-router.get('/subAdmins', [validateToken, checkSuperAdmin], adminController.getAllSubAdmins);
+router.get('/subAdmins', [checkAuth, checkSuperAdmin], adminController.getAllSubAdmins);
 
-router.put('/subAdmin/:id', [validateToken, checkSuperAdmin, signupValidator(), validate], adminController.editSubAdmin);
+router.put('/subAdmin/:id', [checkAuth, checkSuperAdmin, signupValidator(), validate], adminController.editSubAdmin);
 
-router.delete('/subAdmin/:id', [validateToken, checkSuperAdmin], adminController.deleteSubAdmin);
+router.delete('/subAdmin/:id', [checkAuth, checkSuperAdmin], adminController.deleteSubAdmin);
 
 /* Brand Routes */
 

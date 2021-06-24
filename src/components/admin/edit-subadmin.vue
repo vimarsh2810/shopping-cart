@@ -70,7 +70,9 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/admin/subAdmin/${this.$route.params.id}`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
@@ -78,6 +80,9 @@ export default {
           this.subAdmin = response.data.payload;
           this.errors = [];
           this.isLoading = false;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getSubAdmin();
         }
       } catch (error) {
         this.successMsg = null;
@@ -102,13 +107,18 @@ export default {
         this.subAdmin.confirmPassword = this.confirmPassword;
         const response = await axios.put(`${this.$store.getters.base_url}/admin/subAdmin/${this.$route.params.id}`, this.subAdmin, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
         if(response.data.success) {
           this.errors = [];
           this.successMsg = response.data.message;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.editSubAdmin();
         }
       } catch (error) {
         this.successMsg = null;

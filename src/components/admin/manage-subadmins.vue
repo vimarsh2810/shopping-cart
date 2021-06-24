@@ -89,7 +89,9 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/admin/subAdmins`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
@@ -98,27 +100,39 @@ export default {
           this.totalPages = Math.ceil(this.allSubAdmins.length / this.limit);
           this.isLoading = false;
           this.filterItems(1);
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getSubAdmins();
         }
       } catch (error) {
         console.log(error);
       }
     },
 
+    async deleteSubAdminMethod(subAdminId) {
+      try {
+        const response = await axios.delete(`${this.$store.getters.base_url}/admin/subAdmin/${subAdminId}`, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
+          }
+        });
+
+        if(response.data.success) {
+          this.getSubAdmins();
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.deleteSubAdminMethod(subAdminId);
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+
     async deleteSubAdmin(subAdminId) {
       if(confirm('Do you really want to delete this subadmin?')) {
-        try {
-          const response = await axios.delete(`${this.$store.getters.base_url}/admin/subAdmin/${subAdminId}`, {
-            headers: {
-              'Authorization': `Bearer ${this.$store.getters.token}`
-            }
-          });
-
-          if(response.data.success) {
-            this.getSubAdmins();
-          }
-        } catch (error) {
-          console.log(error.response.data.message);
-        }
+        await this.deleteSubAdminMethod(subAdminId);
       }
     },
 
