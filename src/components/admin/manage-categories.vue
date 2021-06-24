@@ -89,8 +89,9 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/admin/limitedCategories`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
           }, params: {
+            accessToken: this.$store.getters.token,
             page: requestedPage,
             limit: this.limit
           }
@@ -101,6 +102,30 @@ export default {
           this.currentPage = response.data.payload.currentPage;
           this.totalPages = response.data.payload.totalPages;
           this.isLoading = false;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getCategories();
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+
+    async deleteCategoryMethod(categoryId) {
+      try {
+        const response = await axios.delete(`${this.$store.getters.base_url}/admin/category/${categoryId}`, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          },  params: {
+            accessToken: this.$store.getters.token,
+          }
+        });
+
+        if(response.data.success) {
+          this.categories.length == 1 ? this.getCategories(this.currentPage - 1) : this.getCategories(this.currentPage);
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.deleteCategoryMethod(categoryId);
         }
       } catch (error) {
         console.log(error.response.data.message);
@@ -109,19 +134,7 @@ export default {
 
     async deleteCategory(categoryId) {
       if(confirm('Do you really want to delete this category?')) {
-        try {
-          const response = await axios.delete(`${this.$store.getters.base_url}/admin/category/${categoryId}`, {
-            headers: {
-              'Authorization': `Bearer ${this.$store.getters.token}`
-            }
-          });
-
-          if(response.data.success) {
-            this.categories.length == 1 ? this.getCategories(this.currentPage - 1) : this.getCategories(this.currentPage);
-          }
-        } catch (error) {
-          console.log(error.response.data.message);
-        }
+        this.deleteCategoryMethod(categoryId);
       }
     },
 

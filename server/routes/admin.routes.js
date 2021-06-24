@@ -11,19 +11,19 @@ const router = express.Router();
 
 /* Category Routes */
 
-router.post('/checkCategoryExists', [validateToken, checkAdmin], adminController.checkCategoryExists);
+router.post('/checkCategoryExists', [checkAuth, checkAdmin], adminController.checkCategoryExists);
 
-router.get('/category/:id', [validateToken, checkAdmin], adminController.getCategoryById);
+router.get('/category/:id', [checkAuth, checkAdmin], adminController.getCategoryById);
 
-router.post('/category', [validateToken, checkAdmin, categoryValidator(), validate], adminController.addCategory);
+router.post('/category', [checkAuth, checkAdmin, categoryValidator(), validate], adminController.addCategory);
 
-router.put('/category/:id', [validateToken, checkAdmin, categoryValidator(), validate], adminController.editCategory);
+router.put('/category/:id', [checkAuth, checkAdmin, categoryValidator(), validate], adminController.editCategory);
 
-router.delete('/category/:id', [validateToken, checkAdmin], adminController.deleteCategory);
+router.delete('/category/:id', [checkAuth, checkAdmin], adminController.deleteCategory);
 
-router.get('/categories', [validateToken, checkAdmin], adminController.getAllCategories);
+router.get('/categories', [checkAuth, checkAdmin], adminController.getAllCategories);
 
-router.get('/limitedCategories', [validateToken, checkAdmin], adminController.getLimitedCategories);
+router.get('/limitedCategories', [checkAuth, checkAdmin], adminController.getLimitedCategories);
 
 router.get('/lastSelectedCategory', [validateToken, checkAdmin], adminController.getLastSelectedCategory);
 

@@ -80,10 +80,19 @@ export default new Vuex.Store({
       try {
         const response = await axios.get(`${context.getters.base_url}/admin/categories`, {
           headers: {
-            'Authorization': `Bearer ${context.getters.token}`
+            'Authorization': `Bearer ${context.getters.refreshToken}`
+          }, params: {
+            accessToken: context.getters.token
           }
         });
-        context.commit('setCategories', response.data.payload);
+
+        if(response.data.success) {
+          context.commit('setCategories', response.data.payload);
+        } else {
+          context.dispatch('refreshAccessToken', response.data.accessToken);
+          await context.dispatch('getCategories');
+        }
+        
       } catch (error) {
         console.log(error.response);
       }

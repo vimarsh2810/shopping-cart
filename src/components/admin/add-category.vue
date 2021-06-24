@@ -65,13 +65,18 @@ export default {
       try {
         const response = await axios.post(`${this.$store.getters.base_url}/admin/checkCategoryExists`, { title: this.title }, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
         if(response.data.success) {
           this.errors = [];
           this.successMsg = response.data.payload;
+        } else if(response.data.message === 'Refreshed AccessToken') {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.checkCategoryExists();
         } else {
           this.successMsg = null;
           this.errors = [response.data.payload];
@@ -90,13 +95,19 @@ export default {
       try {
         const response = await axios.post(`${this.$store.getters.base_url}/admin/category`, formData, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
+        
         if(response.data.success) {
           this.errors = null;
           this.successMsg = response.data.message;
           this.getCategories();
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.addCategory();
         }
       } catch (error) {
         this.successMsg = null;

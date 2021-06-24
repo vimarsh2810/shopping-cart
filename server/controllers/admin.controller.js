@@ -282,9 +282,14 @@ exports.getCategoryById = async (req, res, next) => {
 
 exports.getAllCategories = async (req, res, next) => {
   try {
-    const categories = await Category.findAll({ where: { parentId: null } });
+    const categories = await Category.findAll({ 
+      where: { 
+        parentId: null 
+      },
+      logging: false
+    });
     for(let category of categories) {
-      category.dataValues.children = await category.getChildren();
+      category.dataValues.children = await category.getChildren({ logging: false });
     }
     return res.status(200).json(responseObj(true, 'Categories', categories));
   } catch (error) {

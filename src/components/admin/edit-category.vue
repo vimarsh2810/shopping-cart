@@ -58,7 +58,9 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/admin/category/${this.$route.params.id}`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
@@ -66,6 +68,9 @@ export default {
           this.category = response.data.payload;
           this.isLoading = false;
           this.selectedValue = this.category.parentId;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getCategory();
         }
       } catch (error) {
         this.successMsg = null;
@@ -81,13 +86,18 @@ export default {
         }
         const response = await axios.put(`${this.$store.getters.base_url}/admin/category/${this.$route.params.id}`, data, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
         if(response.data.success) {
           this.errors = null;
           this.successMsg = response.data.message;
           this.getCategories();
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.editCategory();
         }
       } catch (error) {
         this.successMsg = null;
