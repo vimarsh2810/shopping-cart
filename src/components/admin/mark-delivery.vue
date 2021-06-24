@@ -43,13 +43,18 @@ export default {
       try {
         const response = await axios.post(`${this.$store.getters.base_url}/admin/order/${this.$route.params.id}/otp`, formData, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
-        console.log(response.data);
+        
         if(response.data.success) {
           this.error = null;
           this.successMsg = response.data.message;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.verifyOtp();
         }
       } catch (error) {
         console.log(error.response);

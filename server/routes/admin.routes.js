@@ -65,19 +65,19 @@ router.post('/checkBrandExists', [validateToken, checkAdmin], adminController.ch
 
 /* Other Routes */
 
-router.put('/profile', [validateToken, checkAdmin], adminController.editProfile);
+router.put('/profile', [checkAuth, checkAdmin], adminController.editProfile);
 
-router.get('/orders', [validateToken, checkAdmin], adminController.getAllOrders);
+router.get('/orders', [checkAuth, checkAdmin], adminController.getAllOrders);
 
-router.get('/orders/:status', [validateToken, checkAdmin], adminController.getOrdersByStatus);
+router.get('/orders/:status', [checkAuth, checkAdmin], adminController.getOrdersByStatus);
 
-router.get('/order/:id', [validateToken, checkAdmin], adminController.getOrderById);
+router.get('/order/:id', [checkAuth, checkAdmin], adminController.getOrderById);
 
-router.get('/order/:id/otp', [validateToken, checkAdmin], adminController.sendDeliveryOtp);
+router.get('/order/:id/otp', [checkAuth, checkAdmin], adminController.sendDeliveryOtp);
 
-router.post('/order/:id/otp', [validateToken, checkAdmin], adminController.verifyDeliveryOtp);
+router.post('/order/:id/otp', [checkAuth, checkAdmin], adminController.verifyDeliveryOtp);
 
-router.get('/statistics', [validateToken, checkAdmin], adminController.getStatistics);
+router.get('/statistics', [checkAuth, checkAdmin], adminController.getStatistics);
 
 router.get('/products', adminController.getAdminProducts);
 

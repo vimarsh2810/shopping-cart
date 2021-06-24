@@ -123,8 +123,9 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/admin/orders/${development.orderStatus.InProcess}`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
           }, params: {
+            accessToken: this.$store.getters.token,
             page: requestedPage,
             limit: this.limit
           }
@@ -136,6 +137,9 @@ export default {
           this.totalPages = response.data.payload.totalPages;
           this.currentPage = response.data.payload.currentPage;
           this.isLoading = false;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getOrders(requestedPage);
         }
       } catch (error) {
         console.log(error.response.data.message);
@@ -146,12 +150,17 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/admin/statistics`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
         if(response.data.success) {
           this.statistics = response.data.payload;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getStatistics();
         }
       } catch (error) {
         console.log(error.response.data.message);
@@ -162,12 +171,17 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/admin/order/${orderId}/otp`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
         if(response.data.success) {
           this.$router.push({ name: 'MarkDelivery', params: { id: orderId } });
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.markDelivery(orderId);
         }
       } catch (error) {
         console.log(error.response.data.message);

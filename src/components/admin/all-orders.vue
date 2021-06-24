@@ -97,7 +97,9 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/admin/orders`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
@@ -105,6 +107,9 @@ export default {
           this.allOrders = response.data.payload;
           this.totalPages = Math.ceil(this.allOrders.length / this.limit);
           this.filterOrders(1);
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getOrders();
         }
       } catch (error) {
         console.log(error.response.data);
