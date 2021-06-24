@@ -14,7 +14,6 @@ const checkAuth = async (req, res, next) => {
     const refreshToken = req.headers.authorization.split(' ')[1];
     jwt.verify(refreshToken, development.refresh_secret, async (err, decoded) => {
       if(err) {
-        console.log(err);
         switch(err.name) {
           case 'JsonWebTokenError':
             console.log('{{{{{{{{{{{{{{{{ Ref }}}}}}}}}}}}}}}}}}}}')
@@ -58,7 +57,7 @@ const checkAuth = async (req, res, next) => {
               }, development.accessTokenExpirationTime, true);
               console.log('===============Refreshing Token=========================')
               user.accessToken = newAccessToken;
-              await user.save();
+              await user.save({ logging: false });
               return res.status(200).json(responseObj(false, 'Refreshed AccessToken', null, newAccessToken));
 
             case 'SyntaxError':

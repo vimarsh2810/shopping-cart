@@ -53,11 +53,7 @@ export default {
 
     async getBrandByID() {
       try {
-        const response = await axios.get(`${this.$store.getters.base_url}/shop/brand/${this.$route.params.id}`, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
-          }
-        });
+        const response = await axios.get(`${this.$store.getters.base_url}/shop/brand/${this.$route.params.id}`);
 
         this.brand = response.data.payload;
         this.isLoading = false;
@@ -71,13 +67,18 @@ export default {
       try {
         const response = await axios.put(`${this.$store.getters.base_url}/admin/brand/${this.$route.params.id}`, formData, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
         if(response.data.success) {
           this.errors = null;
           this.successMsg = response.data.message;
           await this.$store.dispatch('getBrands');
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.editBrand();
         }
       } catch (error) {
         this.successMsg = null;

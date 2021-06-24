@@ -86,8 +86,9 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/admin/limitedBrands`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
           }, params: {
+            accessToken: this.$store.getters.token,
             page: requestedPage,
             limit: this.limit
           }
@@ -98,6 +99,30 @@ export default {
           this.currentPage = response.data.payload.currentPage;
           this.totalPages = response.data.payload.totalPages;
           this.isLoading = false;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getBrands(requestedPage);
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+
+    async deleteBrandMethod(brandId) {
+      try {
+        const response = await axios.delete(`${this.$store.getters.base_url}/admin/brand/${brandId}`, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
+          }
+        });
+
+        if(response.data.success) {
+          this.brands.length == 1 ? this.getBrands(this.currentPage - 1) : this.getBrands(this.currentPage);
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.deleteBrandMethod(brandId);
         }
       } catch (error) {
         console.log(error.response.data.message);
@@ -106,19 +131,7 @@ export default {
 
     async deleteBrand(brandId) {
       if(confirm('Do you really want to delete this brand?')) {
-        try {
-          const response = await axios.delete(`${this.$store.getters.base_url}/admin/brand/${brandId}`, {
-            headers: {
-              'Authorization': `Bearer ${this.$store.getters.token}`
-            }
-          });
-
-          if(response.data.success) {
-            this.brands.length == 1 ? this.getBrands(this.currentPage - 1) : this.getBrands(this.currentPage);
-          }
-        } catch (error) {
-          console.log(error.response.data.message);
-        }
+        await this.deleteBrandMethod(brandId);
       }
     },
 

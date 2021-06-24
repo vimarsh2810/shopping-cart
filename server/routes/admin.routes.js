@@ -5,6 +5,7 @@ const { checkAdmin, checkSuperAdmin } = require('../middlewares/checkRole.js');
 const { validateToken } = require('../middlewares/validateToken.js');
 const { upload } = require('../middlewares/uploadImage.js');
 const { categoryValidator, signupValidator, validate } = require('../middlewares/validator.js');
+const { checkAuth } = require('../middlewares/checkAuth.js');
 
 const router = express.Router();
 
@@ -52,13 +53,13 @@ router.delete('/subAdmin/:id', [validateToken, checkSuperAdmin], adminController
 
 /* Brand Routes */
 
-router.post('/brand', [validateToken, checkAdmin], adminController.createBrand);
+router.post('/brand', [checkAuth, checkAdmin], adminController.createBrand);
 
-router.put('/brand/:id', [validateToken, checkAdmin], adminController.updateBrand);
+router.put('/brand/:id', [checkAuth, checkAdmin], adminController.updateBrand);
 
-router.delete('/brand/:id', [validateToken, checkAdmin], adminController.deleteBrand);
+router.delete('/brand/:id', [checkAuth, checkAdmin], adminController.deleteBrand);
 
-router.get('/limitedBrands', [validateToken, checkAdmin], adminController.getLimitedBrands);
+router.get('/limitedBrands', [checkAuth, checkAdmin], adminController.getLimitedBrands);
 
 router.post('/checkBrandExists', [validateToken, checkAdmin], adminController.checkBrandExists);
 
