@@ -136,13 +136,18 @@ export default {
       try {  
         const response = await axios.put(`${this.$store.getters.base_url}/admin/product/${this.$route.params.id}`, this.product, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
         if(response.data.success) {
           this.error = null;
           this.successMsg = response.data.message;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.editProduct();
         }
       } catch (error) {
         this.successMsg = null;
@@ -154,7 +159,9 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/admin/product/${this.$route.params.id}`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
@@ -163,6 +170,9 @@ export default {
           this.selectedParentCategory = this.product.category.parentId;
           this.childCategories = this.parentCategories.find(category => category.id === this.selectedParentCategory).children;
           this.isLoading = false;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getProduct();
         }
       } catch (error) {
         this.successMsg = null;

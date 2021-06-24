@@ -125,13 +125,18 @@ export default {
       try {
         const response = await axios.post(`${this.$store.getters.base_url}/admin/checkProductExists`, { title: this.title }, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
         if(response.data.success) {
           this.errors = null;
           this.successMsg = response.data.payload;
+        } else if (response.data.message === 'Refreshed AccessToken') {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.checkProductExists();
         } else {
           this.successMsg = null;
           this.errors = response.data.payload;
@@ -156,7 +161,9 @@ export default {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/admin/lastSelectedCategory`, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
 
@@ -165,6 +172,9 @@ export default {
           this.categoryId = lastSelectedCategory.id;
           await this.addProduct();
           this.categoryId = null;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.addProductInLastSelectedCategory();
         }
       } catch (error) {
         console.log(error.response);
@@ -187,12 +197,17 @@ export default {
       try {  
         const response = await axios.post(`${this.$store.getters.base_url}/admin/product`, formData, {
           headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
           }
         });
         if(response.data.success) {
           this.errors = null;
           this.successMsg = response.data.message;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.addProduct();
         }
       } catch (error) {
         this.successMsg = null;

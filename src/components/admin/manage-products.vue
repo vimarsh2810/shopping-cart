@@ -93,9 +93,7 @@ export default {
     async getProducts(requestedPage) {
       try {
         const response = await axios.get(`${this.$store.getters.base_url}/shop/limitedProducts`, {
-          headers: {
-            'Authorization': `Bearer ${this.$store.getters.token}`
-          }, params: {
+          params: {
             page: requestedPage,
             limit: this.limit,
             includeCategory: Boolean(true)
@@ -113,21 +111,30 @@ export default {
       }
     },
 
+    async deleteProductMethod(productId) {
+      try {
+        const response = await axios.delete(`${this.$store.getters.base_url}/admin/product/${productId}`, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
+          }
+        });
+
+        if(response.data.success) {
+          this.getProducts(this.currentPage);
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.deleteProductMethod(productId);
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+
     async deleteProduct(productId) {
       if(confirm('Do you really want to delete this product?')) {
-        try {
-          const response = await axios.delete(`${this.$store.getters.base_url}/admin/product/${productId}`, {
-            headers: {
-              'Authorization': `Bearer ${this.$store.getters.token}`
-            }
-          });
-
-          if(response.data.success) {
-            this.getProducts(this.currentPage);
-          }
-        } catch (error) {
-          console.log(error.response.data.message);
-        }
+        await this.deleteProductMethod(productId);
       }
     },
 

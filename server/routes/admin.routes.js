@@ -25,19 +25,19 @@ router.get('/categories', [checkAuth, checkAdmin], adminController.getAllCategor
 
 router.get('/limitedCategories', [checkAuth, checkAdmin], adminController.getLimitedCategories);
 
-router.get('/lastSelectedCategory', [validateToken, checkAdmin], adminController.getLastSelectedCategory);
+router.get('/lastSelectedCategory', [checkAuth, checkAdmin], adminController.getLastSelectedCategory);
 
 /* Product Routes */
 
-router.post('/checkProductExists', [validateToken, checkAdmin], adminController.checkProductExists);
+router.post('/checkProductExists', [checkAuth, checkAdmin], adminController.checkProductExists);
 
-router.post('/product', [validateToken, checkAdmin, upload.single("file")], adminController.addProduct);
+router.post('/product', [checkAuth, checkAdmin, upload.single("file")], adminController.addProduct);
 
-router.put('/product/:id', [validateToken, checkAdmin], adminController.editProduct);
+router.put('/product/:id', [checkAuth, checkAdmin], adminController.editProduct);
 
-router.delete('/product/:id', [validateToken, checkAdmin], adminController.deleteProduct);
+router.delete('/product/:id', [checkAuth, checkAdmin], adminController.deleteProduct);
 
-router.get('/product/:id', [validateToken, checkAdmin], adminController.getProductById);
+router.get('/product/:id', [checkAuth, checkAdmin], adminController.getProductById);
 
 /* SubAdmin Routes */
 
