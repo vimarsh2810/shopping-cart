@@ -34,12 +34,19 @@
                     <td class="text-center vertical-center">
                       <button 
                         class="btn btn-warning"
+                        v-if="!brand.deletedAt"
                         @click="$router.push({ name: 'EditBrand', params: { id: brand.id } })"
                       >Edit</button>
                       <button 
                         class="btn btn-danger ml-2"
+                        v-if="!brand.deletedAt"
                         @click="deleteBrand(brand.id)"
                       >Delete</button>
+                      <button 
+                        class="btn btn-success ml-2"
+                        v-if="brand.deletedAt"
+                        @click="restoreBrand(brand.id)"
+                      >Restore</button>
                     </td>
                   </tr>
                 </tbody>
@@ -119,7 +126,8 @@ export default {
         });
 
         if(response.data.success) {
-          this.brands.length == 1 ? this.getBrands(this.currentPage - 1) : this.getBrands(this.currentPage);
+          await this.getBrands(this.currentPage);
+          // this.brands.length == 1 ? this.getBrands(this.currentPage - 1) : this.getBrands(this.currentPage);
         } else {
           this.$store.dispatch('refreshAccessToken', response.data.accessToken);
           await this.deleteBrandMethod(brandId);
@@ -132,6 +140,33 @@ export default {
     async deleteBrand(brandId) {
       if(confirm('Do you really want to delete this brand?')) {
         await this.deleteBrandMethod(brandId);
+      }
+    },
+
+    async restoreBrandMethod(brandId) {
+      try {
+        const response = await axios.put(`${this.$store.getters.base_url}/admin/restoreBrand/${brandId}`, {}, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
+          }
+        });
+
+        if(response.data.success) {
+          await this.getBrands(this.currentPage);
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.restoreBrandMethod(categoryId);
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+
+    async restoreBrand(brandId) {
+      if(confirm('Are you sure you want to restore this brand?')) {
+        await this.restoreBrandMethod(brandId);
       }
     },
 

@@ -344,7 +344,7 @@ exports.restoreCategory = async (req, res, next) => {
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
-},
+};
 
 /* @desc Get last selected category */
 /* @route GET /admin/lastSelectedCategory */
@@ -628,6 +628,18 @@ exports.getLimitedBrands = async (req, res, next) => {
       totalPages: result.totalNoOfPages,
       currentPage: result.currentPage
     }));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Put Restore brand by ID */
+/* @route PUT /admin/restoreBrand/:id */
+
+exports.restoreBrand = async (req, res, next) => {
+  try {
+    const brand = await Brand.restore({ where: { id: req.params.id } });
+    return res.status(200).json(responseObj(true, 'Brand restored'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

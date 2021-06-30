@@ -63,6 +63,8 @@ router.delete('/brand/:id', [checkAuth, checkAdmin], adminController.deleteBrand
 
 router.get('/limitedBrands', [checkAuth, checkAdmin], adminController.getLimitedBrands);
 
+router.put('/restoreBrand/:id', [checkAuth, checkAdmin], adminController.restoreBrand);
+
 router.post('/checkBrandExists', [validateToken, checkAdmin], adminController.checkBrandExists);
 
 /* Other Routes */
