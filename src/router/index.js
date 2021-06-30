@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Signup from '../components/Signup.vue';
 import Login from '../components/Login.vue';
+import ChangePassword from '../components/change-password.vue';
 import UserHome from '../components/users/user-home.vue';
 import ProductDetailsUser from '../components/users/product-details.vue';
 import AddProduct from '../components/admin/add-product.vue';
@@ -55,7 +56,11 @@ const routes = [
     name: 'Login',
     component: Login
   },
-
+  {
+    path: '/auth/change-password',
+    name: 'ChangePassword',
+    component: ChangePassword
+  },
   /* User Routes */
 
   {

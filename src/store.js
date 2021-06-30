@@ -158,7 +158,11 @@ export default new Vuex.Store({
           router.push('/login');
         }
       } catch (error) {
-        console.log(error.response.data.message);
+        if(error.response.status === 401) {
+          router.push('/login');
+        } else  {
+          console.log(error.response);
+        }
       }
     },
 

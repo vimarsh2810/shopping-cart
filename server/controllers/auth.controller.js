@@ -216,7 +216,7 @@ exports.checkOldPassword = async (req, res, next) => {
     const isPasswordCorrect = bcrypt.compareSync(oldPassword, user.password);
 
     if(!isPasswordCorrect) {
-      return res.status(401).json(responseObj(false, 'Incorrect Password'));
+      return res.status(400).json(responseObj(false, 'Incorrect Password'));
     }
     return res.status(200).json(responseObj(true, 'Correct Password'));
   } catch (error) {
@@ -231,6 +231,10 @@ exports.changePassword = async (req, res, next) => {
   try {
     const { oldPassword, newPassword } = req.body;
 
+    if(!oldPassword || !newPassword) {
+      return res.status(400).json(responseObj(false, 'Please fill all the details'));
+    }
+
     const user = await User.findByPk(req.userData.userId, {
       attributes: ['id', 'password']
     });
@@ -238,7 +242,7 @@ exports.changePassword = async (req, res, next) => {
     const isPasswordCorrect = bcrypt.compareSync(oldPassword, user.password);
 
     if(!isPasswordCorrect) {
-      return res.status(401).json(responseObj(false, 'Incorrect Password'));
+      return res.status(400).json(responseObj(false, 'Incorrect Password'));
     }
 
     if(oldPassword === newPassword) {

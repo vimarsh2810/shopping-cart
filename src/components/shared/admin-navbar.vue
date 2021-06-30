@@ -92,6 +92,13 @@
               <i class="fas fa-user-edit"></i>&nbsp;&nbsp;Edit Profile
             </router-link>
 
+            <router-link
+              to="/auth/change-password"
+              class="dropdown-item"
+            >
+              <i class="fas fa-key"></i>&nbsp;&nbsp;Change Password
+            </router-link>
+
             <a 
               class="dropdown-item" 
               @click.prevent="logout"

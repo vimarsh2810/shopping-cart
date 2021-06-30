@@ -127,6 +127,14 @@
                 >
                   <i class="fas fa-envelope mr-1"></i>Verify Email
                 </router-link>
+
+                <router-link
+                  to="/auth/change-password"
+                  class="dropdown-item"
+                >
+                  <i class="fas fa-key"></i>&nbsp;&nbsp;Change Password
+                </router-link>
+
                 <a 
                   class="dropdown-item" 
                   @click.prevent="logout"
