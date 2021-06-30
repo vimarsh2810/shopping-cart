@@ -16,6 +16,7 @@ const Category = sequelize.define('category', {
     }
   },
   {
+    paranoid: true,
     hooks: {
       beforeCreate: async function(category, options) {
         const categoryExist = await Category.findOne({ where: { title: category.title } });

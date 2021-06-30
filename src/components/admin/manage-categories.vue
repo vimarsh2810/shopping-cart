@@ -37,12 +37,19 @@
                     <td class="text-center vertical-center">
                       <button 
                         class="btn btn-warning"
+                        v-if="!category.deletedAt"
                         @click="goToEditCategory(category.id)"
                       >Edit</button>
                       <button 
                         class="btn btn-danger ml-2"
+                        v-if="!category.deletedAt"
                         @click="deleteCategory(category.id)"
                       >Delete</button>
+                      <button 
+                        class="btn btn-success ml-2"
+                        v-if="category.deletedAt"
+                        @click="restoreCategory(category.id)"
+                      >Restore</button>
                     </td>
                   </tr>
                 </tbody>
@@ -122,7 +129,8 @@ export default {
         });
 
         if(response.data.success) {
-          this.categories.length == 1 ? this.getCategories(this.currentPage - 1) : this.getCategories(this.currentPage);
+          await this.getCategories(this.currentPage);
+          // this.categories.length == 1 && this.currentPage !== 1 ? this.getCategories(this.currentPage - 1) : this.getCategories(this.currentPage);
         } else {
           this.$store.dispatch('refreshAccessToken', response.data.accessToken);
           await this.deleteCategoryMethod(categoryId);
@@ -135,6 +143,33 @@ export default {
     async deleteCategory(categoryId) {
       if(confirm('Do you really want to delete this category?')) {
         this.deleteCategoryMethod(categoryId);
+      }
+    },
+
+    async restoreCategoryMethod(categoryId) {
+      try {
+        const response = await axios.put(`${this.$store.getters.base_url}/admin/restoreCategory/${categoryId}`, {}, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          },  params: {
+            accessToken: this.$store.getters.token,
+          }
+        });
+
+        if(response.data.success) {
+          await this.getCategories(this.currentPage);
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.restoreCategory(categoryId);
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+
+    async restoreCategory(categoryId) {
+      if(confirm('Are you sure you want to restore this category?')) {
+        this.restoreCategoryMethod(categoryId);
       }
     },
 

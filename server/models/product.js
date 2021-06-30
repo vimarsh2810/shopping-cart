@@ -29,6 +29,7 @@ const Product = sequelize.define('product',
     }
   },
   {
+    paranoid: true,
     hooks: {
       beforeCreate: async function(product, options) {
         const productExist = await Product.findOne({ where: { title: product.title } });

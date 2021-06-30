@@ -25,6 +25,8 @@ router.get('/categories', [checkAuth, checkAdmin], adminController.getAllCategor
 
 router.get('/limitedCategories', [checkAuth, checkAdmin], adminController.getLimitedCategories);
 
+router.put('/restoreCategory/:id', [checkAuth, checkAdmin], adminController.restoreCategory);
+
 router.get('/lastSelectedCategory', [checkAuth, checkAdmin], adminController.getLastSelectedCategory);
 
 /* Product Routes */

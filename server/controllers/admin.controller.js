@@ -306,6 +306,7 @@ exports.getLimitedCategories = async (req, res, next) => {
     let { page, limit, includeCategory } = req.query;
     const { offset, size } = pagination(page, limit);
     let items = await Category.findAndCountAll({
+      paranoid: false,
       include: [{ 
         model: Category,
         as: 'parent',
@@ -328,9 +329,22 @@ exports.getLimitedCategories = async (req, res, next) => {
       currentPage: result.currentPage
     }));
   } catch (error) {
+    console.log(error)
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+/* @desc Put Restore category by ID */
+/* @route PUT /admin/restoreCategory/:id */
+
+exports.restoreCategory = async (req, res, next) => {
+  try {
+    const category = await Category.restore({ where: { id: req.params.id } });
+    return res.status(200).json(responseObj(true, 'Category restored'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+},
 
 /* @desc Get last selected category */
 /* @route GET /admin/lastSelectedCategory */
@@ -601,6 +615,7 @@ exports.getLimitedBrands = async (req, res, next) => {
     let { page, limit } = req.query;
     const { offset, size } = pagination(page, limit);
     let items = await Brand.findAndCountAll({
+      paranoid: false,
       limit: size,
       offset: offset
     });

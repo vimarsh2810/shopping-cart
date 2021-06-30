@@ -16,6 +16,7 @@ const Brand = sequelize.define('brand',
     }
   },
   {
+    paranoid: true,
     hooks: {
       beforeCreate: async function(brand, options) {
         const brandExists = await Brand.findOne({ where: { name: brand.name }});
