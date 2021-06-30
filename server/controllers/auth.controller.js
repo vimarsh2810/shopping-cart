@@ -11,6 +11,22 @@ const { development } = require('../config/config.js');
 const accessTokenExpirationTime = development.accessTokenExpirationTime;
 const refreshTokenExpirationTime = development.refreshTokenExpirationTime;
 
+const verifyOldPassword = async (userId, enteredPassword) => {
+  try {
+    const user = await User.findByPk(userId, {
+      attributes: ['id', 'password']
+    });
+
+    const passwordCompare = bcrypt.compareSync(enteredPassword, user.password);
+    if(!passwordCompare) {
+      return false
+    }
+    return true;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 // @desc User Signup
 // @route POST /auth/signup 
 
@@ -181,6 +197,57 @@ exports.logout = async (req, res, next) => {
     user.refreshToken = null;
     await user.save();
     return res.status(200).json(responseObj(true, 'User Logged Out'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+// @desc verify old password
+// @route POST /auth/checkOldPassword
+
+exports.checkOldPassword = async (req, res, next) => {
+  try {
+    const { oldPassword } = req.body;
+
+    const user = await User.findByPk(req.userData.userId, {
+      attributes: ['id', 'password']
+    });
+
+    const isPasswordCorrect = bcrypt.compareSync(oldPassword, user.password);
+
+    if(!isPasswordCorrect) {
+      return res.status(401).json(responseObj(false, 'Incorrect Password'));
+    }
+    return res.status(200).json(responseObj(true, 'Correct Password'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+// @desc change password
+// @route PUT /auth/password
+
+exports.changePassword = async (req, res, next) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    const user = await User.findByPk(req.userData.userId, {
+      attributes: ['id', 'password']
+    });
+
+    const isPasswordCorrect = bcrypt.compareSync(oldPassword, user.password);
+
+    if(!isPasswordCorrect) {
+      return res.status(401).json(responseObj(false, 'Incorrect Password'));
+    }
+
+    if(oldPassword === newPassword) {
+      return res.status(400).json(responseObj(false, 'New password can not be same as old password'))
+    }
+
+    user.password = bcrypt.hashSync(newPassword, parseInt(development.salt_value));
+    await user.save();
+    return res.status(200).json(responseObj(true, 'Password changed'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

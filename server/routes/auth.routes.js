@@ -22,4 +22,8 @@ router.get('/renewAccessToken', validateRefreshToken, authController.renewAccess
 
 router.get('/logout', checkAuth, authController.logout);
 
+router.post('/checkOldPassword', checkAuth, authController.checkOldPassword);
+
+router.put('/password', checkAuth, authController.changePassword);
+
 module.exports = router;

@@ -7,7 +7,7 @@ const { createToken } = require('../helpers/createToken.js');
 const checkAuth = async (req, res, next) => {
   try {
 
-    if(!req.headers.authorization) {
+    if(!req.query.accessToken) {
       return res.status(401).json(responseObj(false, 'User not logged in'));
     }
     
