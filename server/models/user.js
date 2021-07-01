@@ -42,6 +42,7 @@ const User = sequelize.define('user', {
     }
   },
   {
+    paranoid: true,
     hooks: {
       beforeCreate: async function(user, options) {
         const userExist = await User.findOne({ 

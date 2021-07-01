@@ -57,11 +57,12 @@ exports.getSubAdmin = async (req, res, next) => {
 
 exports.getAllSubAdmins = async (req, res, next) => {
   try {
-    const subAdmins = await User.findAll({ 
+    const subAdmins = await User.findAll({
+      paranoid: false,
       where: { 
         userRoleId: development.roles.SubAdmin 
       },
-      attributes: ['id', 'name', 'username', 'email']
+      attributes: ['id', 'name', 'username', 'email', 'deletedAt']
     });
     return res.status(200).json(responseObj(true, `All SubAdmins`, subAdmins));
   } catch (error) {
@@ -97,7 +98,19 @@ exports.deleteSubAdmin = async (req, res, next) => {
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }
-}
+};
+
+/* @desc Restore deleted subAdmin */
+/* @route PUT /admin/restoreSubAdmin/:id */
+
+exports.restoreSubAdmin = async (req, res, next) => {
+  try {
+    const subAdmin = await User.restore({ where: { id: req.params.id, userRoleId: development.roles.SubAdmin } });
+    return res.status(200).json(responseObj(true, 'SubAdmin restored'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
 
 /* @desc Check if Product title available */
 /* @route POST /admin/checkProductExists */

@@ -57,6 +57,8 @@ router.put('/subAdmin/:id', [checkAuth, checkSuperAdmin, signupValidator(), vali
 
 router.delete('/subAdmin/:id', [checkAuth, checkSuperAdmin], adminController.deleteSubAdmin);
 
+router.put('/restoreSubAdmin/:id', [checkAuth, checkSuperAdmin], adminController.restoreSubAdmin);
+
 /* Brand Routes */
 
 router.post('/brand', [checkAuth, checkAdmin], adminController.createBrand);

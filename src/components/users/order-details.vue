@@ -122,10 +122,6 @@ export default {
       return this.currentPage == this.totalPages ? false : true;
     },
 
-    async removeProduct(productId) {
-      
-    },
-
     redirectToProductDetails(productId) {
       this.$router.push({ name: 'ProductDetailsUser', params: { id: productId } });
     }

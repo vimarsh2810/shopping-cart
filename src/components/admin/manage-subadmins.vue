@@ -34,14 +34,22 @@
                     <td class="text-center vertical-center">{{ subAdmin.username }}</td>
                     <td class="text-center vertical-center">{{ subAdmin.email }}</td>
                     <td class="text-center vertical-center">
+                      
                       <button 
                         class="btn btn-warning"
+                        v-if="!subAdmin.deletedAt"
                         @click="goToEditSubAdmin(subAdmin.id)"
                       >Edit</button>
                       <button 
                         class="btn btn-danger ml-2"
+                        v-if="!subAdmin.deletedAt"
                         @click="deleteSubAdmin(subAdmin.id)"
                       >Delete</button>
+                      <button 
+                        class="btn btn-success ml-2"
+                        v-if="subAdmin.deletedAt"
+                        @click="restoreSubAdmin(subAdmin.id)"
+                      >Restore</button>
                     </td>
                   </tr>
                 </tbody>
@@ -141,6 +149,33 @@ export default {
       const endIndex = startIndex + this.limit - 1;
       this.visibleSubAdmins = this.allSubAdmins.filter((product, index) => index >= startIndex && index <= endIndex);
       this.currentPage = requiredPage;
+    },
+
+    async restoreSubAdminMethod(subAdminId) {
+      try {
+        const response = await axios.put(`${this.$store.getters.base_url}/admin/restoreSubAdmin/${subAdminId}`, {}, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
+          }
+        });
+
+        if(response.data.success) {
+          await this.getSubAdmins();
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.restoreSubAdminMethod(subAdminId);
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+
+    async restoreSubAdmin(subAdminId) {
+      if(confirm('Are you sure you want to restore this SubAdmin?')) {
+        this.restoreSubAdminMethod(subAdminId);
+      }
     },
 
     goToEditSubAdmin(subAdminId) {
