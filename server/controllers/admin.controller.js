@@ -180,6 +180,53 @@ exports.deleteProduct = async (req, res, next) => {
   }
 };
 
+// @desc Get limited products
+// @route GET /admin/limitedProducts
+
+exports.getLimitedProducts = async (req, res, next) => {
+  try {
+
+    let { page, limit, includeCategory } = req.query;
+    const { offset, size } = pagination(page, limit);
+    let items;
+    if(includeCategory) {
+      items = await Product.findAndCountAll({
+        paranoid: false,
+        include: [ 
+          { model: Category, attributes: ['title'] }
+        ],
+        limit: size,
+        offset: offset
+      });
+    } else {
+      items = await Product.findAndCountAll({ limit: size, offset: offset });
+    }
+    
+    const result = paginationMetaData(items, page, size);
+    
+    return res.status(200).json(responseObj(true, 'Paginated Products', {
+      productCount: result.count,
+      products: result.rows,
+      totalPages: result.totalNoOfPages,
+      currentPage: result.currentPage
+    }));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+/* @desc Put Restore product by ID */
+/* @route PUT /admin/restoreProduct/:id */
+
+exports.restoreProduct = async (req, res, next) => {
+  try {
+    const product = await Product.restore({ where: { id: req.params.id } });
+    return res.status(200).json(responseObj(true, 'Product Restored'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
 /* @desc Get a Product by ID */
 /* @route GET /admin/product/:id */
 

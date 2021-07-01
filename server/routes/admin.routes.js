@@ -41,6 +41,10 @@ router.delete('/product/:id', [checkAuth, checkAdmin], adminController.deletePro
 
 router.get('/product/:id', [checkAuth, checkAdmin], adminController.getProductById);
 
+router.get('/limitedProducts', [checkAuth, checkAdmin], adminController.getLimitedProducts);
+
+router.put('/restoreProduct/:id', [checkAuth, checkAdmin], adminController.restoreProduct);
+
 /* SubAdmin Routes */
 
 router.post('/subAdmin', [checkAuth, checkSuperAdmin, signupValidator(), validate], adminController.addSubAdmin);

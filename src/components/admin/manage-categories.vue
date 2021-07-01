@@ -160,7 +160,7 @@ export default {
           await this.getCategories(this.currentPage);
         } else {
           this.$store.dispatch('refreshAccessToken', response.data.accessToken);
-          await this.restoreCategory(categoryId);
+          await this.restoreCategoryMethod(categoryId);
         }
       } catch (error) {
         console.log(error.response.data.message);

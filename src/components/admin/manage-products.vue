@@ -42,12 +42,19 @@
                     <td class="text-center vertical-center">
                       <button 
                         class="btn btn-warning"
+                        v-if="!product.deletedAt"
                         @click="goToEditProduct(product.id)"
                       >Edit</button>
                       <button 
                         class="btn btn-danger ml-2"
+                        v-if="!product.deletedAt"
                         @click="deleteProduct(product.id)"
                       >Delete</button>
+                      <button 
+                        class="btn btn-success ml-2"
+                        v-if="product.deletedAt"
+                        @click="restoreProduct(product.id)"
+                      >Restore</button>
                     </td>
                   </tr>
                 </tbody>
@@ -92,8 +99,12 @@ export default {
   methods: {
     async getProducts(requestedPage) {
       try {
-        const response = await axios.get(`${this.$store.getters.base_url}/shop/limitedProducts`, {
+        const response = await axios.get(`${this.$store.getters.base_url}/admin/limitedProducts`, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          },
           params: {
+            accessToken: this.$store.getters.token,
             page: requestedPage,
             limit: this.limit,
             includeCategory: Boolean(true)
@@ -105,6 +116,9 @@ export default {
           this.currentPage = response.data.payload.currentPage;
           this.totalPages = response.data.payload.totalPages;
           this.isLoading = false;
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.getProducts(requestedPage);
         }
       } catch (error) {
         console.log(error.response.data.message);
@@ -135,6 +149,32 @@ export default {
     async deleteProduct(productId) {
       if(confirm('Do you really want to delete this product?')) {
         await this.deleteProductMethod(productId);
+      }
+    },
+
+    async restoreProductMethod(productId) {
+      try {
+        const response = await axios.put(`${this.$store.getters.base_url}/admin/restoreProduct/${productId}`, {}, {
+          headers: {
+            'Authorization': `Bearer ${this.$store.getters.refreshToken}`
+          }, params: {
+            accessToken: this.$store.getters.token
+          }
+        });
+        if(response.data.success) {
+          await this.getProducts(this.currentPage);
+        } else {
+          this.$store.dispatch('refreshAccessToken', response.data.accessToken);
+          await this.restoreProductMethod(productId);
+        }
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+
+    async restoreProduct(productId) {
+      if(confirm('Are you sure you want to restore this product?')) {
+        this.restoreProductMethod(productId);
       }
     },
 
