@@ -39,13 +39,15 @@ exports.getProducts = async (req, res, next) => {
           { model: ProductImage, attributes: ['id', 'path'] }
         ],
         limit: size,
-        offset: offset
+        offset: offset,
+        order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
     } else {
       items = await Product.findAndCountAll({ 
         limit: size,
         offset: offset,
-        include: [{ model: ProductImage, attributes: ['id', 'path'] }]
+        include: [{ model: ProductImage, attributes: ['id', 'path'] }],
+        order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
     }
 
@@ -83,23 +85,16 @@ exports.getProductById = async (req, res, next) => {
         [Sequelize.fn('avg', Sequelize.col('reviews.rating')), 'avgRating']
       ],
       include: [
-        { 
-          model: Category
-        },
-        {
-          model: Brand
-        },
-        {
-          model: Review,
-          attributes: []
-        },
-        {
-          model: ProductImage,
-          attributes: ['id', 'path']
-        }
+        { model: Category },
+        { model: Brand },
+        { model: Review, attributes: [] }
       ]
     });
 
+    product.dataValues.productImages = await product.getProductImages({
+      attributes: ['id', 'path'],
+      order: [['id', 'ASC']]
+    });
     product.dataValues.reviews = await product.getReviews({
       include: [{ model: User, attributes: ['id', 'username'] }]
     });
@@ -144,7 +139,8 @@ exports.getProductsByCategory = async (req, res, next) => {
         { model: ProductImage, attributes: ['id', 'path'] }
       ],
       limit: size, 
-      offset: offset 
+      offset: offset,
+      order: [[{ model: ProductImage }, 'id', 'ASC']]
     });
 
     items.rows.forEach((item) => {
@@ -187,7 +183,8 @@ exports.searchProduct = async (req, res, next) => {
           { model: ProductImage, attributes: ['id', 'path'] }
         ],
         limit: size,
-        offset: offset
+        offset: offset,
+        order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
     } else {
       items = await Product.findAndCountAll({
@@ -202,7 +199,8 @@ exports.searchProduct = async (req, res, next) => {
           { model: ProductImage, attributes: ['id', 'path'] }
         ],
         limit: size,
-        offset: offset
+        offset: offset,
+        order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
     }
 
@@ -270,7 +268,8 @@ exports.filterProducts = async (req, res, next) => {
           { model: ProductImage, attributes: ['id', 'path'] }
         ],
         limit: size,
-        offset: offset
+        offset: offset,
+        order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
     } else {
       items = await Product.findAndCountAll({
@@ -285,7 +284,8 @@ exports.filterProducts = async (req, res, next) => {
           { model: ProductImage, attributes: ['id', 'path'] }
         ],
         limit: size,
-        offset: offset
+        offset: offset,
+        order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
     }
 
@@ -332,7 +332,8 @@ exports.filterProductsCategory = async (req, res, next) => {
           { model: ProductImage, attributes: ['id', 'path'] }
         ], 
         limit: size,
-        offset: offset
+        offset: offset,
+        order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
     } else {
       items = await Product.findAndCountAll({
@@ -348,7 +349,8 @@ exports.filterProductsCategory = async (req, res, next) => {
           { model: ProductImage, attributes: ['id', 'path'] }
         ],
         limit: size,
-        offset: offset
+        offset: offset,
+        order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
     }
 

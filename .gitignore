@@ -1,8 +1,8 @@
 .DS_Store
 node_modules
 /dist
+public/img/products
 public/invoices
-
 
 # local env files
 .env.local

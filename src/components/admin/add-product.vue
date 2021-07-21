@@ -121,10 +121,8 @@ export default {
     onFileChange(event) {
       for(let i = 0; i < this.$refs.file.files.length; i++) {
         let file = this.$refs.file.files[i];
-        console.log(file);
         this.images.push(file);
       }
-      // this.image = this.$refs.file.files[0];
     },
 
     async checkProductExists() {
@@ -193,8 +191,6 @@ export default {
         this.categoryId = document.querySelector('#childCategory').value;
       }
       this.selectedBrand = document.querySelector('#brand').value;
-      // formData.append('file', this.image);
-      console.log(this.images);
       this.images.forEach((img, idx) => {
         formData.append('files', this.images[idx]);
       });

@@ -152,7 +152,6 @@ exports.addProduct = async (req, res, next) => {
     });
 
     await req.files.forEach(async (file) => {
-      console.log(file);
       await product.createProductImage({
         path: `/img/products/${file.filename}`
       });
@@ -218,20 +217,21 @@ exports.getLimitedProducts = async (req, res, next) => {
             model: Category, attributes: ['title'] 
           },
           {
-            model: ProductImage
+            model: ProductImage, attributes: ['id', 'path']
           }
         ],
         limit: size,
-        offset: offset
+        offset: offset,
+        order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
     } else {
       items = await Product.findAndCountAll({ 
         limit: size,
         offset: offset,
-        include: [{ model: ProductImage }]
+        include: [{ model: ProductImage, attributes: ['id', 'path'] }],
+        order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
     }
-    
     const result = paginationMetaData(items, page, size);
     
     return res.status(200).json(responseObj(true, 'Paginated Products', {
@@ -269,9 +269,10 @@ exports.getProductById = async (req, res, next) => {
           attributes: ['id','title', 'parentId']
         },
         {
-          model: ProductImage
+          model: ProductImage, attributes: ['id', 'path']
         }
-      ]
+      ],
+      order: [[{ model: ProductImage }, 'id', 'ASC']]
     });
     return res.status(200).json(responseObj(true, `Product having ID = ${req.params.id}`, product));
   } catch (error) {

@@ -12,8 +12,29 @@
           </div>
           <!-- product img div Starts -->
           <div class="col-md-6 col-12">
-            <div class="product-details-img">
+            <!-- <div class="product-details-img">
               <img :src="product.productImages[0].path" alt="Product Image">
+            </div> -->
+            <div id="carouselExampleControls" class="carousel slide" data-interval="false" data-ride="carousel">
+              <div class="carousel-inner">
+                <!-- eslint-disable -->
+                <div class="carousel-item product-details-img active" v-for="(image, index) in product.productImages" v-if="index == 0" :key="image.id">
+                  <img :src="image.path" class="d-block w-100" alt="Product Image">
+                </div>
+                <div class="carousel-item product-details-img" v-for="(image, index) in product.productImages" v-if="index != 0" :key="image.id">
+                  <img :src="image.path" class="d-block w-100" alt="Product Image">
+                </div>
+                <!-- eslint-enable -->
+              </div>
+              <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                <!-- <span class="carousel-control-prev-icon" aria-hidden="true"></span> -->
+                <i class="fas fa-angle-left fa-2x mr-5"></i>
+                <span class="sr-only">Previous</span>
+              </a>
+              <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                <!-- <span class="carousel-control-next-icon" aria-hidden="true"></span> -->
+                <i class="fas fa-angle-right fa-2x ml-5"></i>
+              </a>
             </div>
             <div class="product-details-buttons">
               <button
@@ -434,6 +455,10 @@ export default {
 
   .review p {
     margin-bottom: 0;
+  }
+
+  i {
+    color: black !important;
   }
 
   @media (max-width: 992px) {
