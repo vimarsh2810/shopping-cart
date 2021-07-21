@@ -88,7 +88,7 @@
               :totalPages="totalPages" 
               :showPrevious="showPrevious()" 
               :showNext="showNext()"
-              @pageClicked="getProducts($event)"
+              @pageClicked="getOrders($event)"
             ></Pagination>
           </div>
 

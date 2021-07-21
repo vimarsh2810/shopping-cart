@@ -8,8 +8,10 @@ const pagination = (page, limit) => {
   };
 };
 
-const paginationMetaData = (items, page, size) => {
-  const { count, rows } = items;
+const paginationMetaData = (items, itemCount, page, size) => {
+  const count = itemCount;
+  const rows = items;
+
   const totalNoOfPages = Math.ceil(count / size);
   const currentPage = parseInt(page ? page : 1);
   return {

@@ -208,9 +208,10 @@ exports.getLimitedProducts = async (req, res, next) => {
 
     let { page, limit, includeCategory } = req.query;
     const { offset, size } = pagination(page, limit);
-    let items;
+    let products;
+    let count;
     if(includeCategory) {
-      items = await Product.findAndCountAll({
+      products = await Product.findAll({
         paranoid: false,
         include: [ 
           { 
@@ -224,15 +225,17 @@ exports.getLimitedProducts = async (req, res, next) => {
         offset: offset,
         order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
+      count = await Product.count();
     } else {
-      items = await Product.findAndCountAll({ 
+      products = await Product.findAndCountAll({ 
         limit: size,
         offset: offset,
         include: [{ model: ProductImage, attributes: ['id', 'path'] }],
         order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
+      count = await Product.count();
     }
-    const result = paginationMetaData(items, page, size);
+    const result = paginationMetaData(products, count, page, size);
     
     return res.status(200).json(responseObj(true, 'Paginated Products', {
       productCount: result.count,
@@ -276,7 +279,6 @@ exports.getProductById = async (req, res, next) => {
     });
     return res.status(200).json(responseObj(true, `Product having ID = ${req.params.id}`, product));
   } catch (error) {
-    console.log(error)
     return res.status(500).json(responseObj(false, error.message));
   }
 };
@@ -388,7 +390,7 @@ exports.getLimitedCategories = async (req, res, next) => {
 
     let { page, limit, includeCategory } = req.query;
     const { offset, size } = pagination(page, limit);
-    let items = await Category.findAndCountAll({
+    let categories = await Category.findAll({
       paranoid: false,
       include: [{ 
         model: Category,
@@ -402,8 +404,8 @@ exports.getLimitedCategories = async (req, res, next) => {
       limit: size,
       offset: offset
     });
-
-    const result = paginationMetaData(items, page, size);
+    const count = await Category.count();
+    const result = paginationMetaData(categories, count, page, size);
 
     return res.status(200).json(responseObj(true, 'Paginated Categories', {
       categoryCount: result.count,
@@ -504,14 +506,15 @@ exports.getOrdersByStatus = async (req, res, next) => {
     let { page, limit, includeCategory } = req.query;
     const { offset, size } = pagination(page, limit);
 
-    const items = await Order.findAndCountAll({
+    const orders = await Order.findAll({
       where: { status: req.params.status },
       include: [{ model: User }],
       limit: size,
       offset: offset
     });
 
-    const result = paginationMetaData(items, page, size);
+    const count = await Order.count();
+    const result = paginationMetaData(orders, count, page, size);
     return res.status(200).json(responseObj(true, `${req.params.status} Orders`, {
       orders: result.rows,
       totalPages: result.totalNoOfPages,
@@ -694,16 +697,17 @@ exports.checkBrandExists = async (req, res, next) => {
 
 exports.getLimitedBrands = async (req, res, next) => {
   try {
-
     let { page, limit } = req.query;
     const { offset, size } = pagination(page, limit);
-    let items = await Brand.findAndCountAll({
+    
+    let brands = await Brand.findAll({
       paranoid: false,
       limit: size,
       offset: offset
     });
 
-    const result = paginationMetaData(items, page, size);
+    const count = await Brand.count();
+    const result = paginationMetaData(brands, count, page, size);
 
     return res.status(200).json(responseObj(true, 'Paginated Brands', {
       categoryCount: result.count,

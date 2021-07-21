@@ -152,7 +152,7 @@ import axios from 'axios';
         totalProductsCount: null,
         currentPage: null,
         cartProducts: [],
-        limit: 6
+        limit: 5
       }
     },
     methods: {

@@ -30,9 +30,10 @@ exports.getProducts = async (req, res, next) => {
 
     let { page, limit, includeCategory } = req.query;
     const { offset, size } = pagination(page, limit);
-    let items;
+
+    let products;
     if(includeCategory) {
-      items = await Product.findAndCountAll({
+      products = await Product.findAll({
         include: [ 
           { model: Category, attributes: ['title'] },
           { model: Review },
@@ -43,23 +44,24 @@ exports.getProducts = async (req, res, next) => {
         order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
     } else {
-      items = await Product.findAndCountAll({ 
+      products = await Product.findAll({ 
         limit: size,
         offset: offset,
         include: [{ model: ProductImage, attributes: ['id', 'path'] }],
         order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
     }
+    const count = await Product.count();
 
-    items.rows.forEach((item) => {
+    products.forEach((product) => {
       let sumRating = 0;
-      item.reviews.forEach((review) => {
+      product.reviews.forEach((review) => {
         sumRating += parseInt(review.rating);
       });
-      item.dataValues.avgRating = item.reviews.length > 0 ? Number(sumRating / item.reviews.length).toFixed(1) : null;
+      product.dataValues.avgRating = product.reviews.length > 0 ? Number(sumRating / product.reviews.length).toFixed(1) : null;
     });
     
-    const result = paginationMetaData(items, page, size);
+    const result = paginationMetaData(products, count, page, size);
     
     return res.status(200).json(responseObj(true, 'Paginated Products', {
       productCount: result.count,
@@ -131,8 +133,8 @@ exports.getProductsByCategory = async (req, res, next) => {
     const category = await Category.findByPk(req.params.id, {
       attributes: ['title']
     });
-
-    const items = await Product.findAndCountAll({ 
+    
+    const items = await Product.findAll({ 
       where: { categoryId: req.params.id },
       include: [
         { model: Review },
@@ -143,7 +145,11 @@ exports.getProductsByCategory = async (req, res, next) => {
       order: [[{ model: ProductImage }, 'id', 'ASC']]
     });
 
-    items.rows.forEach((item) => {
+    const count = await Product.count({
+      where: { categoryId: req.params.id }
+    });
+
+    items.forEach((item) => {
       let sumRating = 0;
       item.reviews.forEach((review) => {
         sumRating += parseInt(review.rating);
@@ -151,7 +157,7 @@ exports.getProductsByCategory = async (req, res, next) => {
       item.dataValues.avgRating = item.reviews.length > 0 ? Number(sumRating / item.reviews.length).toFixed(1) : null;
     });
     
-    const result = paginationMetaData(items, page, size);
+    const result = paginationMetaData(items, count, page, size);
     return res.status(200).json(responseObj(true, 'Paginated Products by category', {
       productCount: result.count,
       products: result.rows,
@@ -170,9 +176,10 @@ exports.searchProduct = async (req, res, next) => {
     const { offset, size } = pagination(page, limit);
 
     let items;
+    let count;
 
     if(!categoryId) {
-      items = await Product.findAndCountAll({
+      items = await Product.findAll({
         where: {
           title: {
             [Op.like]: `%${searchText.toLowerCase()}%`
@@ -186,8 +193,16 @@ exports.searchProduct = async (req, res, next) => {
         offset: offset,
         order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
+
+      count = await Product.count({
+        where: {
+          title: {
+            [Op.like]: `%${searchText.toLowerCase()}%`
+          }
+        }
+      });
     } else {
-      items = await Product.findAndCountAll({
+      items = await Product.findAll({
         where: {
           categoryId: categoryId,
           title: {
@@ -202,9 +217,18 @@ exports.searchProduct = async (req, res, next) => {
         offset: offset,
         order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
+
+      count = await Product.count({
+        where: {
+          categoryId: categoryId,
+          title: {
+            [Op.like]: `%${searchText.toLowerCase()}%`
+          }
+        }
+      });
     }
 
-    items.rows.forEach((item) => {
+    items.forEach((item) => {
       let sumRating = 0;
       item.reviews.forEach((review) => {
         sumRating += parseInt(review.rating);
@@ -255,9 +279,12 @@ exports.filterProducts = async (req, res, next) => {
   try {
     const { brandId, minPrice, maxPrice, page, limit  } = req.query;
     const { offset, size } = pagination(page, limit);
-    let items;
+
+    let filteredProducts;
+    let count;
+
     if(!brandId) {
-      items = await Product.findAndCountAll({
+      filteredProducts = await Product.findAll({
         where: {
           price: {
             [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
@@ -271,8 +298,16 @@ exports.filterProducts = async (req, res, next) => {
         offset: offset,
         order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
+
+      count = await Product.count({
+        where: {
+          price: {
+            [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
+          }
+        }
+      });
     } else {
-      items = await Product.findAndCountAll({
+      filteredProducts = await Product.findAll({
         where: { 
           brandId: brandId,
           price: {
@@ -287,17 +322,26 @@ exports.filterProducts = async (req, res, next) => {
         offset: offset,
         order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
-    }
 
-    items.rows.forEach((item) => {
+      count = await Product.count({
+        where: {
+          brandId: brandId,
+          price: {
+            [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
+          }
+        }
+      });
+    }
+    
+    filteredProducts.forEach((product) => {
       let sumRating = 0;
-      item.reviews.forEach((review) => {
+      product.reviews.forEach((review) => {
         sumRating += parseInt(review.rating);
       });
-      item.dataValues.avgRating = item.reviews.length > 0 ? Number(sumRating / item.reviews.length).toFixed(1) : null;
+      product.dataValues.avgRating = product.reviews.length > 0 ? Number(sumRating / product.reviews.length).toFixed(1) : null;
     });
 
-    const result = paginationMetaData(items, page, size);
+    const result = paginationMetaData(filteredProducts, count, page, size);
     
     return res.status(200).json(responseObj(true, 'Filtered Paginated Products', {
       productCount: result.count,
@@ -319,8 +363,9 @@ exports.filterProductsCategory = async (req, res, next) => {
     const { brandId, minPrice, maxPrice, page, limit, categoryId  } = req.query;
     const { offset, size } = pagination(page, limit);
     let items;
+    let count;
     if(!brandId) {
-      items = await Product.findAndCountAll({
+      items = await Product.findAll({
         where: {
           categoryId: categoryId,
           price: {
@@ -335,8 +380,17 @@ exports.filterProductsCategory = async (req, res, next) => {
         offset: offset,
         order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
+
+      count = await Product.count({ 
+        where: {
+          categoryId: categoryId,
+          price: {
+            [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
+          }
+        } 
+      });
     } else {
-      items = await Product.findAndCountAll({
+      items = await Product.findAll({
         where: {
           categoryId: categoryId,
           brandId: brandId,
@@ -352,9 +406,19 @@ exports.filterProductsCategory = async (req, res, next) => {
         offset: offset,
         order: [[{ model: ProductImage }, 'id', 'ASC']]
       });
+
+      count = await Product.count({ 
+        where: {
+          categoryId: categoryId,
+          brandId: brandId,
+          price: {
+            [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
+          }
+        } 
+      });
     }
 
-    items.rows.forEach((item) => {
+    items.forEach((item) => {
       let sumRating = 0;
       item.reviews.forEach((review) => {
         sumRating += parseInt(review.rating);
@@ -362,7 +426,7 @@ exports.filterProductsCategory = async (req, res, next) => {
       item.dataValues.avgRating = item.reviews.length > 0 ? Number(sumRating / item.reviews.length).toFixed(1) : null;
     });
 
-    const result = paginationMetaData(items, page, size);
+    const result = paginationMetaData(items, count, page, size);
     
     return res.status(200).json(responseObj(true, 'Filtered Paginated Products', {
       productCount: result.count,
