@@ -32,7 +32,7 @@
                   <tr v-else v-for="product in visibleProducts" :key="product.id">
                     <td>
                       <div class="cart-img text-center">
-                        <img :src="product.imagePath" alt="">
+                        <img :src="product.productImages[0].path" alt="">
                       </div>
                     </td>
                     <td class="vertical-center text-center">{{ product.title }}</td>

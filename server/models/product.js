@@ -23,9 +23,6 @@ const Product = sequelize.define('product',
     },
     price: {
       type: Sequelize.DECIMAL
-    },
-    imagePath: {
-      type: Sequelize.STRING
     }
   },
   {

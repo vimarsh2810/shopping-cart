@@ -8,6 +8,7 @@ const { verifyCouponCode } = require("../helpers/verifyCouponCode");
 const { development } = require('../config/config.js');
 const { Wallet } = require("../models/wallet");
 const { Order } = require("../models/order");
+const { ProductImage } = require("../models/productImage");
 
 /* @desc Add product to user cart */
 /* @route POST /cart/addToCart */
@@ -36,7 +37,12 @@ exports.getCart = async (req, res, next) => {
   try {
     const cart = await Cart.findOne({ 
       where: { userId:req.userData.userId },
-      include: [{ model: Product }],
+      include: [
+        { 
+          model: Product,
+          include: [{ model: ProductImage, attributes: ['id', 'path'] }] 
+        }
+      ],
       logging: false
     });
     return res.status(200).json(responseObj(200, 'Your Cart', cart));

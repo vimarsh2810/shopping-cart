@@ -66,7 +66,7 @@
 
           <div class="form-group">
             <label for="image">Image</label>
-            <input type="file" class="form-control" name="image" id="image" ref="file" @change="onFileChange" >
+            <input type="file" class="form-control" name="image" id="image" ref="file" @change="onFileChange" multiple="multiple">
           </div>
 
           <button 
@@ -108,6 +108,7 @@ export default {
       brands: this.$store.getters.brands,
       selectedBrand: null,
       image: null,
+      images: [],
       userId: this.$store.getters.userData.id,
       parentCategories: this.$store.getters.categories,
       childCategories: null,
@@ -118,7 +119,12 @@ export default {
   },
   methods: {
     onFileChange(event) {
-      this.image = this.$refs.file.files[0];
+      for(let i = 0; i < this.$refs.file.files.length; i++) {
+        let file = this.$refs.file.files[i];
+        console.log(file);
+        this.images.push(file);
+      }
+      // this.image = this.$refs.file.files[0];
     },
 
     async checkProductExists() {
@@ -187,7 +193,11 @@ export default {
         this.categoryId = document.querySelector('#childCategory').value;
       }
       this.selectedBrand = document.querySelector('#brand').value;
-      formData.append('file', this.image);
+      // formData.append('file', this.image);
+      console.log(this.images);
+      this.images.forEach((img, idx) => {
+        formData.append('files', this.images[idx]);
+      });
       formData.append('description', this.description);
       formData.append('title', this.title);
       formData.append('brandId', this.selectedBrand);

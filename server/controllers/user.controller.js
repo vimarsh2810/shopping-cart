@@ -14,6 +14,7 @@ const { WishList } = require('../models/wishList.js');
 const { createInvoice } = require('../helpers/invoice.helper.js');
 const { deliverInvoiceMail } = require('../helpers/nodeMailer.js');
 const { Review } = require('../models/review.js');
+const { ProductImage } = require('../models/productImage.js');
 
 /* @desc Get data of logged in user */
 /* @route GET /user/data */
@@ -278,7 +279,12 @@ exports.getWishList = async (req, res, next) => {
       where: { 
         userId: req.userData.userId 
       },
-      include: [{ model: Product }],
+      include: [
+        { 
+          model: Product,
+          include: [{ model: ProductImage, attributes: ['id', 'path'] }]
+        }
+      ],
       logging: false
     });
 

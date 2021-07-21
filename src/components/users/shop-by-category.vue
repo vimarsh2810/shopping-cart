@@ -64,7 +64,7 @@
           <div class="col-md-4 col-sm-6 col-12 mbpx-30px" v-for="product in products" :key="product.id">
             <div class="card">
               <div class="card-product-img" @click.prevent="$router.push({ name: 'ProductDetailsUser', params: { id: product.id } })">
-                <img :src="product.imagePath" alt="">
+                <img :src="product.productImages[0].path" alt="">
               </div>
               <div class="card-product-details">
                 <h4

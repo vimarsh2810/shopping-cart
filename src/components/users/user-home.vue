@@ -65,7 +65,7 @@
             <div class="card">
               <div class="card-product-img">
                 <img 
-                  :src="product.imagePath" 
+                  :src="product.productImages[0].path" 
                   alt="Product Image" 
                   @click.prevent="$router.push({ name: 'ProductDetailsUser', params: { id: product.id }})"
                 >

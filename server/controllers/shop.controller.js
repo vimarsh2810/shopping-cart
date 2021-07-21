@@ -8,6 +8,7 @@ const { User } = require('../models/user.js');
 const { Brand } = require('../models/brand.js');
 
 const Op = require('sequelize').Op;
+const { ProductImage } = require('../models/productImage.js');
 
 // @desc Get all products
 // @route GET /shop/getAllProducts
@@ -34,13 +35,18 @@ exports.getProducts = async (req, res, next) => {
       items = await Product.findAndCountAll({
         include: [ 
           { model: Category, attributes: ['title'] },
-          { model: Review } 
+          { model: Review },
+          { model: ProductImage, attributes: ['id', 'path'] }
         ],
         limit: size,
         offset: offset
       });
     } else {
-      items = await Product.findAndCountAll({ limit: size, offset: offset });
+      items = await Product.findAndCountAll({ 
+        limit: size,
+        offset: offset,
+        include: [{ model: ProductImage, attributes: ['id', 'path'] }]
+      });
     }
 
     items.rows.forEach((item) => {
@@ -73,7 +79,7 @@ exports.getProductById = async (req, res, next) => {
       attributes: [
         'id', 'title', 
         'price', 'description', 
-        'categoryId', 'imagePath', 
+        'categoryId', 
         [Sequelize.fn('avg', Sequelize.col('reviews.rating')), 'avgRating']
       ],
       include: [
@@ -86,6 +92,10 @@ exports.getProductById = async (req, res, next) => {
         {
           model: Review,
           attributes: []
+        },
+        {
+          model: ProductImage,
+          attributes: ['id', 'path']
         }
       ]
     });
@@ -129,7 +139,10 @@ exports.getProductsByCategory = async (req, res, next) => {
 
     const items = await Product.findAndCountAll({ 
       where: { categoryId: req.params.id },
-      include: [{ model: Review }],
+      include: [
+        { model: Review },
+        { model: ProductImage, attributes: ['id', 'path'] }
+      ],
       limit: size, 
       offset: offset 
     });
@@ -169,7 +182,10 @@ exports.searchProduct = async (req, res, next) => {
             [Op.like]: `%${searchText.toLowerCase()}%`
           }
         },
-        include: [{ model: Review }],
+        include: [
+          { model: Review },
+          { model: ProductImage, attributes: ['id', 'path'] }
+        ],
         limit: size,
         offset: offset
       });
@@ -181,7 +197,10 @@ exports.searchProduct = async (req, res, next) => {
             [Op.like]: `%${searchText.toLowerCase()}%`
           }
         },
-        include: [{ model: Review }],
+        include: [
+          { model: Review },
+          { model: ProductImage, attributes: ['id', 'path'] }
+        ],
         limit: size,
         offset: offset
       });
@@ -246,7 +265,10 @@ exports.filterProducts = async (req, res, next) => {
             [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
           }
         },
-        include: [{ model: Review }],
+        include: [
+          { model: Review },
+          { model: ProductImage, attributes: ['id', 'path'] }
+        ],
         limit: size,
         offset: offset
       });
@@ -258,7 +280,10 @@ exports.filterProducts = async (req, res, next) => {
             [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
           }
         },
-        include: [{ model: Review }],
+        include: [
+          { model: Review },
+          { model: ProductImage, attributes: ['id', 'path'] }
+        ],
         limit: size,
         offset: offset
       });
@@ -302,7 +327,10 @@ exports.filterProductsCategory = async (req, res, next) => {
             [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
           }
         },
-        include: [{ model: Review }], 
+        include: [
+          { model: Review },
+          { model: ProductImage, attributes: ['id', 'path'] }
+        ], 
         limit: size,
         offset: offset
       });
@@ -315,7 +343,10 @@ exports.filterProductsCategory = async (req, res, next) => {
             [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
           }
         },
-        include: [{ model: Review }],
+        include: [
+          { model: Review },
+          { model: ProductImage, attributes: ['id', 'path'] }
+        ],
         limit: size,
         offset: offset
       });

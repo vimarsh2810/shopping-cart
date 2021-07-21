@@ -33,7 +33,7 @@ router.get('/lastSelectedCategory', [checkAuth, checkAdmin], adminController.get
 
 router.post('/checkProductExists', [checkAuth, checkAdmin], adminController.checkProductExists);
 
-router.post('/product', [checkAuth, checkAdmin, upload.single("file")], adminController.addProduct);
+router.post('/product', [checkAuth, checkAdmin, upload.array('files', 3)], adminController.addProduct);
 
 router.put('/product/:id', [checkAuth, checkAdmin], adminController.editProduct);
 

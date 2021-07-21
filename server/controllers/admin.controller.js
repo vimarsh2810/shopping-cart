@@ -12,6 +12,7 @@ const { generateOtp } = require('../helpers/generateOtp.js');
 const { deliverMail } = require('../helpers/nodeMailer.js');
 const { Review } = require('../models/review.js');
 const { Brand } = require('../models/brand.js');
+const { ProductImage } = require('../models/productImage.js');
 
 /* @desc Create a SubAdmin */
 /* @route POST /admin/subAdmin */
@@ -136,7 +137,7 @@ exports.addProduct = async (req, res, next) => {
 
     const { title, brandId, price, description, categoryId } = req.body;
     
-    if(!title || !brandId || !price || !description || !categoryId || !req.fileName ) {
+    if(!title || !brandId || !price || !description || !categoryId ) {
       return res.status(400).json(responseObj(false, 'All details should be filled'));
     }
 
@@ -148,6 +149,13 @@ exports.addProduct = async (req, res, next) => {
       description: description,
       categoryId: categoryId,
       imagePath: `/img/products/${req.fileName}`
+    });
+
+    await req.files.forEach(async (file) => {
+      console.log(file);
+      await product.createProductImage({
+        path: `/img/products/${file.filename}`
+      });
     });
 
     return res.status(200).json(responseObj(true, 'Product created.', product));
@@ -206,13 +214,22 @@ exports.getLimitedProducts = async (req, res, next) => {
       items = await Product.findAndCountAll({
         paranoid: false,
         include: [ 
-          { model: Category, attributes: ['title'] }
+          { 
+            model: Category, attributes: ['title'] 
+          },
+          {
+            model: ProductImage
+          }
         ],
         limit: size,
         offset: offset
       });
     } else {
-      items = await Product.findAndCountAll({ limit: size, offset: offset });
+      items = await Product.findAndCountAll({ 
+        limit: size,
+        offset: offset,
+        include: [{ model: ProductImage }]
+      });
     }
     
     const result = paginationMetaData(items, page, size);
@@ -246,10 +263,15 @@ exports.restoreProduct = async (req, res, next) => {
 exports.getProductById = async (req, res, next) => {
   try {
     const product = await Product.findByPk(req.params.id, {
-      include: [{ 
-        model: Category,
-        attributes: ['id','title', 'parentId']
-      }]
+      include: [
+        { 
+          model: Category,
+          attributes: ['id','title', 'parentId']
+        },
+        {
+          model: ProductImage
+        }
+      ]
     });
     return res.status(200).json(responseObj(true, `Product having ID = ${req.params.id}`, product));
   } catch (error) {
