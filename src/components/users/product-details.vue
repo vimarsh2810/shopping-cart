@@ -19,23 +19,40 @@
               <div class="carousel-inner">
                 <!-- eslint-disable -->
                 <div class="carousel-item product-details-img active" v-for="(image, index) in product.productImages" v-if="index == 0" :key="image.id">
-                  <img :src="image.path" class="d-block w-100" alt="Product Image">
+                  <img
+                    :src="image.path"
+                    class="d-block w-100"
+                    alt="Product Image"
+                    @mouseover="imgHover"
+                    @mouseout="imgOut"
+                  >
                 </div>
-                <div class="carousel-item product-details-img" v-for="(image, index) in product.productImages" v-if="index != 0" :key="image.id">
-                  <img :src="image.path" class="d-block w-100" alt="Product Image">
+
+                <div
+                  class="carousel-item product-details-img"
+                  v-for="(image, index) in product.productImages"
+                  v-if="index != 0"
+                  :key="image.id"
+                >
+                  <img
+                    :src="image.path"
+                    class="d-block w-100"
+                    alt="Product Image"
+                    @mouseover="imgHover"
+                    @mouseout="imgOut"
+                  >
                 </div>
                 <!-- eslint-enable -->
               </div>
               <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                <!-- <span class="carousel-control-prev-icon" aria-hidden="true"></span> -->
                 <i class="fas fa-angle-left fa-2x mr-5"></i>
                 <span class="sr-only">Previous</span>
               </a>
               <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                <!-- <span class="carousel-control-next-icon" aria-hidden="true"></span> -->
                 <i class="fas fa-angle-right fa-2x ml-5"></i>
               </a>
             </div>
+            
             <div class="product-details-buttons">
               <button
                 class="btn btn-primary"
@@ -52,7 +69,7 @@
 
           <!-- product details div starts -->
           <div class="col-md-6 col-12">
-            <div class="product-details">
+            <div class="product-details" ref="productDetails">
               <div class="product-title">
                 <h4>{{ product.title }}</h4>
               </div>
@@ -98,50 +115,56 @@
               <!-- product info div end -->
             </div>
 
+            <div class="image-zoom-div" ref="imgZoom">
+              <img :src="imgSrc" alt="zoomed image" id="zoomed-image" ref="zoomImg">
+            </div>
+
             <!-- Product Review starts -->
-            <div class="row mb-2">
-              <div class="col-6">
-                <h4 class="mb-0">Product Reviews</h4>
-              </div>
-              <div class="col-6">
-                <button
-                  class="btn btn-primary d-block ml-auto"
-                  data-toggle="modal" 
-                  data-target="#reviewModal"
-                >
-                  Add Review
-                </button>
-              </div>
-              <div class="col-12">
-                <div class="alert alert-danger mt-2" role="alert" v-if="reviewError">
-                  {{ reviewError }}
+            <div ref="productReviews">
+              <div class="row mb-2">
+                <div class="col-6">
+                  <h4 class="mb-0">Product Reviews</h4>
+                </div>
+                <div class="col-6">
+                  <button
+                    class="btn btn-primary d-block ml-auto"
+                    data-toggle="modal" 
+                    data-target="#reviewModal"
+                  >
+                    Add Review
+                  </button>
+                </div>
+                <div class="col-12">
+                  <div class="alert alert-danger mt-2" role="alert" v-if="reviewError">
+                    {{ reviewError }}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="product-reviews" v-if="product.reviews.length > 0">
-              <div class="reviews mb-3">
-                <div class="review" v-for="(review, index) in visibleReviews" :key="index">
-                  <p>
-                    <span 
-                      class="d-inline-flex align-items-center badge badge-success"
-                    >
-                      {{ review.rating }}&nbsp;&#11088;
-                    </span>
-                    &nbsp;&nbsp;&nbsp;{{ review.user.username }}
-                  </p>
-                  <p>{{ review.remark }}</p>
+              <div class="product-reviews" v-if="product.reviews.length > 0">
+                <div class="reviews mb-3">
+                  <div class="review" v-for="(review, index) in visibleReviews" :key="index">
+                    <p>
+                      <span 
+                        class="d-inline-flex align-items-center badge badge-success"
+                      >
+                        {{ review.rating }}&nbsp;&#11088;
+                      </span>
+                      &nbsp;&nbsp;&nbsp;{{ review.user.username }}
+                    </p>
+                    <p>{{ review.remark }}</p>
+                  </div>
                 </div>
+                <Pagination 
+                  :currentPage="currentPage" 
+                  :totalPages="totalPages" 
+                  :showPrevious="showPrevious()" 
+                  :showNext="showNext()"
+                  @pageClicked="filterReviews($event)"
+                ></Pagination>
               </div>
-              <Pagination 
-                :currentPage="currentPage" 
-                :totalPages="totalPages" 
-                :showPrevious="showPrevious()" 
-                :showNext="showNext()"
-                @pageClicked="filterReviews($event)"
-              ></Pagination>
-            </div>
-            <div v-else>
-              <p>No Reviews</p>
+              <div v-else>
+                <p>No Reviews</p>
+              </div>
             </div>
             <!-- Product Review ends -->
           </div>
@@ -223,6 +246,7 @@ export default {
       isLoading: true,
       currentPage: null,
       totalPages: null,
+      imgSrc: null,
       error: null,
       limit: 5,
       visibleReviews: []
@@ -353,6 +377,40 @@ export default {
       } catch (error) {
         alert(error.response.data.message);
       }
+    },
+
+    imgHover(event) {
+      let imgZoomDiv = this.$refs.imgZoom;
+      imgZoomDiv.style.display = 'block';
+      let zoomImgEl = this.$refs.zoomImg;
+      let ogImg = event.currentTarget;
+      this.imgSrc = ogImg.src
+      let prodDetailsEl = this.$refs.productDetails;
+      let productReviewsEl = this.$refs.productReviews;
+      prodDetailsEl.style.display = 'none';
+      productReviewsEl.style.display = 'none';
+
+      ogImg.addEventListener("mousemove",function(event){
+        let clientX = event.clientX - ogImg.offsetLeft
+        let clientY = event.clientY - ogImg.offsetTop
+        
+        var mWidth = ogImg.offsetWidth
+        var mHeight = ogImg.offsetHeight
+        clientX = clientX / mWidth * 100 
+        clientY = clientY / mHeight * 100 - 40
+
+        zoomImgEl.style.transform = 'translate(-'+clientX+'%, -'+clientY+'%) scale(2)'
+      })
+    },
+
+    imgOut(event) {
+      let imgZoomDiv = this.$refs.imgZoom;
+      imgZoomDiv.style.display = 'none';
+      this.imgSrc = null;
+      let prodDetailsEl = this.$refs.productDetails;
+      prodDetailsEl.style.display = 'block';
+      let productReviewsEl = this.$refs.productReviews;
+      productReviewsEl.style.display = 'block';
     }
   },
 
@@ -392,6 +450,7 @@ export default {
     max-width: 100%;
     height: 400px;
     object-fit: contain;
+    cursor: crosshair;
   }
 
   .product-details {
@@ -459,6 +518,25 @@ export default {
 
   i {
     color: black !important;
+  }
+
+  .image-zoom-div {
+	  overflow:hidden;
+    max-width: 100%;
+    max-height: 100%;
+	  position: relative;
+    height: 100% !important;
+  }
+
+  .image-zoom-div img {
+    overflow: hidden;
+    /* width: 100%;
+    height: 100%; */
+    object-fit: contain;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
   }
 
   @media (max-width: 992px) {
