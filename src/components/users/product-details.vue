@@ -52,7 +52,7 @@
                 <i class="fas fa-angle-right fa-2x ml-5"></i>
               </a>
             </div>
-            
+
             <div class="product-details-buttons">
               <button
                 class="btn btn-primary"
@@ -179,6 +179,7 @@
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
+
                 <div class="modal-body">
                   <div class="form-group">
                     <label for="ratings">Ratings</label>
@@ -204,6 +205,7 @@
                     ></textarea>
                   </div>
                 </div>
+                
                 <div class="modal-footer d-flex justify-content-center align-content-center">
                   <button 
                     type="button" 

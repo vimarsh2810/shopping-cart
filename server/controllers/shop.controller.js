@@ -439,3 +439,22 @@ exports.filterProductsCategory = async (req, res, next) => {
     return res.status(500).json(responseObj(false, error.message));
   }
 };
+
+/* @desc GET Get New Arrivals */
+/* @route GET /shop/newArrivals */
+exports.getNewArrivals = async (req, res, next) => {
+  try {
+    const newProducts = await Product.findAll({
+      limit: 5,
+      order: [
+        ['createdAt', 'DESC'],
+        [{ model: ProductImage }, 'id', 'ASC']
+      ],
+      include: [{ model: ProductImage }]
+    });
+
+    return res.status(200).json(responseObj(true, 'New Arrival Products', newProducts));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+}

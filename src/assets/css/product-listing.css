@@ -108,3 +108,20 @@ span {
     margin-bottom: 10px;
   }
 }
+
+#carouselDiv .carousel-item img {
+  max-height: 300px;
+}
+
+#carouselDiv .carousel-item img:hover {
+  cursor: pointer;
+}
+
+#carouselDiv .carousel-item h3:hover {
+  cursor: pointer;
+}
+
+#carouselDiv .carousel-control-next,
+#carouselDiv .carousel-control-prev {
+  color: #000 !important;
+}

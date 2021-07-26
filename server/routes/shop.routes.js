@@ -25,4 +25,6 @@ router.get('/filteredProducts', shopController.filterProducts);
 
 router.get('/filteredProductsCategory', shopController.filterProductsCategory);
 
+router.get('/newArrivals', shopController.getNewArrivals);
+
 module.exports = router;
