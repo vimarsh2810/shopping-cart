@@ -91,4 +91,6 @@ router.get('/statistics', [checkAuth, checkAdmin], adminController.getStatistics
 
 router.get('/products', adminController.getAdminProducts);
 
+router.post('/attribute', [checkAuth, checkAdmin], adminController.createNewAttribute);
+
 module.exports = router;

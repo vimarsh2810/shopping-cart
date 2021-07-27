@@ -6,7 +6,7 @@
     <div class="wrapper" style="margin-top: 100px">
       <div class="container" v-if="!isLoading">
         <div class="row">
-          <div class="col-12">
+          <div class="col-12" v-if="products.length > 0">
             <h3>New Arrivals</h3>
             <!-- Carousel start -->
             <div id="carouselDiv" class="carousel slide" data-interval="false" data-ride="carousel">
@@ -180,7 +180,7 @@
 
         <div class="no-products-found" v-else>
           <div class="no-product-found-inner">
-            <img src="/img/products/no-products-found-2021-05-26.jpg" alt="No Product Found">
+            <img src="/img/products/no-products-found.png" alt="No Product Found">
             <h5>Sorry, No products found</h5>
           </div>
         </div>

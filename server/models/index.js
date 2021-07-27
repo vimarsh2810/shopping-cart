@@ -16,6 +16,9 @@ const { Wallet } = require('./wallet.js');
 const { Coupon } = require('./coupon.js');
 const { Review } = require('./review.js');
 const { Brand } = require('./brand.js');
+const { Attribute } = require('./attribute.js');
+const { AttributeValue } = require('./attributeValue.js');
+const { Variation } = require('./variation.js');
 
 const db = {}
 
@@ -36,5 +39,8 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 db.review = Review;
 db.brand = Brand;
+db.attribute = Attribute;
+db.attributeValue = AttributeValue;
+db.variation = Variation;
 
 module.exports = { db };

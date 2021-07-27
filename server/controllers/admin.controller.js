@@ -13,6 +13,7 @@ const { deliverMail } = require('../helpers/nodeMailer.js');
 const { Review } = require('../models/review.js');
 const { Brand } = require('../models/brand.js');
 const { ProductImage } = require('../models/productImage.js');
+const { Attribute } = require('../models/attribute.js');
 
 /* @desc Create a SubAdmin */
 /* @route POST /admin/subAdmin */
@@ -727,6 +728,25 @@ exports.restoreBrand = async (req, res, next) => {
   try {
     const brand = await Brand.restore({ where: { id: req.params.id } });
     return res.status(200).json(responseObj(true, 'Brand restored'));
+  } catch (error) {
+    return res.status(500).json(responseObj(false, error.message));
+  }
+};
+
+exports.createNewAttribute = async (req, res, next) => {
+  try {
+    const attribute = await Attribute.create({
+      title: req.body.title
+    });
+
+    await req.body.attributeValues.forEach(async (attributeValue) => {
+      await attribute.createAttributeValue({
+        value: attributeValues.value,
+        hex: attributeValues.hex
+      });
+    });
+    
+    return res.status(200).json(responseObj(true, 'Attribute created'));
   } catch (error) {
     return res.status(500).json(responseObj(false, error.message));
   }

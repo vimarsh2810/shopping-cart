@@ -24,6 +24,7 @@ import EditCategory from '../components/admin/edit-category.vue';
 import ManageBrands from '../components/admin/manage-brands.vue';
 import AddBrand from '../components/admin/add-brand.vue';
 import EditBrand from '../components/admin/edit-brand.vue';
+import AddAttribute from '../components/admin/add-attribute.vue';
 import EditProduct from '../components/admin/edit-product.vue';
 import VerifyEmail from '../components/verify-email.vue';
 import Payment from '../components/users/payment.vue';
@@ -203,6 +204,14 @@ const routes = [
     path: '/admin/edit-brand/:id',
     name: 'EditBrand',
     component: EditBrand  ,
+    meta: {
+      requiresAuth: true, adminAuth: true, userAuth: false
+    }
+  },
+  {
+    path: '/admin/add-attribute',
+    name: 'AddAttribute',
+    component: AddAttribute  ,
     meta: {
       requiresAuth: true, adminAuth: true, userAuth: false
     }
